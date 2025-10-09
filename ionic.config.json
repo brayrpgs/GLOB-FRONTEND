@@ -1,0 +1,7 @@
+{
+  "name": "QUICK REPORT",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
