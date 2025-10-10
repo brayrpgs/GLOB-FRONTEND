@@ -16,7 +16,7 @@ const Page: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className='ion-padding'>
-        <h2>hola</h2>
+        <h2>Welcome to Quick Report</h2>
         <IonButton routerLink='/error'>Go to Page Error</IonButton>
       </IonContent>
     </IonPage>
