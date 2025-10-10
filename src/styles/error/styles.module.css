@@ -1,0 +1,28 @@
+.icon {
+  animation: spin 3s infinite ease-in-out;
+  font-size: 10rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--ion-color-danger);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+
+  from {
+    transform: rotate(0deg);
+  }
+}
+
+.error-code {
+  font-size: 10rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--ion-color-danger);
+  margin: auto;
+}
+
+
+
