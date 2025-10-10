@@ -1,0 +1,58 @@
+.login-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.login-col {
+  text-align: center;
+}
+
+.login-title {
+  color: white;
+  margin-top: 15px;
+}
+
+.login-input {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.password-icon {
+  cursor: pointer;
+}
+
+.login-button {
+  margin-top: 20px;
+  color: black;
+  font-weight: 500;
+}
+
+.forgot-password-text {
+  margin-top: 15px;
+  display: block;
+
+  a {
+    color: #e0e0e0;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.password-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.password-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 2;
+}
