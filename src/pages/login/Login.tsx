@@ -34,7 +34,6 @@ const Login: React.FC = () => {
     if (email.trim() === "") {
       setEmailError(true);
       valid = false;
-
     } else {
       setEmailError(false);
     }
@@ -55,10 +54,45 @@ const Login: React.FC = () => {
   }
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (validateData()) {
-      setLoading(true); // Here will be the 
+      setLoading(true);
+
+      try {
+        const response = await fetch("http://localhost:3000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email.trim(),
+            password: password.trim(),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+          setToastMessage("Login successful!");
+          setShowToast(true);
+
+          console.log("User: ", data);
+
+        } else {
+
+          setToastMessage(data.message || "Invalid credentials");
+          setShowToast(true);
+        }
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        setToastMessage("We encountered an error. Please try again.");
+        setShowToast(true);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -99,7 +133,9 @@ const Login: React.FC = () => {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onIonChange={(e) => setPassword(e.detail.value!)}
-                      className={`login-input ${passwordError ? "error-input" : ""}`}
+                      className={`login-input ${
+                        passwordError ? "error-input" : ""
+                      }`}
                     />
                     <IonIcon
                       icon={showPassword ? eyeOffOutline : eyeOutline}
@@ -108,17 +144,31 @@ const Login: React.FC = () => {
                     />
                   </div>
 
-                  <IonButton expand="block" color="light" className="login-button" type="submit">
-                    {loading ? <IonSpinner name="crescent" color="dark" /> : "Sign In"}
+                  <IonButton
+                    expand="block"
+                    color="light"
+                    className="login-button"
+                    type="submit"
+                  >
+                    {loading ? (
+                      <IonSpinner name="crescent" color="dark" />
+                    ) : (
+                      "Sign In"
+                    )}
                   </IonButton>
                 </form>
 
-                <div className="login-links" style={{ display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
+                <div className="login-links">
                   <IonText color="medium">
                     <a href="#">Forgot password?</a>
                   </IonText>
                   <IonText color="primary">
-                    <a href="#" onClick={() => console.log("Redirect to Create New User page")}>
+                    <a
+                      href="#"
+                      onClick={() =>
+                        console.log("Redirect to Create New User page")
+                      }
+                    >
                       Create New User
                     </a>
                   </IonText>
