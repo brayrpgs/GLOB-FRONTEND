@@ -56,3 +56,15 @@
   cursor: pointer;
   z-index: 2;
 }
+
+.login-links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  a {
+    font-size: 0.9rem;
+    text-decoration: underline;
+  }
+}
