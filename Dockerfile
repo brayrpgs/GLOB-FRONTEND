@@ -7,8 +7,12 @@ COPY . .
 
 RUN npm i
 
-RUN npm run build
+# Uncomment the next line to build the frontend
+#RUN npm run build
 
 EXPOSE 5173
 
-CMD ["npm", "run", "preview"]
+CMD ["npm", "run", "dev"]
+
+# Uncomment the next line to run the frontend in development mode
+#CMD ["npm", "run", "preview"]

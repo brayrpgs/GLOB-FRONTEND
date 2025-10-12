@@ -107,7 +107,6 @@ const Page: React.FC = () => {
           color="danger"
           position="top"
         />
-
         <div className={styles["login-content"]}>
           <IonGrid fixed>
             <IonRow className="ion-justify-content-center">
