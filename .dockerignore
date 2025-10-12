@@ -1,0 +1,17 @@
+node_modules
+dist
+build
+.next
+.cache
+.parcel-cache
+npm-debug.log*
+yarn-error.log*
+.DS_Store
+.git
+.gitignore
+coverage
+cypress/videos
+cypress/screenshots
+android
+ios
+*.local
