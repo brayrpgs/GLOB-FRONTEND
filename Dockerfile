@@ -1,17 +1,14 @@
-FROM node:22.14.0
+FROM node:22.14.0-alpine
 
-RUN mkdir -p /home/app
-
-COPY . .
 
 WORKDIR /home/app
 
-RUN npm i -g @ionic/cli
+COPY . .
 
-RUN npm install
+RUN npm i
 
-#RUN npm run build
+RUN npm run build
 
-EXPOSE 5174
+EXPOSE 5173
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "preview"]
