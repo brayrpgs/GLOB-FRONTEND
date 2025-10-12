@@ -13,9 +13,9 @@ import {
   IonToast,
 } from "@ionic/react";
 import { eyeOutline, eyeOffOutline } from "ionicons/icons";
-import "./Login.css";
+import styles from '../../styles/login/styles.module.css';
 
-const Login: React.FC = () => {
+const Page: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -108,11 +108,11 @@ const Login: React.FC = () => {
           position="top"
         />
 
-        <div className="login-content">
+        <div className={styles["login-content"]}>
           <IonGrid fixed>
             <IonRow className="ion-justify-content-center">
-              <IonCol size="12" sizeMd="6" sizeLg="4" className="login-col">
-                <h1 className="login-title">Sign in</h1>
+              <IonCol size="12" sizeMd="6" sizeLg="4" className={styles["login-col"]}>
+                <h1 className={styles["login-title"]}>Sign in</h1>
 
                 <form onSubmit={handleSubmit}>
                   <IonInput
@@ -122,10 +122,10 @@ const Login: React.FC = () => {
                     type="email"
                     value={email}
                     onIonChange={(e) => setEmail(e.detail.value!)}
-                    className={`login-input ${emailError ? "error-input" : ""}`}
+                    className={`${styles["login-input"]} ${emailError ? styles["error-input"] : ""}`}
                   />
 
-                  <div className="password-wrapper">
+                  <div className={styles["password-wrapper"]}>
                     <IonInput
                       fill="outline"
                       label="Password"
@@ -133,21 +133,20 @@ const Login: React.FC = () => {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onIonChange={(e) => setPassword(e.detail.value!)}
-                      className={`login-input ${
-                        passwordError ? "error-input" : ""
-                      }`}
+                      className={`${styles["login-input"]} ${passwordError ? styles["error-input"] : ""
+                        }`}
                     />
                     <IonIcon
                       icon={showPassword ? eyeOffOutline : eyeOutline}
                       onClick={() => setShowPassword(!showPassword)}
-                      className="password-icon"
+                      className={styles["password-icon"]}
                     />
                   </div>
 
                   <IonButton
                     expand="block"
                     color="light"
-                    className="login-button"
+                    className={styles["login-button"]}
                     type="submit"
                   >
                     {loading ? (
@@ -158,7 +157,7 @@ const Login: React.FC = () => {
                   </IonButton>
                 </form>
 
-                <div className="login-links">
+                <div className={styles["login-links"]}>
                   <IonText color="medium">
                     <a href="#">Forgot password?</a>
                   </IonText>
@@ -182,4 +181,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export { Page }

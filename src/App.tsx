@@ -37,6 +37,7 @@ import '@ionic/react/css/palettes/dark.system.css'
 import './theme/variables.css'
 import { Page as LandingPage } from './pages/landing/page'
 import { Page as Error } from './pages/error/page'
+import { Page as Login} from './pages/login/page'
 
 setupIonicReact()
 
@@ -45,6 +46,7 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonRouterOutlet>
         <Route exact path='/' component={LandingPage} />
+        <Route exact path='/login' component={Login} />
         <Route component={Error} />
       </IonRouterOutlet>
     </IonReactRouter>
