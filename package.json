@@ -4,9 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
+    "start": "npm run build && npm run preview",
     "test.e2e": "cypress run",
     "test.unit": "vitest",
     "lint": "eslint"
@@ -17,8 +18,8 @@
     "@capacitor/haptics": "7.0.2",
     "@capacitor/keyboard": "7.0.3",
     "@capacitor/status-bar": "7.0.3",
-    "@ionic/react": "^8.5.0",
-    "@ionic/react-router": "^8.5.0",
+    "@ionic/react": "^8.7.6",
+    "@ionic/react-router": "^8.7.6",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "ionicons": "^7.4.0",
