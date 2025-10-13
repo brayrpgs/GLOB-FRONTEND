@@ -62,9 +62,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  a {
-    font-size: 0.9rem;
-    text-decoration: underline;
-  }
+  text-decoration: underline;
+  font-size: 0.9rem;
 }

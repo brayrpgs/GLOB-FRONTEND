@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import {
   IonPage,
   IonContent,
@@ -11,102 +11,110 @@ import {
   IonIcon,
   IonSpinner,
   IonToast,
+  IonRouterLink,
 } from "@ionic/react";
+import { LOGIN_API_SECURITY_URL } from "../../common/Common";
 import { eyeOutline, eyeOffOutline } from "ionicons/icons";
-import styles from '../../styles/login/styles.module.css';
+import styles from "../../styles/login/styles.module.css";
 
+// Login Page Component
 const Page: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  // Refs for input fields
+  const emailRef = useRef<HTMLIonInputElement>(null);
+  const passwordRef = useRef<HTMLIonInputElement>(null);
+
+  // State variables
   const [showPassword, setShowPassword] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({
+    message: "",
+    show: false,
+    color: "danger" as "danger" | "success",
+  });
 
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  // Validate input data
+  const validateData = useCallback(() => {
+    const email = (emailRef.current?.value as string) || "";
+    const password = (passwordRef.current?.value as string) || "";
 
-  const [toastMessage, setToastMessage] = useState("");
-  const [showToast, setShowToast] = useState(false);
-
-  // Function to validate form data
-  function validateData() {
-    let valid = true;
-
-    if (email.trim() === "") {
-      setEmailError(true);
-      valid = false;
-    } else {
-      setEmailError(false);
+    // Basic validation
+    if (!email.trim() || !password.trim()) {
+      setToast({
+        message: "Please fill in all required fields",
+        show: true,
+        color: "danger",
+      });
+      return false;
     }
+    return true;
+  }, []);
 
-    if (password.trim() === "") {
-      setPasswordError(true);
-      valid = false;
-    } else {
-      setPasswordError(false);
-    }
+  // Show toast message
+  const showToast = useCallback(
+    (message: string, color: "danger" | "success" = "danger") => {
+      setToast({ message, show: true, color });
+    },
+    []
+  );
 
-    if (!valid) {
-      setToastMessage("Please fill in all required fields");
-      setShowToast(true);
-    }
+  // Handle form submission
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    return valid;
-  }
+      // Validate data before submission
+      if (!validateData()) return;
 
-  // Function to handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      // Extract values
+      const email = emailRef.current?.value as string;
+      const password = passwordRef.current?.value as string;
 
-    if (validateData()) {
       setLoading(true);
 
+      // Make API call
       try {
-        const response = await fetch("http://localhost:3000/api/users/login", {
+        const response = await fetch(LOGIN_API_SECURITY_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.trim(),
-            password: password.trim(),
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim(), password: password.trim() }),
         });
 
-        const data = await response.json();
+        const data = await response.text();
 
+        // Handle response
         if (response.ok) {
-
-          setToastMessage("Login successful!");
-          setShowToast(true);
-
-          console.log("User: ", data);
-
+          localStorage.setItem("authToken", data);
+          showToast("Login successful!", "success");
+        } else if (response.status === 400) {
+          showToast("Invalid credentials", "danger");
         } else {
-
-          setToastMessage(data.message || "Invalid credentials");
-          setShowToast(true);
+          showToast("An unexpected error occurred, please try again.", "danger");
         }
       } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        setToastMessage("We encountered an error. Please try again.");
-        setShowToast(true);
+        showToast("An unexpected error occurred, please try again later.", "danger");
       } finally {
         setLoading(false);
       }
-    }
-  };
+    },
+    [validateData, showToast]
+  );
 
+  // Render component
   return (
     <IonPage>
       <IonContent fullscreen>
         <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={toastMessage}
-          duration={2000}
-          color="danger"
-          position="top"
+          key={toast.message + Date.now()}
+          isOpen={toast.show}
+          onDidDismiss={() => setToast((prev) => ({ ...prev, show: false }))}
+          message={toast.message}
+          duration={2500}
+          color={toast.color}
+          position="bottom"
         />
+
         <div className={styles["login-content"]}>
           <IonGrid fixed>
             <IonRow className="ion-justify-content-center">
@@ -115,29 +123,26 @@ const Page: React.FC = () => {
 
                 <form onSubmit={handleSubmit}>
                   <IonInput
+                    ref={emailRef}
                     fill="outline"
                     label="Email"
                     labelPlacement="floating"
                     type="email"
-                    value={email}
-                    onIonChange={(e) => setEmail(e.detail.value!)}
-                    className={`${styles["login-input"]} ${emailError ? styles["error-input"] : ""}`}
+                    className={styles["login-input"]}
                   />
 
                   <div className={styles["password-wrapper"]}>
                     <IonInput
+                      ref={passwordRef}
                       fill="outline"
                       label="Password"
                       labelPlacement="floating"
                       type={showPassword ? "text" : "password"}
-                      value={password}
-                      onIonChange={(e) => setPassword(e.detail.value!)}
-                      className={`${styles["login-input"]} ${passwordError ? styles["error-input"] : ""
-                        }`}
+                      className={styles["login-input"]}
                     />
                     <IonIcon
                       icon={showPassword ? eyeOffOutline : eyeOutline}
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword((prev) => !prev)}
                       className={styles["password-icon"]}
                     />
                   </div>
@@ -147,28 +152,32 @@ const Page: React.FC = () => {
                     color="light"
                     className={styles["login-button"]}
                     type="submit"
+                    disabled={loading}
                   >
-                    {loading ? (
-                      <IonSpinner name="crescent" color="dark" />
-                    ) : (
-                      "Sign In"
-                    )}
+                    {loading ? <IonSpinner name="crescent" color="dark" /> : "Sign In"}
                   </IonButton>
                 </form>
 
                 <div className={styles["login-links"]}>
                   <IonText color="medium">
-                    <a href="#">Forgot password?</a>
-                  </IonText>
-                  <IonText color="primary">
                     <a
                       href="#"
-                      onClick={() =>
-                        console.log("Redirect to Create New User page")
-                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        console.log("Forgot password clicked");
+                      }}
+                    >
+                      Forgot password?
+                    </a>
+                  </IonText>
+
+                  <IonText color="primary">
+                    <IonRouterLink
+                      routerLink="/register"
+                      className={styles["login-links"]}
                     >
                       Create New User
-                    </a>
+                    </IonRouterLink>
                   </IonText>
                 </div>
               </IonCol>
@@ -180,4 +189,4 @@ const Page: React.FC = () => {
   );
 };
 
-export { Page }
+export { Page };
