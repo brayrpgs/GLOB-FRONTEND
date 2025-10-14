@@ -26,9 +26,9 @@ const Page: React.FC = () => {
 
   // State variables
   const [showPassword, setShowPassword] = useState(false);
-  const [showCreateUser, setShowCreateUser] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({
+    id: "",
     message: "",
     show: false,
     color: "danger" as "danger" | "success",
@@ -41,11 +41,7 @@ const Page: React.FC = () => {
 
     // Basic validation
     if (!email.trim() || !password.trim()) {
-      setToast({
-        message: "Please fill in all required fields",
-        show: true,
-        color: "danger",
-      });
+      showToast("Please fill in all required fields", "danger");
       return false;
     }
     return true;
@@ -54,7 +50,12 @@ const Page: React.FC = () => {
   // Show toast message
   const showToast = useCallback(
     (message: string, color: "danger" | "success" = "danger") => {
-      setToast({ message, show: true, color });
+      setToast({
+        id: crypto.randomUUID(),
+        message,
+        show: true,
+        color,
+      });
     },
     []
   );
@@ -106,9 +107,9 @@ const Page: React.FC = () => {
     <IonPage>
       <IonContent fullscreen>
         <IonToast
-          key={toast.message + Date.now()}
+          key={toast.id}
           isOpen={toast.show}
-          onDidDismiss={() => setToast((prev) => ({ ...prev, show: false }))}
+          onDidDismiss={() => setToast(prev => ({ ...prev, show: false }))}
           message={toast.message}
           duration={2500}
           color={toast.color}

@@ -20,6 +20,7 @@ import {
 import { eyeOutline, eyeOffOutline, cloudUploadOutline } from "ionicons/icons";
 import styles from "../../styles/register/styles.module.css";
 import { USER_API_SECURITY_URL } from "../../common/Common";
+import { PASSWORD_REGEX } from "../../common/Validator";
 
 // Register Page Component
 const Page: React.FC = () => {
@@ -69,8 +70,7 @@ const Page: React.FC = () => {
     }
 
     // Password complexity validation
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).+$/;
-    if (!passwordRegex.test(password)) {
+    if (!PASSWORD_REGEX.test(password)) {
       setToast(prev => ({ ...prev, message: "Password must contain at least one uppercase letter, one number, and one special character.", show: true }));
       return false;
     }
@@ -113,7 +113,7 @@ const Page: React.FC = () => {
           }),
         });
 
-        await response.json();
+        await response.text(); // Consume response body ONLY
 
         // Handle response
         if (response.status === 201) {
@@ -122,15 +122,16 @@ const Page: React.FC = () => {
 
           // Clear form and redirect after a delay
           setTimeout(() => {
-            emailRef.current!.value = "";
-            usernameRef.current!.value = "";
-            passwordRef.current!.value = "";
-            confirmPasswordRef.current!.value = "";
+            if (emailRef.current) emailRef.current.value = "";
+            if (usernameRef.current) usernameRef.current.value = "";
+            if (passwordRef.current) passwordRef.current.value = "";
+            if (confirmPasswordRef.current) confirmPasswordRef.current.value = "";
             setAvatarUrl("");
             setShowPassword(false);
             setShowConfirmPassword(false);
             router.push("/login", "forward");
           }, 2000);
+
         } else {
           showToast("Registration failed", "danger");
         }
