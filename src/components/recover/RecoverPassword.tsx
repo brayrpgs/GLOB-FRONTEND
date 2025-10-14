@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { IonToast } from "@ionic/react";
+import { IonToast, IonSpinner } from "@ionic/react";
 import styles from "../../styles/login/styles.module.css";
 import { EMAIL_REGEX } from "../../common/Validator";
 import { RESET_API_SECURITY_URL } from "../../common/Common";
@@ -10,27 +10,29 @@ interface RecoverPasswordProps {
     onClose: () => void;
 }
 
-// Modal component for password recovery
+// RecoverPassword Component
 const RecoverPassword: React.FC<RecoverPasswordProps> = ({ isOpen, onClose }) => {
+    // Refs and state variables
     const emailRef = useRef<HTMLInputElement>(null);
-    const [toastState, setToastState] = useState<{ show: boolean; message: string; color: "success" | "danger" }>({
-        show: false,
+    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Toast state
+    const [toast, setToast] = useState({
+        id: "",
         message: "",
-        color: "success",
+        color: "success" as "success" | "danger",
+        show: false,
     });
 
+    // Modal visibility state
     const [visible, setVisible] = useState(false);
     const [showClass, setShowClass] = useState(false);
-
-    // Store timeout to clean up if needed
-    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Handle modal open/close with animation
     useEffect(() => {
         if (isOpen) {
-            // Reset toast state when opening
-            setToastState({ show: false, message: "", color: "success" });
-
+            setToast({ id: "", message: "", color: "success", show: false });
             setVisible(true);
             setTimeout(() => setShowClass(true), 10);
         } else {
@@ -41,14 +43,31 @@ const RecoverPassword: React.FC<RecoverPasswordProps> = ({ isOpen, onClose }) =>
         }
     }, [isOpen]);
 
+    // Show toast message
+    const showToast = (message: string, color: "success" | "danger") => {
+        setToast(prev => ({ ...prev, show: false }));
+        setTimeout(() => {
+            setToast({
+                id: crypto.randomUUID(),
+                message,
+                color,
+                show: true,
+            });
+        }, 50);
+    };
+
+    // Handle sending password recovery email
     const handleSend = async () => {
         const email = emailRef.current?.value || "";
 
         if (!email || !EMAIL_REGEX.test(email)) {
-            setToastState({ show: true, message: "Please enter a valid email", color: "danger" });
+            showToast("Please enter a valid email", "danger");
             return;
         }
 
+        setIsLoading(true);
+
+        // API call to send recovery email
         try {
             const response = await fetch(RESET_API_SECURITY_URL, {
                 method: "POST",
@@ -56,51 +75,56 @@ const RecoverPassword: React.FC<RecoverPasswordProps> = ({ isOpen, onClose }) =>
                 body: JSON.stringify({ email }),
             });
 
+            // Handle response
             if (response.status === 201) {
-                setToastState({ show: true, message: "Password reset email sent!", color: "success" });
+                showToast("Password reset email sent!", "success");
 
-                // Close modal after toast duration
                 if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
                 closeTimeoutRef.current = setTimeout(() => {
                     if (emailRef.current) emailRef.current.value = "";
                     onClose();
                 }, 2000);
             } else if (response.status === 400) {
-                setToastState({ show: true, message: "We couldn't find an account with that email", color: "danger" });
+                showToast("We couldn't find an account with that email", "danger");
             } else if (response.status === 404) {
-                setToastState({ show: true, message: "We couldn't find a user with that specification", color: "danger" });
+                showToast("We couldn't find a user with that specification", "danger");
             } else {
-                setToastState({ show: true, message: "Unexpected error, try again later", color: "danger" });
+                showToast("Unexpected error, try again later", "danger");
             }
         } catch (error) {
             console.error("Error calling recoverPassword API:", error);
-            setToastState({ show: true, message: "Network error, please try again later", color: "danger" });
+            showToast("Network error, please try again later", "danger");
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    // Don't render anything if not visible
     if (!visible) return null;
 
-    // Render modal and toast
     return (
         <>
             <div
-                className={`${styles['modal-backdrop']} ${showClass ? styles.show : ""}`}
+                className={`${styles["modal-backdrop"]} ${showClass ? styles.show : ""}`}
                 onClick={onClose}
             >
-                <div className={styles['modal-box']} onClick={(e) => e.stopPropagation()}>
+                <div className={styles["modal-box"]} onClick={(e) => e.stopPropagation()}>
                     <h2>Recover Password</h2>
                     <input type="email" placeholder="Email" ref={emailRef} />
-                    <button onClick={handleSend}>Send</button>
+
+                    <button onClick={handleSend} disabled={isLoading}>
+                        {isLoading ? <IonSpinner name="crescent" /> : "Send"}
+                    </button>
                 </div>
             </div>
 
             <IonToast
-                isOpen={toastState.show}
-                onDidDismiss={() => setToastState((s) => ({ ...s, show: false }))}
-                message={toastState.message}
-                color={toastState.color}
+                key={toast.id}
+                isOpen={toast.show}
+                onDidDismiss={() => setToast(prev => ({ ...prev, show: false }))}
+                message={toast.message}
                 duration={2000}
+                color={toast.color}
+                position="bottom"
             />
         </>
     );
