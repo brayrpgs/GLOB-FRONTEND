@@ -16,6 +16,7 @@ import {
 import { LOGIN_API_SECURITY_URL } from "../../common/Common";
 import { eyeOutline, eyeOffOutline } from "ionicons/icons";
 import styles from "../../styles/login/styles.module.css";
+import { RecoverPassword } from "../../components/recover/RecoverPassword";
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -27,6 +28,7 @@ const Page: React.FC = () => {
   // State variables
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [recoverModalOpen, setRecoverModalOpen] = useState(false);
   const [toast, setToast] = useState({
     id: "",
     message: "",
@@ -165,7 +167,7 @@ const Page: React.FC = () => {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        console.log("Forgot password clicked");
+                        setRecoverModalOpen(true); // abre el modal
                       }}
                     >
                       Forgot password?
@@ -185,6 +187,7 @@ const Page: React.FC = () => {
             </IonRow>
           </IonGrid>
         </div>
+        <RecoverPassword isOpen={recoverModalOpen} onClose={() => setRecoverModalOpen(false)} />
       </IonContent>
     </IonPage>
   );
