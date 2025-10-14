@@ -51,7 +51,7 @@ const Page: React.FC = () => {
   const showToast = useCallback(
     (message: string, color: "danger" | "success" = "danger") => {
       setToast({
-        id: crypto.randomUUID(), // 👈 genera un ID único cada vez
+        id: crypto.randomUUID(),
         message,
         show: true,
         color,
@@ -107,7 +107,7 @@ const Page: React.FC = () => {
     <IonPage>
       <IonContent fullscreen>
         <IonToast
-          key={toast.id} 
+          key={toast.id}
           isOpen={toast.show}
           onDidDismiss={() => setToast(prev => ({ ...prev, show: false }))}
           message={toast.message}
