@@ -167,7 +167,7 @@ const Page: React.FC = () => {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        setRecoverModalOpen(true); // abre el modal
+                        setRecoverModalOpen(true);
                       }}
                     >
                       Forgot password?

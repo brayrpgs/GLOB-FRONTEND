@@ -137,3 +137,40 @@
 .modal-box button:hover {
   background-color: #3171e0;
 }
+
+@media (max-width: 768px) {
+  .modal-box {
+    min-width: 320px;
+    max-width: 360px;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-box {
+    width: 90%;
+    min-width: unset;
+    max-width: 90%;
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .modal-box input {
+    font-size: 0.95rem;
+    padding: 0.65rem;
+  }
+
+  .modal-box button {
+    font-size: 0.95rem;
+    padding: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .modal-box {
+    width: 95%;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+}
