@@ -37,9 +37,9 @@ import '@ionic/react/css/palettes/dark.system.css'
 import './theme/variables.css'
 import { Page as LandingPage } from './pages/landing/page'
 import { Page as Error } from './pages/error/page'
-import { Page as Login } from './pages/login/page'
-import { Page as Register } from './pages/register/page'
-import { Page as ResetPassword } from './pages/reset/page'
+import { Page as Login} from './pages/login/page'
+import { Page as Register} from './pages/register/page'
+import { Page as ResetPassword} from './pages/reset/page'
 
 setupIonicReact()
 

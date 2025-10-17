@@ -190,4 +190,4 @@ const Page: React.FC = () => {
   )
 }
 
-export { Page }
+export { Page };
