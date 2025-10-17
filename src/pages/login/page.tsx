@@ -17,6 +17,7 @@ import { LOGIN_API_SECURITY_URL } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
+import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/Fetch'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -37,11 +38,11 @@ const Page: React.FC = () => {
 
   // Validate input data
   const validateData = useCallback(() => {
-    const email = (emailRef.current?.value as string) || ''
-    const password = (passwordRef.current?.value as string) || ''
+    const email = (emailRef.current?.value as string) ?? ''
+    const password = (passwordRef.current?.value as string) ?? ''
 
     // Basic validation
-    if (!email.trim() || !password.trim()) {
+    if (email.trim() === '' || password.trim() === '') {
       showToast('Please fill in all required fields', 'danger')
       return false
     }
@@ -77,23 +78,20 @@ const Page: React.FC = () => {
 
       // Make API call
       try {
-        const response = await fetch(LOGIN_API_SECURITY_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email.trim(), password: password.trim() })
-        })
+        const headers: Headers = new Headers()
+        const body: any = { email: email.trim(), password: password.trim() }
+        headers.append('Content-Type', 'application/json')
+        const response = new FetchHelper(
+          LOGIN_API_SECURITY_URL,
+          METHOD_HTTP.POST,
+          headers,
+          body
+        )
+          .buildFetch<string>(RESPONSE_TYPE.TEXT)
 
-        const data = await response.text()
-
-        // Handle response
-        if (response.ok) {
-          localStorage.setItem('authToken', data)
-          showToast('Login successful!', 'success')
-        } else if (response.status === 400) {
-          showToast('Invalid credentials', 'danger')
-        } else {
-          showToast('An unexpected error occurred, please try again.', 'danger')
-        }
+        const data = await response
+        localStorage.setItem('authToken', data)
+        showToast('Login successful!', 'success')
       } catch (error) {
         showToast('An unexpected error occurred, please try again later.', 'danger')
       } finally {
