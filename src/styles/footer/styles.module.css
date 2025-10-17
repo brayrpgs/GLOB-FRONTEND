@@ -1,0 +1,23 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  background: var(--ion-background-color, #f8f8f8);
+  color: var(--ion-text-color, #222);
+  font-size: 0.9rem;
+}
+
+.footerTop {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.footerSmall {
+  font-size: 0.82rem;
+  opacity: 0.9;
+}

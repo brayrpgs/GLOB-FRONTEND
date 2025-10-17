@@ -1,0 +1,22 @@
+.headerContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+  overflow: auto;
+}
+
+.headerTitle {
+  margin: 0;
+  font-weight: 600;
+}
+
+.headerLink:hover {
+  text-decoration: underline;
+}
+
+.textSize {
+  font-size: .7rem;
+  min-width: max-content;
+}
