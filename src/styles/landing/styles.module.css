@@ -42,3 +42,80 @@
     transform: translateY(0px);
   }
 }
+
+/*
+-- Rocket animation for the icon
+**/
+.iconRocket {
+  transition: 1s all ease-in-out;
+  animation: rocket 5s infinite ease;
+}
+
+@keyframes rocket {
+  0% {
+    transform: translateY(-25px);
+    color: red;
+    filter: drop-shadow(0px 0px 8px red);
+  }
+
+  50% {
+    transform: translateY(0px);
+    color: unset;
+    filter: unset;
+  }
+
+  100% {
+    transform: translateY(-25px);
+    color: red;
+    filter: drop-shadow(0px 0px 8px red);
+  }
+}
+
+/**
+-- Globe animation for the icon
+*/
+.iconGlobe {
+  transition: 1s all ease-in-out;
+  animation: globe 5s infinite ease;
+}
+
+@keyframes globe {
+  0% {
+    transform: rotate(0deg);
+    color: unset;
+  }
+
+  50% {
+    transform: rotate(180deg);
+    color: blue;
+    filter: drop-shadow(0px 0px 8px blue);
+  }
+
+  100% {
+    transform: rotate(360deg);
+    color: unset;
+  }
+}
+
+/**
+-- Notification animation for the icon
+*/
+.iconNotification {
+  transition: 1s all ease-in-out;
+  animation: notification 5s infinite ease;
+}
+
+@keyframes notification {
+  0% {
+    color: unset;
+  }
+
+  50% {
+    color: yellow;
+    filter: drop-shadow(0px 0px 8px yellow);
+  }
+
+  100% {
+    color: unset;
+  }
+}

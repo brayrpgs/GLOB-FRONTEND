@@ -22,7 +22,7 @@ const Page: React.FC = () => {
         <IonCard className={styles.animationEnter}>
           <img className={styles.imgCard} src='https://www.manageengine.com/products/service-desk/itsm/images/it-project-management-software.png' alt='Project management software' />
           <IonCardHeader>
-            <IonCardTitle> <IonIcon icon={rocketSharp} /> The New Era of Intelligent Project Management</IonCardTitle>
+            <IonCardTitle> <IonIcon className={styles.iconRocket} icon={rocketSharp} /> The New Era of Intelligent Project Management</IonCardTitle>
             <IonCardSubtitle>Quick Report</IonCardSubtitle>
           </IonCardHeader>
           <IonCardContent>
@@ -38,15 +38,15 @@ const Page: React.FC = () => {
         <IonCard className={styles.animationEnter}>
           <img className={styles.imgCard + ' ' + styles.imgCardCover} src='https://econfortysalud.com/wp-content/uploads/usos-ia-arquitectura.jpg.webp' alt='Project Management Software' />
           <IonCardHeader>
-            <IonCardTitle><IonIcon icon={globe} /> Future-Ready Architecture</IonCardTitle>
+            <IonCardTitle><IonIcon className={styles.iconGlobe} icon={globe} /> Future-Ready Architecture</IonCardTitle>
             <IonCardSubtitle>Quick Report</IonCardSubtitle>
           </IonCardHeader>
           <IonCardContent>
             <ul>
               Quick Report is not just a system, it's a growing platform.
               Its roadmap highlights:
-              <li><IonIcon icon={notifications} /> Real-Time Notification Service (SSE) — instant communication to keep teams always informed</li>
-              <li><IonIcon icon={sparkles} /> Artificial Intelligence Module — intelligent recommendations that optimize resource allocation and sprint planning.</li>
+              <li><IonIcon className={styles.iconNotification} icon={notifications} /> Real-Time Notification Service (SSE) — instant communication to keep teams always informed</li>
+              <li><IonIcon className={styles.iconNotification} icon={sparkles} /> Artificial Intelligence Module — intelligent recommendations that optimize resource allocation and sprint planning.</li>
             </ul>
           </IonCardContent>
         </IonCard>
@@ -54,7 +54,7 @@ const Page: React.FC = () => {
         <IonCard className={styles.animationEnter}>
           <img className={styles.imgCard + ' ' + styles.imgCardCover} src='https://video.udacity-data.com/topher/2024/October/670988f2_ud615/ud615.jpg' alt='Project Management Software' />
           <IonCardHeader>
-            <IonCardTitle><IonIcon icon={bulbOutline} /> The Best of Our Product</IonCardTitle>
+            <IonCardTitle><IonIcon className={styles.iconNotification} icon={bulbOutline} /> The Best of Our Product</IonCardTitle>
             <IonCardSubtitle>Quick Report</IonCardSubtitle>
           </IonCardHeader>
           <IonCardContent>
