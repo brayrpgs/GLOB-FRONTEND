@@ -46,7 +46,7 @@ setupIonicReact()
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
+      <IonRouterOutlet animated>
         <Route exact path='/' component={LandingPage} />
         <Route exact path='/login' component={Login} />
         <Route exact path='/register' component={Register} />
