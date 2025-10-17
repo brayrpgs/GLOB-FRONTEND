@@ -1,35 +1,42 @@
-export const FETCH = async <T>(url: string = URL, options?: RequestInit): Promise<T> => {
-  const init: RequestInit = { method: methods.GET, ...options }
-  const response = await fetch(url, init)
-  if (!response.ok) {
-    const text = await response.text().catch(() => '')
-    throw new Error(`Network response was not ok: ${response.status} ${response.statusText} ${text}`)
+class FetchHelper {
+  private readonly baseUrl: string
+  private readonly method: METHOD_HTTP
+  private readonly headers: Headers
+
+  constructor (baseUrl: string, method: METHOD_HTTP, headers: Headers) {
+    this.baseUrl = baseUrl
+    this.method = method
+    this.headers = headers
   }
-  const data = (await response.json()) as T
-  return data
-}
-const fetchData = async () => {
-  const data = await FETCH<Root>()
+
+  public async buildFetch<T>(): Promise<T> {
+    // perform the fetch
+    const response = await fetch(this.baseUrl, {
+      method: this.method,
+      headers: this.headers
+    })
+    // validate if response is client error
+    if (response.status >= 400 && response.status < 600) {
+      console.error(`Client error: ${response.status} ${response.statusText}`)
+      return await Promise.reject(new Error(`Client error: ${response.status} ${response.statusText}`))
+    }
+    // get the response validate if is ok
+    if (response.status >= 200 && response.status < 300) {
+      console.log(`Success: ${response.status} ${response.statusText}`)
+    }
+    // parse the response as json
+    const data = (await response.json()) as T
+    return data
+  }
 }
 
-enum methods {
+enum METHOD_HTTP {
   GET = 'GET',
-  POST = 'POST',
   PUT = 'PUT',
-  DELETE = 'DELETE'
+  POST = 'POST',
+  DELETE = 'DELETE',
+  PATCH = 'PATCH',
+  HEAD = 'HEAD'
 }
 
-interface Root {
-  Issue_type: IssueType[]
-  page: number
-  currentLimit: number
-  totalData: number
-}
-
-interface IssueType {
-  ISSUE_TYPE_ID: number
-  STATUS: number
-  PRIORITY: number
-}
-
-export type { IssueType, Root }
+export { FetchHelper, METHOD_HTTP }
