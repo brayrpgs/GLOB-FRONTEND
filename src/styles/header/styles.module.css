@@ -4,19 +4,19 @@
   align-items: center;
   gap: 0.75rem;
   justify-content: space-between;
-}
-
-.headerItems {
-  display: flex;
-  gap: 2rem;
+  overflow: scroll;
 }
 
 .headerTitle {
   margin: 0;
-  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .headerLink:hover {
   text-decoration: underline;
+}
+
+.textSize {
+  font-size: .7rem;
+  width: 5rem;
 }

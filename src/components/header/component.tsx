@@ -8,14 +8,12 @@ const component: React.FC = () => {
       <IonToolbar>
         <IonTitle>
           <div className={styles.headerContent}>
-            <span className={styles.headerItems}>
-              <IonButton routerLink='/' className={styles.headerTitle} color='secondary'>Quick Report</IonButton>
-              <IonButton routerLink='/' className={styles.headerTitle} color='secondary'>Contact Us</IonButton>
-            </span>
-            <span className={styles.headerItems}>
-              <IonButton routerLink='/login' className={styles.headerLink} color='dark'>Login</IonButton>
-              <IonButton routerLink='/register' className={styles.headerLink} color='dark'>Sign Up</IonButton>
-            </span>
+            <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Quick Report</IonButton>
+            <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Contact Us</IonButton>
+            <div>
+              <IonButton routerLink='/login' className={`${styles.headerLink} ${styles.textSize}`} color='dark'>Login</IonButton>
+              <IonButton routerLink='/register' className={`${styles.headerLink} ${styles.textSize}`} color='dark'>Sign Up</IonButton>
+            </div>
           </div>
         </IonTitle>
       </IonToolbar>

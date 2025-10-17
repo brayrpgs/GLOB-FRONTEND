@@ -31,7 +31,8 @@ const Page: React.FC = () => {
         </IonCard>
 
         <div className={styles.containerInformation + ' ' + styles.animationEnter}>
-          <img className={styles.imgInformation} src='applications-microservice.webp' alt='microservices' />
+          <img className={styles.imgInformation} src='banner1.png' alt='microservices' />
+          <img className={styles.imgInformation} src='banner2.png' alt='microservices' />
         </div>
 
         <IonCard className={styles.animationEnter}>
