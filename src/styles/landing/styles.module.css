@@ -1,0 +1,46 @@
+
+
+
+
+.imgCard {
+  object-fit: contain;
+  height: 20rem;
+  object-position: center;
+  margin: auto;
+  display: block;
+}
+
+.imgCardCover {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 30rem;
+}
+
+.imgInformation {
+  object-fit: contain;
+  height: 50rem;
+  object-position: center;
+}
+
+.containerInformation {
+  margin: auto;
+  width: fit-content;
+}
+
+.animationEnter {
+  transition: 1.5s all ease-in-out;
+  animation: enter 1.5s ease-in-out;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
