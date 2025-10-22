@@ -37,9 +37,9 @@ import '@ionic/react/css/palettes/dark.system.css'
 import './theme/variables.css'
 import { Page as LandingPage } from './pages/landing/page'
 import { Page as Error } from './pages/error/page'
-import { Page as Login} from './pages/login/page'
-import { Page as Register} from './pages/register/page'
-import { Page as ResetPassword} from './pages/reset/page'
+import { Page as Login } from './pages/login/page'
+import { Page as Register } from './pages/register/page'
+import { Page as ResetPassword } from './pages/reset/page'
 
 setupIonicReact()
 
@@ -50,7 +50,7 @@ const App: React.FC = () => (
         <Route exact path='/' component={LandingPage} />
         <Route exact path='/login' component={Login} />
         <Route exact path='/register' component={Register} />
-        <Route exact path='/new-password' component={ResetPassword} />
+        <Route exact path='/reset' component={ResetPassword} />
         <Route component={Error} />
       </IonRouterOutlet>
     </IonReactRouter>
