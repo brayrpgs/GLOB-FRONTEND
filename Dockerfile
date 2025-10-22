@@ -1,11 +1,12 @@
 FROM node:22.14.0-alpine
 
-
 WORKDIR /home/app
 
-COPY . .
+COPY package*.json /
 
 RUN npm i
+
+COPY . .
 
 # Uncomment the next line to build the frontend
 #RUN npm run build
