@@ -1,0 +1,23 @@
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--ion-color-primary);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  transition: background 0.3s ease;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.drop-zone:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.file-name {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+}
