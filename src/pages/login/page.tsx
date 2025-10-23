@@ -17,8 +17,9 @@ import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
-import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/Fetch'
-import { TokenUtils } from '../../Helpers/TokenUtils'
+import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
+import { TokenUtils } from '../../Helpers/TokenHelper'
+import { TokenPayload } from '../../models/TokenPayload'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -91,12 +92,11 @@ const Page: React.FC = () => {
           .buildFetch<string>(RESPONSE_TYPE.TEXT)
 
         const data = await response
-        console.log('Login Response:', data)
         localStorage.setItem(TOKEN_KEY_NAME, data)
 
         // request if user have user_project registers
-        const tokenUtils = new TokenUtils(data)
-        console.log(tokenUtils.getToken())
+        const tokenUtils: TokenPayload = new TokenUtils(data).decode()
+
         showToast('Login successful!', 'success')
 
         // Redirect to main if user had user_project role if not redirect to welcome

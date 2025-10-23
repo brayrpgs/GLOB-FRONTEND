@@ -8,12 +8,8 @@ class TokenUtils {
     this.token = token
   }
 
-  public getToken (): TokenPayload {
+  public decode (): TokenPayload {
     return jwtDecode<TokenPayload>(this.token)
-  }
-
-  public isValid (): boolean {
-    return true
   }
 }
 export { TokenUtils }

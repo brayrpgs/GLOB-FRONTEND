@@ -20,8 +20,8 @@ class FetchHelper {
     })
     // validate if response is client error
     if (response.status >= 400 && response.status < 600) {
-      console.error(`Client error: ${response.status} ${response.statusText}`)
-      return await Promise.reject(new Error(`Client error: ${response.status} ${response.statusText}`))
+      console.error(`FETCH_HELPER: ${response.status} ${response.statusText}`)
+      return await Promise.reject(new Error(`FETCH_HELPER: ${response.status} ${response.statusText}`))
     }
     // get the response validate if is ok
     if (response.status >= 200 && response.status < 300) {
