@@ -20,6 +20,7 @@ import { RecoverPassword } from '../../components/recover/RecoverPassword'
 import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
+import { RequestHelper } from '../../Helpers/RequestHelper'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -80,23 +81,22 @@ const Page: React.FC = () => {
 
       // Make API call
       try {
-        const headers: Headers = new Headers()
-        const body: any = { email: email.trim(), password: password.trim() }
-        headers.append('Content-Type', 'application/json')
-        const response = new FetchHelper(
+        const body = { email: email.trim(), password: password.trim() }
+        const requestLogin = new RequestHelper(
           LOGIN_API_SECURITY_URL,
           METHOD_HTTP.POST,
-          headers,
+          RESPONSE_TYPE.TEXT,
           body
         )
-          .buildFetch<string>(RESPONSE_TYPE.TEXT)
+        requestLogin.addHeaders('Content-Type', 'application/json')
+        const data = await requestLogin.buildRequest<string>()
 
-        const data = await response
+        // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
 
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenUtils(data).decode()
-
+        
         showToast('Login successful!', 'success')
 
         // Redirect to main if user had user_project role if not redirect to welcome

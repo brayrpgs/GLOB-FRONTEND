@@ -7,14 +7,16 @@ class RequestHelper {
   private headers: Headers | null
   private readonly body?: any
   private readonly responseType: RESPONSE_TYPE
+  private readonly parameters: URLSearchParams
 
-  constructor (url: string, method: METHOD_HTTP, responseType: RESPONSE_TYPE = RESPONSE_TYPE.JSON, body?: any) {
+  constructor (url: string, method: METHOD_HTTP, responseType: RESPONSE_TYPE = RESPONSE_TYPE.JSON, body?: any, params?: any) {
     this.url = url
     this.method = method
     this.headers = null
     this.fetch = null
     this.body = body
     this.responseType = responseType
+    this.parameters = new URLSearchParams(params)
   }
 
   addHeaders (key: string, value: string): void {
@@ -28,7 +30,7 @@ class RequestHelper {
   }
 
   async buildRequest<T>(): Promise<T> {
-    this.fetch = new FetchHelper(this.url, this.method, this.headers as Headers, this.body)
+    this.fetch = new FetchHelper(this.url + this.parameters.toString(), this.method, this.headers as Headers, this.body)
     return await this.fetch.buildFetch<T>(this.responseType)
   }
 }
