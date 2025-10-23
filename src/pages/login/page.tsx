@@ -13,11 +13,12 @@ import {
   IonToast,
   IonRouterLink
 } from '@ionic/react'
-import { LOGIN_API_SECURITY_URL } from '../../common/Common'
+import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
 import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/Fetch'
+import { TokenUtils } from '../../Helpers/TokenUtils'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -90,9 +91,15 @@ const Page: React.FC = () => {
           .buildFetch<string>(RESPONSE_TYPE.TEXT)
 
         const data = await response
-        localStorage.setItem('authToken', data)
+        console.log('Login Response:', data)
+        localStorage.setItem(TOKEN_KEY_NAME, data)
+
+        // request if user have user_project registers
+        const tokenUtils = new TokenUtils(data)
+        console.log(tokenUtils.getToken())
         showToast('Login successful!', 'success')
-        // Redirect or perform additional actions here after successful login
+
+        // Redirect to main if user had user_project role if not redirect to welcome
         setTimeout(() => {
           history.pushState(null, '', '/home')
           history.go()
