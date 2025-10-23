@@ -1,0 +1,7 @@
+.profileComponent {
+  --border-radius: 100%;
+  aspect-ratio: 1 / 1;
+  height: 3rem;
+  width: 3rem;
+  font-size: 0px;
+}

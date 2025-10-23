@@ -92,6 +92,11 @@ const Page: React.FC = () => {
         const data = await response
         localStorage.setItem('authToken', data)
         showToast('Login successful!', 'success')
+        // Redirect or perform additional actions here after successful login
+        setTimeout(() => {
+          history.pushState(null, '', '/home')
+          history.go()
+        }, 1000)
       } catch (error) {
         showToast('An unexpected error occurred, please try again later.', 'danger')
       } finally {
@@ -190,4 +195,4 @@ const Page: React.FC = () => {
   )
 }
 
-export { Page };
+export { Page }
