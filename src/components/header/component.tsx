@@ -16,7 +16,7 @@ const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
             <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Quick Report</IonButton>
             <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Contact Us</IonButton>
 
-            {isLoggedIn !== null
+            {isLoggedIn as boolean
               ? (
                 <Profile />
                 )

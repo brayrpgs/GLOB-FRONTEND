@@ -17,7 +17,7 @@ import { bulbOutline, globe, notifications, rocketSharp, sparkles } from 'ionico
 const Page: React.FC = () => {
   return (
     <IonPage>
-      <Header />
+      <Header isLoggedIn={false} />
       <IonContent fullscreen className='ion-padding'>
         <IonCard className={styles.animationEnter}>
           <img className={styles.imgCard} src='https://www.manageengine.com/products/service-desk/itsm/images/it-project-management-software.png' alt='Project management software' />
