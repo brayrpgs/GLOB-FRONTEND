@@ -81,6 +81,7 @@ const Page: React.FC = () => {
 
       setLoading(true)
       try {
+        // create the api request to login
         const body = { email: email.trim(), password: password.trim() }
         const requestLogin = new RequestHelper(
           LOGIN_API_SECURITY_URL,
@@ -93,9 +94,9 @@ const Page: React.FC = () => {
         const data = await requestLogin.buildRequest<string>()
         // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
-
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenUtils(data).decode()
+        // create the api request to get user projects
         const requestUserProject = new RequestHelper(
           USER_PROJECT_API_DATA_APLICATION_URL,
           METHOD_HTTP.GET,
@@ -110,9 +111,11 @@ const Page: React.FC = () => {
         requestUserProject.addHeaders('Content-Type', 'application/json')
         requestUserProject.addHeaders('Authorization', `Bearer ${data}`)
         const userProject = await requestUserProject.buildRequest<GetUserProject>()
+        // Show success toast
         showToast('Login successful!', 'success')
         // Redirect to main if user had user_project role if not redirect to welcome
         setTimeout(() => {
+          // Redirect based on user project data
           if (userProject.totalData >= 1) {
             history.pushState(null, '', '/home')
             history.go()
@@ -122,6 +125,7 @@ const Page: React.FC = () => {
           }
         }, 1000)
       } catch (error) {
+        // Handle errors
         console.log(error)
         showToast('An unexpected error occurred, please try again later.', 'danger')
       } finally {
