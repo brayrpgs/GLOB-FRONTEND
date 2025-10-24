@@ -1,0 +1,26 @@
+.imageContact {
+  margin: auto;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  height: 30rem;
+}
+
+.containerItem {
+  transition : 1s all ease;
+}
+
+@media(min-width: 1024px) {
+  .containerItem {
+    padding-inline: 25%;
+  }
+}
+@media(min-width: 768px) and (max-width: 1023px){
+  .containerItem {
+    padding-inline: 5rem;
+  }
+}
+
+.colorPrimary{
+  color:var(--ion-color-secondary)
+}
