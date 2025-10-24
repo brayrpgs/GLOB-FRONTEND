@@ -24,7 +24,7 @@ import { informationCircleOutline, sparklesOutline } from "ionicons/icons";
 import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from "../../Helpers/Fetch";
 import { ANALYZE_PROJECT_BY_AI_URL } from "../../common/Common";
 import styles from "../../styles/ai-feedback/style.module.css";
-import type { ProjectAnalysisResponse } from "../../models/ProjectAnalysisReponse";
+import type { ProjectAnalysisResponse } from "../../models/ProjectAnalysisResponse";
 
 type AIFeedbackModalProps = {
     projectId: number;
