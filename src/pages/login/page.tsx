@@ -21,7 +21,6 @@ import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
-import { UserProject } from '../../models/UserProject'
 import { GetUserProject } from '../../models/GetUserProject'
 
 // Login Page Component
