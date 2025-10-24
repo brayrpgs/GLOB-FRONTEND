@@ -9,6 +9,10 @@ export const LOGIN_API_SECURITY_URL = `${USER_API_SECURITY_URL}/login`
 export const RESET_API_SECURITY_URL = `${BASE_API_SECURITY_URL}/recoverPassword`
 export const VALIDATE_API_SECURITY_URL = `${RESET_API_SECURITY_URL}/validate`
 
+// Microservice Data-Aplicaction
+export const BASE_API_DATA_APLICATION_URL = 'http://localhost:8000'
+export const USER_PROJECT_API_DATA_APLICATION_URL = `${BASE_API_DATA_APLICATION_URL}/user-projects/`
+
 // Token key name in localStorage
 export const TOKEN_KEY_NAME = 'authToken'
 
@@ -16,6 +20,6 @@ export const TOKEN_KEY_NAME = 'authToken'
 export const BASE_API_IMPORT_EXPORT_URL = 'http://localhost:5184/api'
 export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`
 
-// Microservice Performance-AI 
-export const BASE_API_PERFORMANCE_AI = `http://localhost:4000`;
-export const ANALYZE_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/analyze`;
+// Microservice Performance-AI
+export const BASE_API_PERFORMANCE_AI = 'http://localhost:4000'
+export const ANALYZE_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/analyze`

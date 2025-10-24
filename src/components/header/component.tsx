@@ -2,6 +2,8 @@ import { IonButton, IonHeader, IonTitle, IonToolbar } from '@ionic/react'
 import React from 'react'
 import styles from '../../styles/header/styles.module.css'
 import { Component as Profile } from '../profile/component'
+import { ImportData as Import } from '../import/ImportData'
+import { AIFeedbackModal as Ai } from '../aifeedback/AIFeedbackModal'
 
 interface HeaderProps {
   isLoggedIn?: boolean
@@ -14,11 +16,15 @@ const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
         <IonTitle>
           <div className={styles.headerContent}>
             <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Quick Report</IonButton>
-            <IonButton routerLink='/' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Contact Us</IonButton>
+            <IonButton routerLink='/contact' className={`${styles.headerTitle} ${styles.textSize}`} color='secondary'>Contact Us</IonButton>
 
-            {isLoggedIn !== null
+            {isLoggedIn as boolean
               ? (
-                <Profile />
+                <>
+                  <Import />
+                  <Ai projectId={1} />
+                  <Profile />
+                </>
                 )
               : (
                 <div>

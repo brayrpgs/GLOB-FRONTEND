@@ -1,12 +1,11 @@
-import { IonButton, IonIcon } from '@ionic/react'
-import { personCircle } from 'ionicons/icons'
+import { IonAvatar } from '@ionic/react'
 import styles from '../../styles/profile/styles.module.css'
 
 const Component: React.FC = () => {
   return (
-    <IonButton color='dark' className={`${styles.profileComponent}`}>
-      <IonIcon icon={personCircle} size='large' />
-    </IonButton>
+    <IonAvatar className={styles.profileComponent}>
+      <img alt="Silhouette of a person's head" src='https://ionicframework.com/docs/img/demos/avatar.svg' />
+    </IonAvatar>
   )
 }
 

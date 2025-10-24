@@ -29,14 +29,13 @@ const Page: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Form Data:', formData)
-   
     alert('Form submitted (check the console).')
   }
 
   return (
     <IonPage>
       <Header isLoggedIn={false} />
-      <IonContent fullscreen className='ion-padding'>
+      <IonContent fullscreen className={`${styles.animationEnter} ion-padding`}>
         <div className={styles.contactContainer}>
           <form className={styles.contactForm} onSubmit={handleSubmit}>
             <h1 className={`${styles.containerItem} ${styles.colorPrimary}`}>Contact Us</h1>
