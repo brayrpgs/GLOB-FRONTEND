@@ -21,7 +21,8 @@ import {
     IonText,
 } from "@ionic/react";
 import { informationCircleOutline, sparklesOutline } from "ionicons/icons";
-import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from "../../Helpers/Fetch";
+import { RequestHelper } from "../../Helpers/RequestHelper";
+import { METHOD_HTTP, RESPONSE_TYPE } from "../../Helpers/FetchHelper";
 import { ANALYZE_PROJECT_BY_AI_URL } from "../../common/Common";
 import styles from "../../styles/ai-feedback/style.module.css";
 import type { ProjectAnalysisResponse } from "../../models/ProjectAnalysisResponse";
@@ -59,12 +60,14 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
         setData(null);
 
         try {
-            const helper = new FetchHelper(
+            const helper = new RequestHelper(
                 `${ANALYZE_PROJECT_BY_AI_URL}/${projectId}`,
                 METHOD_HTTP.GET,
-                new Headers({ "Content-Type": "application/json" })
+                RESPONSE_TYPE.JSON
             );
-            const response = await helper.buildFetch<ProjectAnalysisResponse>(RESPONSE_TYPE.JSON);
+            helper.addHeaders("Content-Type", "application/json" )
+            const response = await helper.buildRequest<ProjectAnalysisResponse>();
+            
             setData(response);
             setCachedResults((prev) => ({ ...prev, [projectId]: response }));
         } catch (err: any) {
