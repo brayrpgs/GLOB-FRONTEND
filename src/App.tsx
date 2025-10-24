@@ -44,6 +44,7 @@ import { Page as Register } from './pages/register/page'
 import { Page as ResetPassword } from './pages/reset/page'
 import { Page as Main } from './pages/main/page'
 import { Page as Welcome } from './pages/welcome/page'
+import { Page as Contact } from './pages/contact/page'
 
 setupIonicReact()
 
@@ -57,6 +58,7 @@ const App: React.FC = () => (
         <Route exact path='/reset' component={ResetPassword} />
         <Route exact path='/home' component={Main} />
         <Route exact path='/welcome' component={Welcome} />
+        <Route exact path='/contact' component={Contact} />
         <Route component={Error} />
       </IonRouterOutlet>
     </IonReactRouter>
