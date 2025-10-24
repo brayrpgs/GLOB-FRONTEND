@@ -2,7 +2,6 @@ import {
   IonContent,
   IonPage,
   IonItem,
-  IonLabel,
   IonInput,
   IonTextarea,
   IonButton,
@@ -41,7 +40,7 @@ const Page: React.FC = () => {
         <div className={styles.contactContainer}>
           <form className={styles.contactForm} onSubmit={handleSubmit}>
             <h1 className={`${styles.containerItem} ${styles.colorPrimary}`}>Contact Us</h1>
-            <img src='/contact-us.jpg' alt='Contact Us' className={styles.imageContact} />
+            <img src='/contact-us.png' alt='Contact Us' className={styles.imageContact} />
             <p className={styles.containerItem}>Have any questions? We'd love to hear from you.</p>
             <IonItem className={`${styles.containerItem} ${styles.customInput}`}>
               <IonIcon className={styles.colorPrimary} icon={personOutline} slot='start' />
