@@ -22,6 +22,8 @@ import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
 import { GetUserProject } from '../../models/GetUserProject'
+import { component as Header } from '../../components/header/component'
+import { component as Footer } from '../../components/footer/component'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -137,6 +139,7 @@ const Page: React.FC = () => {
   // Render component
   return (
     <IonPage>
+      <Header isLoggedIn={false} />
       <IonContent fullscreen>
         <IonToast
           key={toast.id}
@@ -219,6 +222,7 @@ const Page: React.FC = () => {
         </div>
         <RecoverPassword isOpen={recoverModalOpen} onClose={() => setRecoverModalOpen(false)} />
       </IonContent>
+      <Footer />
     </IonPage>
   )
 }
