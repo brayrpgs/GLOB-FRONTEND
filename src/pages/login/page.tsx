@@ -86,7 +86,8 @@ const Page: React.FC = () => {
           LOGIN_API_SECURITY_URL,
           METHOD_HTTP.POST,
           RESPONSE_TYPE.TEXT,
-          body
+          body,
+          { data: 'test' }
         )
         requestLogin.addHeaders('Content-Type', 'application/json')
         const data = await requestLogin.buildRequest<string>()
@@ -96,7 +97,7 @@ const Page: React.FC = () => {
 
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenUtils(data).decode()
-        
+
         showToast('Login successful!', 'success')
 
         // Redirect to main if user had user_project role if not redirect to welcome

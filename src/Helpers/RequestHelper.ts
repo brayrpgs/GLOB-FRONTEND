@@ -30,7 +30,7 @@ class RequestHelper {
   }
 
   async buildRequest<T>(): Promise<T> {
-    this.fetch = new FetchHelper(this.url + this.parameters.toString(), this.method, this.headers as Headers, this.body)
+    this.fetch = new FetchHelper(`${this.url}?${this.parameters.toString()}`, this.method, this.headers as Headers, this.body)
     return await this.fetch.buildFetch<T>(this.responseType)
   }
 }
