@@ -15,3 +15,7 @@ export const TOKEN_KEY_NAME = 'authToken'
 // Microservice Import-Export Url's API Restful
 export const BASE_API_IMPORT_EXPORT_URL = 'http://localhost:5184/api'
 export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`
+
+// Microservice Performance-AI
+export const BASE_API_PERFORMANCE_AI = 'http://localhost:4000'
+export const ANALYZE_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/analyze`
