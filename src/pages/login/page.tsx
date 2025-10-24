@@ -13,7 +13,7 @@ import {
   IonToast,
   IonRouterLink
 } from '@ionic/react'
-import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
+import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
@@ -21,6 +21,8 @@ import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
+import { UserProject } from '../../models/UserProject'
+import { GetUserProject } from '../../models/GetUserProject'
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -78,8 +80,6 @@ const Page: React.FC = () => {
       const password = passwordRef.current?.value as string
 
       setLoading(true)
-
-      // Make API call
       try {
         const body = { email: email.trim(), password: password.trim() }
         const requestLogin = new RequestHelper(
@@ -91,21 +91,38 @@ const Page: React.FC = () => {
         )
         requestLogin.addHeaders('Content-Type', 'application/json')
         const data = await requestLogin.buildRequest<string>()
-
         // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
 
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenUtils(data).decode()
-
+        const requestUserProject = new RequestHelper(
+          USER_PROJECT_API_DATA_APLICATION_URL,
+          METHOD_HTTP.GET,
+          RESPONSE_TYPE.JSON,
+          undefined,
+          {
+            user_id_fk: tokenUtils.id,
+            page: 1,
+            limit: 10
+          }
+        )
+        requestUserProject.addHeaders('Content-Type', 'application/json')
+        requestUserProject.addHeaders('Authorization', `Bearer ${data}`)
+        const userProject = await requestUserProject.buildRequest<GetUserProject>()
         showToast('Login successful!', 'success')
-
         // Redirect to main if user had user_project role if not redirect to welcome
         setTimeout(() => {
-          history.pushState(null, '', '/home')
-          history.go()
+          if (userProject.totalData >= 1) {
+            history.pushState(null, '', '/home')
+            history.go()
+          } else {
+            history.pushState(null, '', '/welcome')
+            history.go()
+          }
         }, 1000)
       } catch (error) {
+        console.log(error)
         showToast('An unexpected error occurred, please try again later.', 'danger')
       } finally {
         setLoading(false)
