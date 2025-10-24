@@ -43,20 +43,39 @@ const Page: React.FC = () => {
             <h1 className={`${styles.containerItem} ${styles.colorPrimary}`}>Contact Us</h1>
             <img src='/contact-us.jpg' alt='Contact Us' className={styles.imageContact} />
             <p className={styles.containerItem}>Have any questions? We'd love to hear from you.</p>
-            <IonItem className={styles.containerItem}>
+            <IonItem className={`${styles.containerItem} ${styles.customInput}`}>
               <IonIcon className={styles.colorPrimary} icon={personOutline} slot='start' />
-              <IonLabel position='floating'>Full Name</IonLabel>
-              <IonInput name='fullName' value={formData.fullName} onIonChange={handleInputChange} required />
+              <IonInput
+                label='Full Name'
+                labelPlacement='floating'
+                name='fullName'
+                value={formData.fullName}
+                onIonChange={handleInputChange}
+                required
+              />
             </IonItem>
-            <IonItem className={styles.containerItem}>
+            <IonItem className={`${styles.containerItem} ${styles.customInput}`}>
               <IonIcon className={styles.colorPrimary} icon={mailOutline} slot='start' />
-              <IonLabel position='floating'>{emailLabel}</IonLabel>
-              <IonInput type='email' name='email' value={formData.email} onIonChange={handleInputChange} required />
+              <IonInput
+                label={emailLabel}
+                labelPlacement='floating'
+                type='email'
+                name='email'
+                value={formData.email}
+                onIonChange={handleInputChange}
+                required
+              />
             </IonItem>
-            <IonItem className={styles.containerItem}>
+            <IonItem className={`${styles.containerItem} ${styles.customInput}`}>
               <IonIcon className={styles.colorPrimary} icon={chatboxEllipsesOutline} slot='start' />
-              <IonLabel position='floating'>Message</IonLabel>
-              <IonTextarea name='message' value={formData.message} onIonChange={handleInputChange} rows={5} required />
+              <IonTextarea
+                label='Message'
+                labelPlacement='floating'
+                name='message'
+                value={formData.message}
+                onIonChange={handleInputChange}
+                required
+              />
             </IonItem>
             <IonButton color='secondary' expand='block' type='submit' className={styles.containerItem}>
               Send Message
