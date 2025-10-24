@@ -9,23 +9,17 @@ export const LOGIN_API_SECURITY_URL = `${USER_API_SECURITY_URL}/login`
 export const RESET_API_SECURITY_URL = `${BASE_API_SECURITY_URL}/recoverPassword`
 export const VALIDATE_API_SECURITY_URL = `${RESET_API_SECURITY_URL}/validate`
 
-<<<<<<< HEAD
 // Microservice Data-Aplicaction
 export const BASE_API_DATA_APLICATION_URL = 'http://localhost:8000'
 export const USER_PROJECT_API_DATA_APLICATION_URL = `${BASE_API_DATA_APLICATION_URL}/user-projects/`
 
-=======
->>>>>>> 69f816904cf13dd8bfda8d0fb565cebc367f3865
 // Token key name in localStorage
 export const TOKEN_KEY_NAME = 'authToken'
 
 // Microservice Import-Export Url's API Restful
 export const BASE_API_IMPORT_EXPORT_URL = 'http://localhost:5184/api'
 export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`
-<<<<<<< HEAD
-=======
 
 // Microservice Performance-AI
 export const BASE_API_PERFORMANCE_AI = 'http://localhost:4000'
 export const ANALYZE_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/analyze`
->>>>>>> 69f816904cf13dd8bfda8d0fb565cebc367f3865
