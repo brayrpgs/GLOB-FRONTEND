@@ -13,9 +13,7 @@ import {
   IonToast,
   IonRouterLink
 } from '@ionic/react'
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
+import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
@@ -23,14 +21,14 @@ import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
-=======
+import { GetUserProject } from '../../models/GetUserProject'
+import { component as Header } from '../../components/header/component'
+import { component as Footer } from '../../components/footer/component'
 import { LOGIN_API_SECURITY_URL } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
 import { FetchHelper, METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/Fetch'
->>>>>>> 3ef61f643600118b2b6b70caa23b727d2eafe75f
-=======
 import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
@@ -39,7 +37,6 @@ import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenUtils } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
->>>>>>> 5bd803de3e26f1017756046ad8db82bd30e9618f
 
 // Login Page Component
 const Page: React.FC = () => {
@@ -97,9 +94,8 @@ const Page: React.FC = () => {
       const password = passwordRef.current?.value as string
 
       setLoading(true)
-
-      // Make API call
       try {
+        // create the api request to login
         const body = { email: email.trim(), password: password.trim() }
         const requestLogin = new RequestHelper(
           LOGIN_API_SECURITY_URL,
@@ -110,21 +106,41 @@ const Page: React.FC = () => {
         )
         requestLogin.addHeaders('Content-Type', 'application/json')
         const data = await requestLogin.buildRequest<string>()
-
         // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
-
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenUtils(data).decode()
-
+        // create the api request to get user projects
+        const requestUserProject = new RequestHelper(
+          USER_PROJECT_API_DATA_APLICATION_URL,
+          METHOD_HTTP.GET,
+          RESPONSE_TYPE.JSON,
+          undefined,
+          {
+            user_id_fk: tokenUtils.id,
+            page: 1,
+            limit: 10
+          }
+        )
+        requestUserProject.addHeaders('Content-Type', 'application/json')
+        requestUserProject.addHeaders('Authorization', `Bearer ${data}`)
+        const userProject = await requestUserProject.buildRequest<GetUserProject>()
+        // Show success toast
         showToast('Login successful!', 'success')
-
         // Redirect to main if user had user_project role if not redirect to welcome
         setTimeout(() => {
-          history.pushState(null, '', '/home')
-          history.go()
+          // Redirect based on user project data
+          if (userProject.totalData >= 1) {
+            history.pushState(null, '', '/home')
+            history.go()
+          } else {
+            history.pushState(null, '', '/welcome')
+            history.go()
+          }
         }, 1000)
       } catch (error) {
+        // Handle errors
+        console.log(error)
         showToast('An unexpected error occurred, please try again later.', 'danger')
       } finally {
         setLoading(false)
@@ -136,6 +152,7 @@ const Page: React.FC = () => {
   // Render component
   return (
     <IonPage>
+      <Header isLoggedIn={false} />
       <IonContent fullscreen>
         <IonToast
           key={toast.id}
@@ -218,6 +235,7 @@ const Page: React.FC = () => {
         </div>
         <RecoverPassword isOpen={recoverModalOpen} onClose={() => setRecoverModalOpen(false)} />
       </IonContent>
+      <Footer />
     </IonPage>
   )
 }

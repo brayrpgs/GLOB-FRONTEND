@@ -16,7 +16,7 @@ class FetchHelper {
     const response = await fetch(this.baseUrl, {
       method: this.method,
       headers: this.headers,
-      body: JSON.stringify(this.body)
+      body: this.body != null ? JSON.stringify(this.body) : null
     })
     // validate if response is client error
     if (response.status >= 400 && response.status < 600) {
