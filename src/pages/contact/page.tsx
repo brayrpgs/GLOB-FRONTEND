@@ -29,7 +29,7 @@ const Page: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Form Data:', formData)
-    // You can add the logic to send the form here
+   
     alert('Form submitted (check the console).')
   }
 
