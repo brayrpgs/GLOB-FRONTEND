@@ -13,5 +13,5 @@ export const VALIDATE_API_SECURITY_URL = `${RESET_API_SECURITY_URL}/validate`
 export const TOKEN_KEY_NAME = 'authToken'
 
 // Microservice Import-Export Url's API Restful
-export const BASE_API_IMPORT_EXPORT_URL = `http://localhost:5184/api`;
-export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`;
+export const BASE_API_IMPORT_EXPORT_URL = 'http://localhost:5184/api'
+export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`
