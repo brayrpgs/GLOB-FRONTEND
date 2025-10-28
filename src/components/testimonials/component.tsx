@@ -20,17 +20,14 @@ const component: React.FC = () => {
   ]
   const testiRef = useRef<HTMLDivElement>(null)
 
+  // Handle testimonial navigation with fade animations
   const handleButtons = (direction: number): void => {
-    // validate direction
     if ((index + direction > 2) || (index + direction < 0)) return
-    // change the state for fade effect
     testiRef.current?.classList.add(styles.exitFade)
-    // update
     setTimeout(() => {
       setIndex(index + direction)
       testiRef.current?.classList.replace(styles.exitFade, styles.enterFade)
     }, 1000)
-    // remove class
     testiRef.current?.classList.remove(styles.enterFade)
   }
 
