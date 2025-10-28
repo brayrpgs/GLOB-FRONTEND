@@ -10,8 +10,12 @@ import {
   IonPage
 } from '@ionic/react'
 import styles from '../../styles/landing/styles.module.css'
+/**
+ * components imports
+ */
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
+import { component as Testimonials } from '../../components/testimonials/component'
 import { bulbOutline, globe, notifications, rocketSharp, sparkles } from 'ionicons/icons'
 
 const Page: React.FC = () => {
@@ -62,6 +66,8 @@ const Page: React.FC = () => {
             Quick Report redefines project management with an architecture built for performance, continuous evolution, and real digital transformation.
           </IonCardContent>
         </IonCard>
+
+        <Testimonials />
 
       </IonContent>
       <Footer />
