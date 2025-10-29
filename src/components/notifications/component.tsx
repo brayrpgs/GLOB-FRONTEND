@@ -44,7 +44,31 @@ const NotificationsComponent: React.FC = () => {
     eventSource.onmessage = (event) => {
       const eventData = JSON.parse(event.data) as SSEData
 
-      const message = `Change in ${eventData.table}: A record was ${eventData.operation.toLowerCase()}ED in channel ${eventData.channel}.`
+      let message = ''
+      const operation = eventData.operation.toLowerCase()
+      const table = eventData.table
+      const data = eventData.data
+
+      // Determine the descriptive name from the data payload
+      let descriptiveName = data.NAME || data.SUMMARY
+
+      if (!descriptiveName) {
+        descriptiveName = `item in ${table}`
+      }
+
+      switch (operation) {
+        case 'insert':
+          message = `A new ${table.toLowerCase()} "${descriptiveName}" has been created, see more details.`
+          break
+        case 'update':
+          message = `The ${table.toLowerCase()} "${descriptiveName}" you are assigned to has been updated.`
+          break
+        case 'delete':
+          message = `The ${table.toLowerCase()} "${descriptiveName}" you were enrolled in has been deleted.`
+          break
+        default:
+          message = `Change in ${table}: A record was ${operation}ED in channel ${eventData.channel}.`
+      }
 
       const newNotification: Notification = {
         id: new Date().getTime().toString() + Math.random().toString(), // Using a more robust unique ID
@@ -99,7 +123,7 @@ const NotificationsComponent: React.FC = () => {
                 </IonLabel>
               </IonItem>
             ))}
-            {notificationsList.length === 0 && <IonItem>No notifications</IonItem>}
+            {notificationsList.length === 0 && <IonItem>No notificationsss</IonItem>}
           </IonList>
         </IonContent>
       </IonPopover>
