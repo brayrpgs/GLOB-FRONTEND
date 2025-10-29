@@ -16,6 +16,7 @@ import styles from '../../styles/landing/styles.module.css'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { component as Testimonials } from '../../components/testimonials/component'
+import { component as PaymentInfo } from '../../components/paymentinfo/component'
 import { bulbOutline, globe, notifications, rocketSharp, sparkles } from 'ionicons/icons'
 
 const Page: React.FC = () => {
@@ -38,6 +39,8 @@ const Page: React.FC = () => {
           <img className={styles.imgInformation} src='banner1.png' alt='microservices' />
           <img className={styles.imgInformation} src='banner2.png' alt='microservices' />
         </div>
+
+        <PaymentInfo />
 
         <IonCard className={styles.animationEnter}>
           <img className={styles.imgCard + ' ' + styles.imgCardCover} src='https://econfortysalud.com/wp-content/uploads/usos-ia-arquitectura.jpg.webp' alt='Project Management Software' />
