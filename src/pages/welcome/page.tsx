@@ -10,15 +10,24 @@ import { jwtDecode } from 'jwt-decode'
 import { TokenPayload } from '../../models/TokenPayload'
 import styles from '../../styles/welcome/styles.module.css'
 import { UserProject } from '../../models/UserProject'
+import { GetUserProject } from '../../models/GetUserProject'
 
 const Page: React.FC = () => {
   const [user, setUser] = useState<User>()
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   useEffect(() => {
+    // validations
+    if (localStorage.getItem(TOKEN_KEY_NAME) === null) {
+      window.location.href = '/'
+    }
     void getUserData()
       .then(user => setUser(user[0]))
       .catch(error => console.error(error))
+
+    void validateUserProject()
+      .then()
+      .catch(err => console.error(err))
   }, [])
   return (
     <IonPage>
@@ -176,6 +185,24 @@ const getUserData = async (): Promise<User[]> => {
 
   // execute request
   return await userData.buildRequest<User[]>()
+}
+
+const validateUserProject = async (): Promise<void> => {
+  const params = { user_id_fk: 12, page: 1, limit: 10 }
+  const getUserProject = new RequestHelper(
+    USER_PROJECT_API_DATA_APLICATION_URL,
+    METHOD_HTTP.GET,
+    RESPONSE_TYPE.JSON,
+    null,
+    params
+  )
+  getUserProject.addHeaders('accept', 'application/json')
+  getUserProject.addHeaders('Authorization', `Bearer ${localStorage.getItem(TOKEN_KEY_NAME) as string}`)
+  const data = await getUserProject.buildRequest<GetUserProject>()
+  if (data.totalData > 0) {
+    history.pushState(null, '', '/')
+    history.go()
+  }
 }
 
 const aceptTerms = async (): Promise<UserProject[]> => {
