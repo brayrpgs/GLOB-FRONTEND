@@ -107,7 +107,10 @@ const NotificationsComponent: React.FC = () => {
           )}
         </IonButton>
       </IonButtons>
-      <IonPopover ref={popover} isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
+      <IonPopover ref={popover} isOpen={isOpen} onDidDismiss={() => {
+        setIsOpen(false)
+        setNotificationsList([])
+      }}>
         <IonHeader>
           <IonToolbar>
             <IonTitle>Notifications</IonTitle>
