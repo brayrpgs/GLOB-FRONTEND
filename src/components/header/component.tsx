@@ -4,6 +4,7 @@ import styles from '../../styles/header/styles.module.css'
 import { Component as Profile } from '../profile/component'
 import { ImportData as Import } from '../import/ImportData'
 import { AIFeedbackModal as Ai } from '../aifeedback/AIFeedbackModal'
+import { Component as Notifications } from '../notifications/component'
 
 interface HeaderProps {
   isLoggedIn?: boolean
@@ -23,6 +24,7 @@ const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
                 <>
                   <Import />
                   <Ai projectId={1} />
+                  <Notifications />
                   <Profile />
                 </>
                 )
