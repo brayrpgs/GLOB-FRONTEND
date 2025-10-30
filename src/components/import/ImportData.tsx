@@ -13,14 +13,20 @@ import {
 } from '@ionic/react'
 import { cloudUploadOutline } from 'ionicons/icons'
 import './ImportData.css'
-import { CSV_API_IMPORT_EXPORT_URL } from '../../common/Common'
+import { CSV_API_IMPORT_EXPORT_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
+import { RequestHelper } from '../../Helpers/RequestHelper'
+import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
+import { TokenHelper } from '../../Helpers/TokenHelper'
+import { GetUserProject } from '../../models/GetUserProject'
+import { UploadedBase64 } from '../../models/UploadedBase64'
+import { GetUploadedBase64 } from '../../models/GetUploadedBase64'
 
 // Import CSV component
 const ImportData: React.FC = () => {
   // UI and upload state
   const [showModal, setShowModal] = useState(false)
-  const [file, setFile] = useState<File | null>(null)
-  const [fileName, setFileName] = useState<string | null>(null)
+  const [file, setFile] = useState<File>()
+  const [fileName, setFileName] = useState<string>()
   const [loading, setLoading] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -47,15 +53,13 @@ const ImportData: React.FC = () => {
   )
 
   // Validate and set the selected file
-  const processFile = (f: File | undefined) => {
-    if (f == null) return
-    if (f.name.endsWith('.csv')) {
-      setFile(f)
-      setFileName(f.name)
-      showToast(`File ready: ${f.name}`, 'success')
+  const processFile = (file: File): void => {
+    if (file == null) return
+    if (file.name.endsWith('.csv')) {
+      setFile(file)
+      setFileName(file.name)
+      showToast(`File ready: ${file.name}`, 'success')
     } else {
-      setFile(null)
-      setFileName(null)
       showToast('Invalid file. Only CSV allowed.', 'danger')
     }
 
@@ -63,34 +67,32 @@ const ImportData: React.FC = () => {
   }
 
   // Drag & drop behavior
-  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault()
     event.stopPropagation()
   }
 
-  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault()
     event.stopPropagation()
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+    if (event.dataTransfer.files !== null && event.dataTransfer.files.length > 0) {
       processFile(event.dataTransfer.files[0])
       event.dataTransfer.clearData()
     }
   }
 
-  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0]
+  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>): void => {
+    const selectedFile: File = event.target.files?.[0] as File
     processFile(selectedFile)
   }
 
   // Upload logic: encode file and send to backend
-  const handleUpload = async () => {
+  const handleUpload = async (): Promise<void> => {
     if (file == null) {
       showToast('No file selected for upload', 'danger')
       return
     }
-
     setLoading(true)
-
     try {
       // Convert CSV to Base64 (includes full prefix)
       const base64Content = await new Promise<string>((resolve, reject) => {
@@ -99,37 +101,67 @@ const ImportData: React.FC = () => {
         reader.onerror = reject
         reader.readAsDataURL(file)
       })
-
       // Get JWT token
-      const token = localStorage.getItem('authToken')
-      if (!token) {
-        showToast('Missing authentication token', 'danger')
+      const token = localStorage.getItem(TOKEN_KEY_NAME) as string
+      const tokenPayload = new TokenHelper(token)
+      if (token === null) {
+        showToast('Missing loggin...', 'danger')
         setLoading(false)
         return
       }
-
-      // API call
-      const response = await fetch(CSV_API_IMPORT_EXPORT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
+      // step 1
+      /**
+       *
         body: JSON.stringify({
           fileName: file.name,
           base64Content
         })
-      })
-
-      // Response handling
-      if (response.ok) {
-        if (response.status === 201) {
-          showToast('File uploaded successfully!', 'success')
-        } else {
-          showToast('Request succeeded.', 'success')
+      }
+       */
+      const requestUser = new RequestHelper(
+        USER_PROJECT_API_DATA_APLICATION_URL,
+        METHOD_HTTP.GET,
+        RESPONSE_TYPE.JSON,
+        null,
+        {
+          user_id_fk: tokenPayload.decode().id,
+          page: 1,
+          limit: 10
         }
+      )
+      requestUser.addHeaders('Authorization', token)
+      requestUser.addHeaders('accept', 'application/json')
+      const getUserProject = await requestUser.buildRequest<GetUserProject>()
+      // step 2
+      if (getUserProject.totalData < 1 || getUserProject.totalData > 1) {
+        showToast('Unexpected error. Please try again.', 'danger')
+      }
+      // step 3
+      //
+      const uploadedBase64: UploadedBase64 = {
+        base64Content,
+        fileName: file.name,
+        userProject: getUserProject.data[0].USER_PROJECT_ID
+      }
+      const requestUpload = new RequestHelper(
+        CSV_API_IMPORT_EXPORT_URL,
+        METHOD_HTTP.POST,
+        RESPONSE_TYPE.JSON,
+        uploadedBase64,
+        {
+          user_id_fk: tokenPayload.decode().id,
+          page: 1,
+          limit: 10
+        }
+      )
+      requestUpload.addHeaders('Content-Type', 'application/json')
+      requestUpload.addHeaders('Authorization', `Bearer ${token}`)
+      const response = await requestUpload.buildRequest<GetUploadedBase64>()
+      // Response handling
+      if (response.statusCode === 201) {
+        showToast('File uploaded successfully!', 'success')
       } else {
-        switch (response.status) {
+        switch (response.statusCode) {
           case 400:
             showToast('Invalid CSV file. Please upload a Jira export CSV file.', 'danger')
             break
@@ -155,22 +187,22 @@ const ImportData: React.FC = () => {
   }
 
   // Reset file selection
-  const handleClear = () => {
-    setFile(null)
-    setFileName(null)
+  const handleClear = (): void => {
+    setFile(undefined)
+    setFileName(undefined)
     showToast('File cleared', 'success')
     if (fileInputRef.current != null) fileInputRef.current.value = ''
   }
 
   // Modal control
-  const handleOpenModal = () => {
+  const handleOpenModal = (): void => {
     setToast({ message: '', show: false, color: 'danger', id: '' })
-    setFile(null)
-    setFileName(null)
+    setFile(undefined)
+    setFileName(undefined)
     setShowModal(true)
   }
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     handleClear()
     setToast({ message: '', show: false, color: 'danger', id: '' })
     setShowModal(false)
@@ -224,7 +256,7 @@ const ImportData: React.FC = () => {
             />
           </div>
 
-          {fileName && (
+          {fileName !== null && (
             <IonText color='primary'>
               <p className='file-name'>{fileName}</p>
             </IonText>
