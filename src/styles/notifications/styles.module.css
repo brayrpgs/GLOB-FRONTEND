@@ -1,0 +1,15 @@
+.colorPrimary{
+  color:var(--ion-color-secondary)
+}
+ 
+ :global(ion-popover.notificationsPopover) {
+   --width: 500px;
+ }
+ 
+ :global(ion-popover.notificationsPopover)::part(content) {
+   scrollbar-width: none; /* Firefox */
+ }
+ 
+ :global(ion-popover.notificationsPopover)::part(content)::-webkit-scrollbar {
+   display: none; /* Safari and Chrome */
+ }
