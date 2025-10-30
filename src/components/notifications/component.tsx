@@ -18,6 +18,9 @@ import styles from '../../styles/notifications/styles.module.css'
 import { NOTIFICATIONS_API_SSE_URL } from '../../common/Common'
 import { SSEData } from '../../models/SseData'
 import { Notifications } from '../../models/Notification'
+import { ValidateNotification } from '../../middleware/ValidateNotificantion'
+
+//function
 
 const component: React.FC = () => {
   const popover = useRef<HTMLIonPopoverElement>(null)
@@ -25,6 +28,15 @@ const component: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
+    /**
+     * Section validate
+     */
+    const Validate = new ValidateNotification('/')
+    Validate.validateJWT()
+    void Validate.validateWithLogin()
+    /**
+     * end section validate
+     */
     const eventSource = new EventSource(NOTIFICATIONS_API_SSE_URL)
 
     eventSource.onmessage = (event) => {
@@ -33,8 +45,7 @@ const component: React.FC = () => {
       let message = ''
       const operation = eventData.operation.toLowerCase()
       const table = eventData.table
-      const data = eventData.data
-
+      const data = eventData.data      
       // Determine the descriptive name from the data payload
       let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
 
