@@ -9,7 +9,7 @@ class ValidateHome extends Validate {
   // validate method
   async validateWithLogin (): Promise<void> {
     const user: User = await this.getUser()
-    // user.MEMBERSHIPPLAN_ID ?? this.redirect() // uncommented after implements MEMBERSHIPPLAN
+    user.MEMBERSHIPPLAN_ID ?? this.redirect() // uncommented after implements MEMBERSHIPPLAN
   }
 
   async getUser (): Promise<User> {
