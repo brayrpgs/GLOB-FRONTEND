@@ -20,7 +20,7 @@ import { SSEData } from '../../models/SseData'
 import { Notifications } from '../../models/Notification'
 import { ValidateNotification } from '../../middleware/ValidateNotificantion'
 
-//function
+// function
 
 const component: React.FC = () => {
   const popover = useRef<HTMLIonPopoverElement>(null)
@@ -45,7 +45,7 @@ const component: React.FC = () => {
       let message = ''
       const operation = eventData.operation.toLowerCase()
       const table = eventData.table
-      const data = eventData.data      
+      const data = eventData.data
       // Determine the descriptive name from the data payload
       let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
 
@@ -108,7 +108,7 @@ const component: React.FC = () => {
         ref={popover} isOpen={isOpen} onDidDismiss={() => {
           setIsOpen(false)
           setNotificationsList([])
-        }}
+        }} className='notificationsPopover'
       >
         <IonHeader>
           <IonToolbar>
