@@ -1,8 +1,18 @@
 import { IonContent, IonPage } from '@ionic/react'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
+import { ValidateHome } from '../../middleware/ValidateHome'
+import { useEffect } from 'react'
 
 const Page: React.FC = () => {
+  useEffect(() => {
+    const execValidates = async (): Promise<void> => {
+      const validate = new ValidateHome()
+      validate.validateJWT()
+      await validate.validateWithLogin()
+    }
+    void execValidates()
+  }, [])
   return (
     <IonPage>
       <Header isLoggedIn />

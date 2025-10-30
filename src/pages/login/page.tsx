@@ -18,7 +18,7 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
 import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
-import { TokenUtils } from '../../Helpers/TokenHelper'
+import { TokenHelper } from '../../Helpers/TokenHelper'
 import { TokenPayload } from '../../models/TokenPayload'
 import { RequestHelper } from '../../Helpers/RequestHelper'
 import { GetUserProject } from '../../models/GetUserProject'
@@ -96,7 +96,7 @@ const Page: React.FC = () => {
         // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
         // request if user have user_project registers
-        const tokenUtils: TokenPayload = new TokenUtils(data).decode()
+        const tokenUtils: TokenPayload = new TokenHelper(data).decode()
         // create the api request to get user projects
         const requestUserProject = new RequestHelper(
           USER_PROJECT_API_DATA_APLICATION_URL,

@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode'
 import { TokenPayload } from '../models/TokenPayload'
 
-class TokenUtils {
+class TokenHelper {
   private readonly token: string
 
   constructor (token: string) {
@@ -12,4 +12,4 @@ class TokenUtils {
     return jwtDecode<TokenPayload>(this.token)
   }
 }
-export { TokenUtils }
+export { TokenHelper }

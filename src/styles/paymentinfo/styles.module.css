@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 5rem;
+  height: 60rem;
+}
+
+.header {
+  padding: 1rem;
+  outline: 1px solid var(--ion-color-secondary);
+  box-shadow: 0 0 20px 9px var(--ion-color-secondary);
+  width: 20rem;
+  border-radius: 1rem;
+  margin-block: 4rem;
+  overflow: hidden;
+  height: 9rem;
+  h2 {
+    font-weight: 900;
+    text-align: center;
+  }
+
+  transition: 1s all ease;
+  interpolate-size: allow-keywords;
+}
+
+
+.header:hover {
+   height: auto;
+  transition: 1s all ease;
+  box-shadow: 0 0 20px 9px var(--ion-color-success);
+}
+
+.buttons {
+  display: block;
+  text-align: center;
+}
