@@ -16,33 +16,19 @@ import { notifications as notificationsIcon } from 'ionicons/icons'
 import React, { useEffect, useRef, useState } from 'react'
 import styles from '../../styles/notifications/styles.module.css'
 import { NOTIFICATIONS_API_SSE_URL } from '../../common/Common'
+import { SSEData } from '../../models/SseData'
+import { Notifications } from '../../models/Notification'
 
-interface Notification {
-  id: string
-  message: string
-  timestamp: string
-}
-
-interface SSEData {
-  channel: string
-  data: Record<string, any>
-  table: string
-  operation: string
-  id: string
-  message: string
-  timestamp: string
-}
-
-const NotificationsComponent: React.FC = () => {
+const component: React.FC = () => {
   const popover = useRef<HTMLIonPopoverElement>(null)
-  const [notificationsList, setNotificationsList] = useState<Notification[]>([])
+  const [notificationsList, setNotificationsList] = useState<Notifications[]>([])
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     const eventSource = new EventSource(NOTIFICATIONS_API_SSE_URL)
 
     eventSource.onmessage = (event) => {
-      const eventData = JSON.parse(event.data) as SSEData
+      const eventData: SSEData = JSON.parse(event.data)
 
       let message = ''
       const operation = eventData.operation.toLowerCase()
@@ -50,9 +36,9 @@ const NotificationsComponent: React.FC = () => {
       const data = eventData.data
 
       // Determine the descriptive name from the data payload
-      let descriptiveName = data.NAME || data.SUMMARY
+      let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
 
-      if (!descriptiveName) {
+      if (descriptiveName == null) {
         descriptiveName = `item in ${table}`
       }
 
@@ -70,8 +56,8 @@ const NotificationsComponent: React.FC = () => {
           message = `Change in ${table}: A record was ${operation}ED in channel ${eventData.channel}.`
       }
 
-      const newNotification: Notification = {
-        id: new Date().getTime().toString() + Math.random().toString(), // Using a more robust unique ID
+      const newNotification: Notifications = {
+        id: new Date().getTime().toString() + Math.random().toString(),
         message,
         timestamp: eventData.timestamp
       }
@@ -92,8 +78,8 @@ const NotificationsComponent: React.FC = () => {
     }
   }, [])
 
-  const openPopover = (e: React.MouseEvent) => {
-    popover.current?.present(e.nativeEvent)
+  const openPopover = (e: React.MouseEvent): void => {
+    void popover.current?.present(e.nativeEvent)
     setIsOpen(true)
   }
 
@@ -107,10 +93,12 @@ const NotificationsComponent: React.FC = () => {
           )}
         </IonButton>
       </IonButtons>
-      <IonPopover ref={popover} isOpen={isOpen} onDidDismiss={() => {
-        setIsOpen(false)
-        setNotificationsList([])
-      }}>
+      <IonPopover
+        ref={popover} isOpen={isOpen} onDidDismiss={() => {
+          setIsOpen(false)
+          setNotificationsList([])
+        }}
+      >
         <IonHeader>
           <IonToolbar>
             <IonTitle>Notifications</IonTitle>
@@ -126,7 +114,7 @@ const NotificationsComponent: React.FC = () => {
                 </IonLabel>
               </IonItem>
             ))}
-            {notificationsList.length === 0 && <IonItem>No notificationsss</IonItem>}
+            {notificationsList.length === 0 && <IonItem>No notifications</IonItem>}
           </IonList>
         </IonContent>
       </IonPopover>
@@ -134,4 +122,4 @@ const NotificationsComponent: React.FC = () => {
   )
 }
 
-export { NotificationsComponent as Component }
+export { component }
