@@ -6,6 +6,7 @@ import { ImportData as Import } from '../import/ImportData'
 import { AIFeedbackModal as Ai } from '../aifeedback/AIFeedbackModal'
 import { component as Notifications } from '../notifications/component'
 import { ValidateHeader } from '../../middleware/ValidateHeader'
+import { MembershipPlan } from '../../enums/MembershipPlan'
 
 interface HeaderProps {
   isLoggedIn?: boolean
@@ -13,12 +14,16 @@ interface HeaderProps {
 
 const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
   const validate = new ValidateHeader()
-  const [proUser, setProUser] = useState<boolean>(false)
+  const [planMembership, setPlanMembership] = useState<MembershipPlan>(MembershipPlan.BASIC)
 
   useEffect(() => {
     const exec = async (): Promise<void> => {
-      const isProUser = await validate.isProUser()
-      setProUser(isProUser)
+      const plan = await validate.getPlan()
+      if (plan !== null) {
+        setPlanMembership(plan)
+      } else {
+        setPlanMembership(MembershipPlan.BASIC)
+      }
     }
     void exec()
   }, [])
@@ -33,11 +38,9 @@ const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
             {isLoggedIn as boolean
               ? (
                 <>
-                  <Import />
-                  <Ai projectId={1} />
-                  {
-                    proUser ? (<Notifications />) : (<div />)
-                  }
+                  {[MembershipPlan.PRO, MembershipPlan.PLUS].includes(planMembership) ? (<Import />) : (<div />)}
+                  {[MembershipPlan.PRO].includes(planMembership) ? (<Ai projectId={1} />) : (<div />)}
+                  {[MembershipPlan.PRO].includes(planMembership) ? (<Notifications />) : (<div />)}
                   <Profile />
                 </>
                 )
