@@ -109,15 +109,6 @@ const ImportData: React.FC = () => {
         setLoading(false)
         return
       }
-      // step 1
-      /**
-       *
-        body: JSON.stringify({
-          fileName: file.name,
-          base64Content
-        })
-      }
-       */
       const requestUser = new RequestHelper(
         USER_PROJECT_API_DATA_APLICATION_URL,
         METHOD_HTTP.GET,
