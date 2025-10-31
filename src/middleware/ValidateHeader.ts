@@ -11,11 +11,11 @@ class ValidateHeader extends Validate {
     throw new Error('Method not implemented.')
   }
 
-  async isProUser (): Promise<boolean> {
+  async getPlan (): Promise<MembershipPlan | null> {
     // step 1
     const token = localStorage.getItem(TOKEN_KEY_NAME) as string
     const tokenPayload = new TokenHelper(token)
-    if (token === null) return false
+    if (token === null) return null
     // step 2
     const requestUser = new RequestHelper(
       USER_API_SECURITY_URL,
@@ -29,9 +29,9 @@ class ValidateHeader extends Validate {
     requestUser.addHeaders('Authorization', token)
     requestUser.addHeaders('accept', 'application/json')
     const getUser = await requestUser.buildRequest<User[]>()
-    if (getUser.length < 1 || getUser.length > 1) return false
+    if (getUser.length < 1 || getUser.length > 1) return null
     // step 3
-    return getUser[0].MEMBERSHIPPLAN_ID === MembershipPlan.PRO
+    return getUser[0].MEMBERSHIPPLAN_ID
   }
 }
 

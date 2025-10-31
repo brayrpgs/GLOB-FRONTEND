@@ -1,4 +1,5 @@
 import { TOKEN_KEY_NAME, USER_API_SECURITY_URL } from '../common/Common'
+import { MembershipPlan } from '../enums/MembershipPlan'
 import { METHOD_HTTP, RESPONSE_TYPE } from '../Helpers/FetchHelper'
 import { RequestHelper } from '../Helpers/RequestHelper'
 import { TokenHelper } from '../Helpers/TokenHelper'
@@ -9,7 +10,14 @@ class ValidateHome extends Validate {
   // validate method
   async validateWithLogin (): Promise<void> {
     const user: User = await this.getUser()
-    // user.MEMBERSHIPPLAN_ID ?? this.redirect() // uncommented after implements MEMBERSHIPPLAN
+    const canView = [
+      MembershipPlan.BASIC,
+      MembershipPlan.PLUS,
+      MembershipPlan.PRO
+    ].includes(user.MEMBERSHIPPLAN_ID)
+    if (!canView) {
+      this.redirect()
+    }
   }
 
   async getUser (): Promise<User> {
