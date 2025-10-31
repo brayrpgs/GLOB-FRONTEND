@@ -2,7 +2,7 @@ import { IonContent, IonPage } from '@ionic/react'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { ValidateHome } from '../../middleware/ValidateHome'
-import { component as Project } from "../../components/project/component";
+import { component as Project } from '../../components/project/component'
 import { useEffect } from 'react'
 
 const Page: React.FC = () => {
