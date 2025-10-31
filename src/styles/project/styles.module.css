@@ -10,6 +10,11 @@
   }
 }
 
+.card:hover {
+  outline: 1px solid;
+  box-shadow: 0 0 20px 5px grey;
+}
+
 .animatedFadeHorizontal {
   animation: fadeHorizontal 1s ease;
 }

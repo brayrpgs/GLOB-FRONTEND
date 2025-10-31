@@ -6,7 +6,7 @@ export const component: React.FC = () => {
   useEffect(() => { }, [])
 
   return (
-    <IonCard className={styles.animatedFadeHorizontal}>
+    <IonCard className={`${styles.animatedFadeHorizontal} ${styles.card}`}>
       <IonCardHeader>
         <IonIcon className={styles.iconProject} icon={layers} size='large' />
         <IonCardTitle>Card Title</IonCardTitle>
