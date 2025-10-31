@@ -3,6 +3,7 @@
     opacity: 0;
     transform: translateX(-200px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -11,4 +12,16 @@
 
 .animatedFadeHorizontal {
   animation: fadeHorizontal 1s ease;
+}
+
+.iconProject {
+  color: var(--ion-color-success)
+}
+
+.suptitleCard {
+  span {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.5rem;
+  }
 }
