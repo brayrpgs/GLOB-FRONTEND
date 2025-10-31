@@ -1,7 +1,7 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonLabel, IonList, IonProgressBar } from '@ionic/react'
 import styles from '../../styles/project/styles.module.css'
 import { useEffect, useState } from 'react'
-import { analyticsOutline, calendarNumberOutline, infinite, layers, listOutline, pricetagOutline } from 'ionicons/icons'
+import { albumsOutline, analyticsOutline, calendarNumberOutline, layers, listOutline } from 'ionicons/icons'
 import { Project } from '../../models/Project'
 import { PROJECT_API_DATA_APLICATION_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
 import { TokenHelper } from '../../Helpers/TokenHelper'
@@ -25,7 +25,7 @@ export const component: React.FC = () => {
       {projects?.map((value, key) => (
         <IonCard key={key} className={`${styles.animatedFadeHorizontal} ${styles.card}`}>
           <IonCardHeader>
-            <IonIcon className={styles.iconProject} icon={layers} size='large' />
+            <IonIcon className={`${styles.iconProject} ${styles.bloom}`} icon={layers} size='large' />
             <IonCardTitle>{value.NAME}</IonCardTitle>
             <IonCardSubtitle className={styles.suptitleCard}>
               <span><IonIcon icon={listOutline} color='primary' /> {value.DESCRIPTION}</span>
@@ -34,16 +34,18 @@ export const component: React.FC = () => {
           <IonCardContent>
             <IonList>
               <IonItem className={styles.suptitleCard}>
-                <span><IonIcon icon={analyticsOutline} color='warning' /> <IonLabel>Status: {ProjectStatus[value.STATUS]}</IonLabel></span>
+                <span><IonIcon className={styles.bloom} icon={albumsOutline} color='warning' /> <IonLabel>Status: {ProjectStatus[value.STATUS]}</IonLabel></span>
               </IonItem>
               <IonItem className={styles.suptitleCard}>
-                <span><IonIcon icon={calendarNumberOutline} color='dark' /> <IonLabel>Date Init: {['-infinity', 'infinity'].includes(value.DATE_INIT) ? 'No Date Set' : value.DATE_INIT}</IonLabel></span>
+                <span><IonIcon className={styles.bloom} icon={calendarNumberOutline} color='dark' /> <IonLabel>Date Init: {['-infinity', 'infinity'].includes(value.DATE_INIT) ? 'No Date Set' : value.DATE_INIT}</IonLabel></span>
               </IonItem>
               <IonItem className={styles.suptitleCard}>
-                <span><IonIcon icon={calendarNumberOutline} color='dark' /> <IonLabel>Date End: {['-infinity', 'infinity'].includes(value.DATE_END) ? 'No Date Set' : value.DATE_INIT}</IonLabel></span>
+                <span><IonIcon className={styles.bloom} icon={calendarNumberOutline} color='dark' /> <IonLabel>Date End: {['-infinity', 'infinity'].includes(value.DATE_END) ? 'No Date Set' : value.DATE_INIT}</IonLabel></span>
               </IonItem>
               <IonItem className={styles.suptitleCard}>
-                <IonProgressBar buffer={value.PROGRESS} value={value.PROGRESS} />
+                <span>
+                  <IonIcon className={styles.bloom} icon={analyticsOutline} color='warning' /> Progress: <IonProgressBar buffer={value.PROGRESS} value={value.PROGRESS} />
+                </span>
               </IonItem>
             </IonList>
           </IonCardContent>

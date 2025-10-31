@@ -1,10 +1,11 @@
-import { IonAlert, IonButton, IonContent, IonIcon, IonPage } from '@ionic/react'
+import { IonAlert, IonContent, IonIcon, IonPage } from '@ionic/react'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { ValidateHome } from '../../middleware/ValidateHome'
 import { component as Project } from '../../components/project/component'
 import { useEffect } from 'react'
 import { addCircle } from 'ionicons/icons'
+import styles from '../../styles/main/styles.module.css'
 
 const Page: React.FC = () => {
   useEffect(() => {
@@ -20,30 +21,43 @@ const Page: React.FC = () => {
       <Header isLoggedIn />
       <IonContent className='ion-padding'>
         <h1>Quick Report Projects</h1>
-        <IonButton id='present-alert'><IonIcon icon={addCircle} /></IonButton>
+        <IonIcon className={styles.cursorPointer} id='present-alert' icon={addCircle} size='large' />
         <IonAlert
           trigger='present-alert'
-          header='Please enter your info'
-          buttons={['OK']}
-          inputs={[
+          header='Create a new Project'
+          buttons={[
             {
-              placeholder: 'Name'
+              text: 'create'.toUpperCase(),
+              handler: undefined
             },
             {
-              placeholder: 'Nickname (max 8 characters)',
+              text: 'cancel'.toUpperCase(),
+              handler: undefined
+            }
+          ]}
+          inputs={[
+            {
+              placeholder: 'name'.toUpperCase()
+            },
+            {
+              placeholder: 'description'.toUpperCase(),
               attributes: {
                 maxlength: 8
               }
             },
             {
-              type: 'number',
-              placeholder: 'Age',
-              min: 1,
-              max: 100
+              type: 'datetime-local',
+              placeholder: 'date init'.toUpperCase()
             },
             {
-              type: 'textarea',
-              placeholder: 'A little about yourself'
+              type: 'datetime-local',
+              placeholder: 'date init'.toUpperCase()
+            },
+            {
+              type: 'number',
+              placeholder: 'progress'.toUpperCase(),
+              min: 0,
+              max: 100
             }
           ]}
         />
