@@ -1,7 +1,7 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonLabel, IonList, IonProgressBar } from '@ionic/react'
 import styles from '../../styles/project/styles.module.css'
 import { useEffect, useState } from 'react'
-import { analyticsOutline, calendarNumberOutline, infinite, layers, listOutline, pricetagOutline } from 'ionicons/icons'
+import { analyticsOutline, calendarNumberOutline, layers, listOutline } from 'ionicons/icons'
 import { Project } from '../../models/Project'
 import { PROJECT_API_DATA_APLICATION_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
 import { TokenHelper } from '../../Helpers/TokenHelper'
