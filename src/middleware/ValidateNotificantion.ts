@@ -6,34 +6,25 @@ import { TokenHelper } from '../Helpers/TokenHelper'
 import { User } from '../models/User'
 import { Validate } from './Validate'
 
-class ValidateHome extends Validate {
-  // validate method
+class ValidateNotification extends Validate {
   async validateWithLogin (): Promise<void> {
-    const user: User = await this.getUser()
-    const canView = [
-      MembershipPlan.BASIC,
-      MembershipPlan.PLUS,
-      MembershipPlan.PRO
-    ].includes(user.MEMBERSHIPPLAN_ID)
-    if (!canView) {
-      this.redirect()
-    }
-  }
-
-  async getUser (): Promise<User> {
     const token = new TokenHelper(localStorage.getItem(TOKEN_KEY_NAME) as string)
+    const tokenPayload = token.decode()
+    // user request
     const request = new RequestHelper(
       USER_API_SECURITY_URL,
       METHOD_HTTP.GET,
       RESPONSE_TYPE.JSON,
       null,
-      { user_id: token.decode().id }
+      {
+        user_id: tokenPayload.id
+      }
     )
     request.addHeaders('accept', 'application/json')
-    const user = await request.buildRequest<User[]>()
-    if (user.length > 1 || user.length < 0) this.redirect()
-    return user[0]
+    const users = await request.buildRequest<User[]>()
+    if (users[0].MEMBERSHIPPLAN_ID !== MembershipPlan.PRO) {
+      this.redirect()
+    }
   }
 }
-
-export { ValidateHome }
+export { ValidateNotification }
