@@ -3,13 +3,14 @@ import styles from '../../styles/project/styles.module.css'
 import { useEffect, useState } from 'react'
 import { albumsOutline, analyticsOutline, calendarNumberOutline, layers, listOutline } from 'ionicons/icons'
 import { Project } from '../../models/Project'
-import { PROJECT_API_DATA_APLICATION_URL, TOKEN_KEY_NAME, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
-import { TokenHelper } from '../../Helpers/TokenHelper'
+import { PROJECT_API_DATA_APLICATION_URL, TOKEN_KEY_NAME } from '../../common/Common'
 import { RequestHelper } from '../../Helpers/RequestHelper'
 import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { GetUserProject } from '../../models/GetUserProject'
 import { GetProject } from '../../models/GetProject'
 import { ProjectStatus } from '../../enums/ProjectStatus'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
 export const component: React.FC = () => {
   const [projects, SetProjects] = useState<Project[]>()
   useEffect(() => {
@@ -58,19 +59,12 @@ export const component: React.FC = () => {
 const getProyects = async (): Promise<Project[]> => {
   // step 1
   const token = localStorage.getItem(TOKEN_KEY_NAME) as string
-  const tokenPayload = new TokenHelper(token).decode()
-  const requestUserProject = new RequestHelper(
-    USER_PROJECT_API_DATA_APLICATION_URL,
-    METHOD_HTTP.GET,
-    RESPONSE_TYPE.JSON,
-    null,
+  const tokenPayload = new TokenPayloadUtils().getTokenPayload()
+  const getUserProject = await new UserProjectUtils().get<GetUserProject>(
     {
       user_id_fk: tokenPayload.id, page: 1, limit: 10
     }
   )
-  requestUserProject.addHeaders('accept', 'application/json')
-  requestUserProject.addHeaders('Authorization', token)
-  const getUserProject = await requestUserProject.buildRequest<GetUserProject>()
   // validate userProject
   if (getUserProject.totalData > 1 || getUserProject.totalData < 1) {
     return []
