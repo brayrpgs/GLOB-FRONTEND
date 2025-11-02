@@ -20,11 +20,9 @@ import {
   IonText
 } from '@ionic/react'
 import { informationCircleOutline, sparklesOutline } from 'ionicons/icons'
-import { RequestHelper } from '../../Helpers/RequestHelper'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
-import { ANALYZE_PROJECT_BY_AI_URL } from '../../common/Common'
 import styles from '../../styles/ai-feedback/style.module.css'
 import type { ProjectAnalysisResponse } from '../../models/ProjectAnalysisResponse'
+import { AnalizeUtils } from '../../utils/AnalizeUtils'
 
 interface AIFeedbackModalProps {
   projectId: number
@@ -43,13 +41,13 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
 
   // Dismiss modal
   const dismiss = useCallback(() => {
-    modal.current?.dismiss()
+    void modal.current?.dismiss()
   }, [])
 
   // Handle modal open
   const handleOpen = useCallback(async () => {
     // Check cache first
-    if (cachedResults[projectId]) {
+    if (cachedResults[projectId] !== null) {
       setData(cachedResults[projectId])
       return
     }
@@ -59,18 +57,11 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
     setData(null)
 
     try {
-      const helper = new RequestHelper(
-                `${ANALYZE_PROJECT_BY_AI_URL}/${projectId}`,
-                METHOD_HTTP.GET,
-                RESPONSE_TYPE.JSON
-      )
-      helper.addHeaders('Content-Type', 'application/json')
-      const response = await helper.buildRequest<ProjectAnalysisResponse>()
-
+      const response = await new AnalizeUtils().get<ProjectAnalysisResponse>()
       setData(response)
       setCachedResults((prev) => ({ ...prev, [projectId]: response }))
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch analysis.')
+      setError('Failed to fetch analysis.')
     } finally {
       setLoading(false)
     }
@@ -111,7 +102,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
             </div>
           )}
 
-          {error && (
+          {error !== null && (
             <IonCard color='danger'>
               <IonCardContent>
                 <IonText color='light'>
@@ -196,7 +187,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
                       </IonLabel>
                     </IonItem>
 
-                    {data.analysis.issues.bottlenecks?.length
+                    {(data.analysis.issues.bottlenecks != null && data.analysis.issues.bottlenecks.length > 0)
                       ? (
                         <IonItem>
                           <IonLabel className='ion-text-wrap'>
@@ -222,7 +213,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
               </IonCard>
 
               {/* Risks Card */}
-              {data.analysis.risks?.length
+              {(data.analysis.risks != null && data.analysis.risks.length > 0)
                 ? (
                   <IonCard>
                     <IonCardHeader>
@@ -244,7 +235,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
                 : null}
 
               {/* Recommendations Card */}
-              {data.analysis.recommendations?.length
+              {(data.analysis.recommendations != null && data.analysis.recommendations.length > 0)
                 ? (
                   <IonCard>
                     <IonCardHeader>

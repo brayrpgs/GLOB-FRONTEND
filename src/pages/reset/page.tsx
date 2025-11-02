@@ -12,9 +12,10 @@ import {
   IonTitle
 } from '@ionic/react'
 import styles from '../../styles/reset/styles.module.css'
-import { VALIDATE_API_SECURITY_URL } from '../../common/Common'
 import { OTP_REGEX } from '../../common/Validator'
 import { ChangePassword } from '../../components/recover/ChangePassword'
+import { ChangePasswordUtils } from '../../utils/ChangePasswordUtils'
+import { OTP } from '../../models/OTP'
 
 const OTP_LENGTH = 6
 
@@ -55,24 +56,16 @@ const Page: React.FC = () => {
 
     // Call API to validate OTP
     try {
-      const response = await fetch(VALIDATE_API_SECURITY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ otp: code })
-      })
-
-      if (response.ok) {
-        const result = await response.json()
-        const recoverId = result.data[0].USER_ID
-        setRecoverId(recoverId)
-        setOtpValidated(true)
-        showToast('OTP verified successfully!', 'success')
-      } else {
-        showToast('Invalid or expired token', 'danger')
-      }
+      const result = await new ChangePasswordUtils().post<OTP>(
+        { otp: code }
+      )
+      const recoverId = result.data[0].USER_ID
+      setRecoverId(recoverId.toString())
+      setOtpValidated(true)
+      showToast('OTP verified successfully!', 'success')
     } catch (error) {
       console.error(error)
-      showToast('Network error, please try again later', 'danger')
+      showToast('Error, please try again later', 'danger')
     } finally {
       setIsVerifying(false)
     }
