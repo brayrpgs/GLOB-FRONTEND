@@ -1,9 +1,8 @@
-import { TOKEN_KEY_NAME, USER_API_SECURITY_URL } from '../common/Common'
+import { TOKEN_KEY_NAME } from '../common/Common'
 import { MembershipPlan } from '../enums/MembershipPlan'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../Helpers/FetchHelper'
-import { RequestHelper } from '../Helpers/RequestHelper'
-import { TokenHelper } from '../Helpers/TokenHelper'
 import { User } from '../models/User'
+import { TokenPayloadUtils } from '../utils/TokenPayloadUtils'
+import { UserUtils } from '../utils/UserUtils'
 import { Validate } from './Validate'
 
 class ValidateHeader extends Validate {
@@ -14,21 +13,14 @@ class ValidateHeader extends Validate {
   async getPlan (): Promise<MembershipPlan | null> {
     // step 1
     const token = localStorage.getItem(TOKEN_KEY_NAME) as string
-    const tokenPayload = new TokenHelper(token)
+    const tokenPayload = new TokenPayloadUtils().getTokenPayload()
     if (token === null) return null
     // step 2
-    const requestUser = new RequestHelper(
-      USER_API_SECURITY_URL,
-      METHOD_HTTP.GET,
-      RESPONSE_TYPE.JSON,
-      null,
+    const getUser = await new UserUtils().get<User[]>(
       {
-        user_id: tokenPayload.decode().id
+        user_id: tokenPayload.id
       }
     )
-    requestUser.addHeaders('Authorization', token)
-    requestUser.addHeaders('accept', 'application/json')
-    const getUser = await requestUser.buildRequest<User[]>()
     if (getUser.length < 1 || getUser.length > 1) return null
     // step 3
     return getUser[0].MEMBERSHIPPLAN_ID

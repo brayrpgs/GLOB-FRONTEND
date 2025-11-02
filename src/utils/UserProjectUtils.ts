@@ -17,11 +17,7 @@ class UserProjectUtils implements Api {
       METHOD_HTTP.GET,
       RESPONSE_TYPE.JSON,
       null,
-      {
-        user_id_fk: this.tokenPayload.id,
-        page: 1,
-        limit: 10
-      }
+      params
     )
     requestUser.addHeaders('Authorization', this.token())
     requestUser.addHeaders('accept', 'application/json')
