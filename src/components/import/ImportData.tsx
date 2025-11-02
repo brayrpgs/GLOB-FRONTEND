@@ -20,6 +20,9 @@ import { TokenHelper } from '../../Helpers/TokenHelper'
 import { GetUserProject } from '../../models/GetUserProject'
 import { UploadedBase64 } from '../../models/UploadedBase64'
 import { GetUploadedBase64 } from '../../models/GetUploadedBase64'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
+import { ImportDataUtils } from '../../utils/ImportDataUtils'
 
 // Import CSV component
 const ImportData: React.FC = () => {
@@ -103,51 +106,30 @@ const ImportData: React.FC = () => {
       })
       // Get JWT token
       const token = localStorage.getItem(TOKEN_KEY_NAME) as string
-      const tokenPayload = new TokenHelper(token)
+      const tokenPayload = new TokenPayloadUtils().getTokenPayload()
       if (token === null) {
         showToast('Missing loggin...', 'danger')
         setLoading(false)
         return
       }
-      const requestUser = new RequestHelper(
-        USER_PROJECT_API_DATA_APLICATION_URL,
-        METHOD_HTTP.GET,
-        RESPONSE_TYPE.JSON,
-        null,
+      const getUserProject = await new UserProjectUtils().get<GetUserProject>(
         {
-          user_id_fk: tokenPayload.decode().id,
+          user_id_fk: tokenPayload.id,
           page: 1,
           limit: 10
         }
       )
-      requestUser.addHeaders('Authorization', token)
-      requestUser.addHeaders('accept', 'application/json')
-      const getUserProject = await requestUser.buildRequest<GetUserProject>()
       // step 2
       if (getUserProject.totalData < 1 || getUserProject.totalData > 1) {
         showToast('Unexpected error. Please try again.', 'danger')
       }
       // step 3
-      //
       const uploadedBase64: UploadedBase64 = {
         base64Content,
         fileName: file.name,
         userProject: getUserProject.data[0].USER_PROJECT_ID
       }
-      const requestUpload = new RequestHelper(
-        CSV_API_IMPORT_EXPORT_URL,
-        METHOD_HTTP.POST,
-        RESPONSE_TYPE.JSON,
-        uploadedBase64,
-        {
-          user_id_fk: tokenPayload.decode().id,
-          page: 1,
-          limit: 10
-        }
-      )
-      requestUpload.addHeaders('Content-Type', 'application/json')
-      requestUpload.addHeaders('Authorization', `Bearer ${token}`)
-      const response = await requestUpload.buildRequest<GetUploadedBase64>()
+      const response = await new ImportDataUtils().post<GetUploadedBase64>(uploadedBase64)
       // Response handling
       if (response.statusCode === 201) {
         showToast('File uploaded successfully!', 'success')
