@@ -47,7 +47,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
   // Handle modal open
   const handleOpen = useCallback(async () => {
     // Check cache first
-    if (cachedResults[projectId] !== null) {
+    if (projectId in cachedResults) {
       setData(cachedResults[projectId])
       return
     }
@@ -57,7 +57,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
     setData(null)
 
     try {
-      const response = await new AnalizeUtils().get<ProjectAnalysisResponse>()
+      const response = await new AnalizeUtils().get<ProjectAnalysisResponse>(projectId)
       setData(response)
       setCachedResults((prev) => ({ ...prev, [projectId]: response }))
     } catch (err: any) {
@@ -112,7 +112,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
             </IonCard>
           )}
 
-          {!loading && !error && (data != null) && (
+          {!loading && error !== null && (data != null) && (
             <>
               {/* General Information Card */}
               <IonCard>
