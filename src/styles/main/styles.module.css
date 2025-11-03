@@ -12,3 +12,9 @@
 .color-red {
   color: var(--ion-color-danger) !important;
 }
+
+.container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}

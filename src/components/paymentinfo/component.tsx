@@ -19,7 +19,7 @@ const component: React.FC = () => {
         <p>Choose the plan that fits your needs.</p>
         <ul>
           <li>Plus Plan - $20/month</li>
-          <li>Feature:One project administration</li>
+          <li>Feature:three projects administration</li>
           <li>Feature:Have a dedicated account manager</li>
           <li>Feature:Access to premium templates</li>
           <li>Feature:Priority support</li>
@@ -33,7 +33,7 @@ const component: React.FC = () => {
         <p>Choose the plan that fits your needs.</p>
         <ul>
           <li>Pro Plan - $45/month</li>
-          <li>Feature:One project administration</li>
+          <li>Feature:Five projects administration</li>
           <li>Feature:Have a dedicated account manager</li>
           <li>Feature:Access to premium templates</li>
           <li>Feature:Priority support</li>

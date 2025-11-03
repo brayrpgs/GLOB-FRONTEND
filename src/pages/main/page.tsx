@@ -156,7 +156,7 @@ const Page: React.FC = () => {
           buttons={buttons}
           inputs={inputs}
         />
-        <Project />
+        <div className={styles.container}><Project /></div>
       </IonContent>
       <Footer />
     </IonPage>
