@@ -1,16 +1,15 @@
 import { IonButton, IonContent, IonPage, IonToast } from '@ionic/react'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
-import { RequestHelper } from '../../Helpers/RequestHelper'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
-import { TOKEN_KEY_NAME, USER_API_SECURITY_URL, USER_PROJECT_API_DATA_APLICATION_URL } from '../../common/Common'
+import { TOKEN_KEY_NAME } from '../../common/Common'
 import { User } from '../../models/User'
 import { useEffect, useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import { TokenPayload } from '../../models/TokenPayload'
 import styles from '../../styles/welcome/styles.module.css'
 import { UserProject } from '../../models/UserProject'
 import { GetUserProject } from '../../models/GetUserProject'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { UserUtils } from '../../utils/UserUtils'
 
 const Page: React.FC = () => {
   const [user, setUser] = useState<User>()
@@ -173,32 +172,15 @@ const Page: React.FC = () => {
 }
 
 const getUserData = async (): Promise<User[]> => {
-  const jwt = jwtDecode<TokenPayload>(localStorage.getItem(TOKEN_KEY_NAME) as string)
-  const userData = new RequestHelper(
-    USER_API_SECURITY_URL,
-    METHOD_HTTP.GET,
-    RESPONSE_TYPE.JSON,
-    null,
-    { user_id: jwt.id }
+  const tokenPayload = new TokenPayloadUtils().getTokenPayload()
+  return await new UserUtils().get<User[]>(
+    { user_id: tokenPayload.id }
   )
-  userData.addHeaders('accept', 'application/json')
-
-  // execute request
-  return await userData.buildRequest<User[]>()
 }
 
 const validateUserProject = async (): Promise<void> => {
   const params = { user_id_fk: 12, page: 1, limit: 10 }
-  const getUserProject = new RequestHelper(
-    USER_PROJECT_API_DATA_APLICATION_URL,
-    METHOD_HTTP.GET,
-    RESPONSE_TYPE.JSON,
-    null,
-    params
-  )
-  getUserProject.addHeaders('accept', 'application/json')
-  getUserProject.addHeaders('Authorization', `Bearer ${localStorage.getItem(TOKEN_KEY_NAME) as string}`)
-  const data = await getUserProject.buildRequest<GetUserProject>()
+  const data = await new UserProjectUtils().get<GetUserProject>(params)
   if (data.totalData > 0) {
     history.pushState(null, '', '/')
     history.go()
@@ -206,23 +188,12 @@ const validateUserProject = async (): Promise<void> => {
 }
 
 const aceptTerms = async (): Promise<UserProject[]> => {
-  const jwt = jwtDecode<TokenPayload>(localStorage.getItem(TOKEN_KEY_NAME) as string)
-  const userData = new RequestHelper(
-    USER_PROJECT_API_DATA_APLICATION_URL,
-    METHOD_HTTP.POST,
-    RESPONSE_TYPE.JSON,
-    {
-      user_id_fk: jwt.id,
-      rol_proyect: 1,
-      productivity: 0
-    }
-  )
-  userData.addHeaders('accept', 'application/json')
-  userData.addHeaders('Authorization', `Bearer ${localStorage.getItem(TOKEN_KEY_NAME) as string}`)
-  userData.addHeaders('Content-Type', 'application/json')
-
-  // execute request
-  return await userData.buildRequest<UserProject[]>()
+  const jwt = new TokenPayloadUtils().getTokenPayload()
+  return await new UserProjectUtils().post({
+    user_id_fk: jwt.id,
+    rol_proyect: 1,
+    productivity: 0
+  })
 }
 
 export { Page }

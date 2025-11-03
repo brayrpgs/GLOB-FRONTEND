@@ -14,22 +14,17 @@ import {
   IonToolbar,
   IonTitle,
   IonButtons,
-  IonBackButton,
-  useIonRouter
+  IonBackButton
 } from '@ionic/react'
 import { eyeOutline, eyeOffOutline, cloudUploadOutline } from 'ionicons/icons'
 import styles from '../../styles/register/styles.module.css'
-import { USER_API_SECURITY_URL } from '../../common/Common'
 import { PASSWORD_REGEX } from '../../common/Validator'
-import { RequestHelper } from '../../Helpers/RequestHelper'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { User } from '../../models/User'
-import { h } from 'ionicons/dist/types/stencil-public-runtime'
+import { UserUtils } from '../../utils/UserUtils'
 
 // Register Page Component
 const Page: React.FC = () => {
   // Router instance
-  const router = useIonRouter()
 
   // Refs for input fields
   const emailRef = useRef<HTMLIonInputElement>(null)
@@ -50,19 +45,19 @@ const Page: React.FC = () => {
 
   // Validate input data
   const validateData = useCallback(() => {
-    const email = (emailRef.current?.value as string) || ''
-    const username = (usernameRef.current?.value as string) || ''
-    const password = (passwordRef.current?.value as string) || ''
-    const confirmPassword = (confirmPasswordRef.current?.value as string) || ''
+    const email = emailRef.current?.value as string
+    const username = usernameRef.current?.value as string
+    const password = passwordRef.current?.value as string
+    const confirmPassword = confirmPasswordRef.current?.value as string
 
     // Basic validation
-    if (!email.trim() || !username.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (email.trim() !== null || username.trim() !== null || password.trim() !== null || confirmPassword.trim() !== null) {
       setToast(prev => ({ ...prev, message: 'Please fill in all required fields', show: true }))
       return false
     }
 
     // Avatar validation
-    if (!avatarUrl) {
+    if (avatarUrl !== null) {
       setToast(prev => ({ ...prev, message: 'Please upload an avatar', show: true }))
       return false
     }
@@ -106,32 +101,12 @@ const Page: React.FC = () => {
       setLoading(true)
 
       try {
-        /* const response = await fetch(USER_API_SECURITY_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: email.trim(),
-            username: username.trim(),
-            password: password.trim(),
-            avatarUrl
-          })
+        const user = await new UserUtils().post<User[]>({
+          email: email.trim(),
+          username: username.trim(),
+          password: password.trim(),
+          avatarUrl
         })
-
-        */
-        const requestCreateUser = new RequestHelper(
-          USER_API_SECURITY_URL,
-          METHOD_HTTP.POST,
-          RESPONSE_TYPE.JSON,
-          {
-            email: email.trim(),
-            username: username.trim(),
-            password: password.trim(),
-            avatarUrl
-          }
-        )
-        requestCreateUser.addHeaders('Content-Type', 'application/json')
-        requestCreateUser.addHeaders('Accept', 'application/json')
-        const user = await requestCreateUser.buildRequest<User[]>()
         // Handle response
         if (user.length > 0) {
           // Success
@@ -200,9 +175,9 @@ const Page: React.FC = () => {
                 <div
                   className={styles['avatar-circle']}
                   onClick={() => document.getElementById('avatarInput')?.click()}
-                  style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : {}}
+                  style={avatarUrl !== null ? { backgroundImage: `url(${avatarUrl})` } : {}}
                 >
-                  {!avatarUrl && <IonIcon icon={cloudUploadOutline} className={styles['avatar-icon']} />}
+                  {avatarUrl !== null && <IonIcon icon={cloudUploadOutline} className={styles['avatar-icon']} />}
                 </div>
 
                 <input

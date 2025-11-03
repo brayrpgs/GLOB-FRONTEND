@@ -1,0 +1,20 @@
+.cursorPointer {
+  cursor: pointer;
+  transition: 1s all;
+}
+
+.cursorPointer:hover {
+  cursor: pointer;
+  transition: .5s all;
+  opacity: .5;
+}
+
+.color-red {
+  color: var(--ion-color-danger) !important;
+}
+
+.container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
