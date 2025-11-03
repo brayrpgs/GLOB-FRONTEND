@@ -1,6 +1,6 @@
 import { ProjectStatus } from '../enums/ProjectStatus'
 
-export interface Project {
+interface Project {
   PROJECT_ID: number
   NAME: string
   DESCRIPTION: string
@@ -10,3 +10,5 @@ export interface Project {
   STATUS: ProjectStatus
   PROGRESS: number
 }
+
+export type { Project }
