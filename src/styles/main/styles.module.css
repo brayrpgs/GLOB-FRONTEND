@@ -8,3 +8,7 @@
   transition: .5s all;
   opacity: .5;
 }
+
+.color-red {
+  color: var(--ion-color-danger) !important;
+}
