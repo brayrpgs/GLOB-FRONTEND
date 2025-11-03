@@ -3,7 +3,7 @@ import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { ValidateHome } from '../../middleware/ValidateHome'
 import { component as Project } from '../../components/project/component'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { addCircle } from 'ionicons/icons'
 import styles from '../../styles/main/styles.module.css'
 import { ToastBuilder } from '../../components/toast/ToastBuilder'
@@ -13,12 +13,12 @@ import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { ProjectStatus } from '../../enums/ProjectStatus'
 import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { GetUserProject } from '../../models/GetUserProject'
-import { ValidateMain } from '../../middleware/ValidateMain'
 
 const Page: React.FC = () => {
   const [toast] = useIonToast()
+  const [canCreate, setCanCreate] = useState(true)
   const handlerCreateNewProject = async (data: Record<number, string>): Promise<void> => {
-    const validate = new ValidateMain('/home')
+    const validate = new ValidateHome('/home')
     /**
      * handle validate fields
      */
@@ -58,9 +58,9 @@ const Page: React.FC = () => {
       }
     )
     if (requestProject.length !== 1) {
-    /**
-   * Show the error message
-   */
+      /**
+     * Show the error message
+     */
       const danger = new ToastBuilder()
         .setAnimated(true)
         .setColor('danger')
@@ -71,9 +71,9 @@ const Page: React.FC = () => {
         .setMode('ios')
       await toast(danger.build())
     } else {
-    /**
-   * Show the error message
-   */
+      /**
+     * Show the error message
+     */
       const success = new ToastBuilder()
         .setAnimated(true)
         .setColor('success')
@@ -129,12 +129,13 @@ const Page: React.FC = () => {
       cssClass: styles['color-red']
     }
   ]
-
   useEffect(() => {
     const execValidates = async (): Promise<void> => {
       const validate = new ValidateHome()
       validate.validateJWT()
       await validate.validateWithLogin()
+      const canCreate = await validate.canCreateProject()
+      setCanCreate(canCreate)
     }
     void execValidates()
   }, [])
@@ -143,7 +144,12 @@ const Page: React.FC = () => {
       <Header isLoggedIn />
       <IonContent className='ion-padding'>
         <h1>Quick Report Projects</h1>
-        <IonIcon className={styles.cursorPointer} id='present-alert' icon={addCircle} size='large' />
+        {
+          canCreate
+            ? <IonIcon className={styles.cursorPointer} id='present-alert' icon={addCircle} size='large' />
+            : ''
+        }
+
         <IonAlert
           trigger='present-alert'
           header='Create a new Project'
