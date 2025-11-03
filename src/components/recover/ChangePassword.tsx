@@ -82,7 +82,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ recoverId }) => {
           status: user.STATUS,
           paymentInfo: undefined
         }
-        const putResponse = await new UserUtils().put<PutUser>(putData)
+        const putResponse = await new UserUtils().put<PutUser>(putData, user.USER_ID)
 
         if (putResponse !== null) {
           setToast({ message: 'Password updated successfully! Redirecting to login...', show: true, color: 'success' })
