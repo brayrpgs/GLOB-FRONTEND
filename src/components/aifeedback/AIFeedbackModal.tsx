@@ -112,8 +112,8 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
             </IonCard>
           )}
 
-          {!loading && error !== null && (data != null) && (
-            <>
+          {!loading && data != null
+            ? <>
               {/* General Information Card */}
               <IonCard>
                 <IonCardHeader>
@@ -255,8 +255,8 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
                   </IonCard>
                   )
                 : null}
-            </>
-          )}
+              </>
+            : ''}
         </IonContent>
       </IonModal>
     </>
