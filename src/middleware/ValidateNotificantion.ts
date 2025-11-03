@@ -1,27 +1,17 @@
-import { TOKEN_KEY_NAME, USER_API_SECURITY_URL } from '../common/Common'
 import { MembershipPlan } from '../enums/MembershipPlan'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../Helpers/FetchHelper'
-import { RequestHelper } from '../Helpers/RequestHelper'
-import { TokenHelper } from '../Helpers/TokenHelper'
 import { User } from '../models/User'
+import { TokenPayloadUtils } from '../utils/TokenPayloadUtils'
+import { UserUtils } from '../utils/UserUtils'
 import { Validate } from './Validate'
 
 class ValidateNotification extends Validate {
   async validateWithLogin (): Promise<void> {
-    const token = new TokenHelper(localStorage.getItem(TOKEN_KEY_NAME) as string)
-    const tokenPayload = token.decode()
-    // user request
-    const request = new RequestHelper(
-      USER_API_SECURITY_URL,
-      METHOD_HTTP.GET,
-      RESPONSE_TYPE.JSON,
-      null,
+    const tokenPayload = new TokenPayloadUtils().getTokenPayload()
+    const users = await new UserUtils().get<User[]>(
       {
         user_id: tokenPayload.id
       }
     )
-    request.addHeaders('accept', 'application/json')
-    const users = await request.buildRequest<User[]>()
     if (users[0].MEMBERSHIPPLAN_ID !== MembershipPlan.PRO) {
       this.redirect()
     }

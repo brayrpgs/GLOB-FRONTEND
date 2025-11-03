@@ -13,17 +13,16 @@ import {
   IonToast,
   IonRouterLink
 } from '@ionic/react'
-import { LOGIN_API_SECURITY_URL, TOKEN_KEY_NAME } from '../../common/Common'
+import { TOKEN_KEY_NAME } from '../../common/Common'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import styles from '../../styles/login/styles.module.css'
 import { RecoverPassword } from '../../components/recover/RecoverPassword'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
 import { TokenPayload } from '../../models/TokenPayload'
-import { RequestHelper } from '../../Helpers/RequestHelper'
 import { GetUserProject } from '../../models/GetUserProject'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { LoginUtils } from '../../utils/LoginUtils'
 
 // Login Page Component
@@ -85,20 +84,12 @@ const Page: React.FC = () => {
       try {
         // create the api request to login
         const body = { email: email.trim(), password: password.trim() }
-        const requestLogin = new RequestHelper(
-          LOGIN_API_SECURITY_URL,
-          METHOD_HTTP.POST,
-          RESPONSE_TYPE.TEXT,
-          body,
-          { data: 'test' }
-        )
-        requestLogin.addHeaders('Content-Type', 'application/json')
-        const data = await requestLogin.buildRequest<string>()
+        const data = await new LoginUtils().post<string>(body)
         // Store token in local storage
         localStorage.setItem(TOKEN_KEY_NAME, data)
         // request if user have user_project registers
         const tokenUtils: TokenPayload = new TokenPayloadUtils().getTokenPayload()
-        const userProject = await new LoginUtils().get<GetUserProject>(
+        const userProject = await new UserProjectUtils().get<GetUserProject>(
           {
             user_id_fk: tokenUtils.id,
             page: 1,
