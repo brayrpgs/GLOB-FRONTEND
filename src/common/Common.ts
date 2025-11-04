@@ -25,6 +25,7 @@ export const CSV_API_IMPORT_EXPORT_URL = `${BASE_API_IMPORT_EXPORT_URL}/csv`
 // Microservice Performance-AI
 export const BASE_API_PERFORMANCE_AI = 'http://localhost:4000'
 export const ANALYZE_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/analyze`
+export const QUERY_PROJECT_BY_AI_URL = `${BASE_API_PERFORMANCE_AI}/query`
 
 // Microservice SSE
 export const BASE_API_SSE = 'http://localhost:4001'
