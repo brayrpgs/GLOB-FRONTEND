@@ -397,7 +397,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
 
   // Ask question
   const handleAskQuestion = useCallback(async () => {
-    if (question.trim() !== undefined) return
+    if (question.trim() === undefined) return
 
     // Cancel previous request if exists
     if (abortControllerRef.current != null) {
