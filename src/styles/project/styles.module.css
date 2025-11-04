@@ -68,3 +68,14 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.select {
+  background-color: var(--ion-color-warning) !important;
+  color: var(--ion-color-dark-contrast);
+  border-radius: 1rem;
+  transition: 1s all ease !important;
+}
+.select:open {
+  transition: 1s all ease !important;
+  
+}

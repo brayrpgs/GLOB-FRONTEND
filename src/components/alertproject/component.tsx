@@ -2,6 +2,7 @@ import { IonAlert, IonButton, IonIcon } from '@ionic/react'
 import { Project } from '../../models/Project'
 import styles from '../../styles/project/styles.module.css'
 import { create } from 'ionicons/icons'
+import { ProjectStatus } from '../../enums/ProjectStatus'
 
 interface componentProps {
   project: Project
@@ -60,9 +61,13 @@ const component: React.FC<componentProps> = ({ project }) => {
               label: 'DATE END'.toUpperCase(),
               placeholder: 'DATE END'.toUpperCase()
             }
-
           ]}
         />
+        <select className={`${styles.select}`} defaultValue={ProjectStatus[project?.STATUS]}>
+          <option value={ProjectStatus[1]}>{ProjectStatus[1]}</option>
+          <option value={ProjectStatus[2]}>{ProjectStatus[2]}</option>
+          <option value={ProjectStatus[3]}>{ProjectStatus[3]}</option>
+        </select>
 
       </fieldset>
     </>
