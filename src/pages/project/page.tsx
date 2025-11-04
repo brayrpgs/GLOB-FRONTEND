@@ -1,0 +1,46 @@
+import React, { useEffect, useState } from 'react'
+/**
+ * imports components
+ */
+import { component as Header } from '../../components/header/component'
+import { component as Footer } from '../../components/footer/component'
+import { component as Alert } from '../../components/alertproject/component'
+import { IonContent, IonPage } from '@ionic/react'
+import { ProjectsUtils } from '../../utils/ProjectsUtils'
+import { GetProject } from '../../models/GetProject'
+import { URLHelper } from '../../Helpers/URLHelper'
+import { Project } from '../../models/Project'
+/**
+ * import styles
+ */
+import styles from '../../styles/project/styles.module.css'
+const Page: React.FC = () => {
+  const [project, setProject] = useState<Project>()
+
+  useEffect(() => {
+    const exec = async (): Promise<void> => {
+      // get data prject
+      const projectBackend = await new ProjectsUtils().get<GetProject>({
+        project_id: new URLHelper().getPathId()
+      })
+      // update project
+      setProject(projectBackend.data[0])
+    }
+    void exec()
+  }, [])
+  return (
+    <>
+      <IonPage>
+        <Header isLoggedIn />
+        <IonContent className='ion-padding'>
+          <h1 className={styles.title}>{project?.NAME.toUpperCase()}</h1>
+          <div className={styles.containerInfo}>
+            <Alert project={project as Project} />
+          </div>
+        </IonContent>
+        <Footer />
+      </IonPage>
+    </>
+  )
+}
+export { Page }
