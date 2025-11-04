@@ -37,7 +37,7 @@ interface QAEntry {
   isStreaming?: boolean
 }
 
-function isDateExpired (timestamp: Date): boolean {
+function isDateExpired(timestamp: Date): boolean {
   const currentDate = Date.now()
   const prevTime = timestamp.getTime()
   const diff = currentDate - prevTime
@@ -66,7 +66,7 @@ const ProjectCards: React.FC<{ data: ProjectAnalysisResponse }> = ({ data }) => 
         <IonCardTitle>General</IonCardTitle>
       </IonCardHeader>
       <IonCardContent>
-        <IonList lines='none'>
+        <IonList lines="none">
           <IonItem>
             <IonLabel>
               <h3>Project</h3>
@@ -96,9 +96,9 @@ const ProjectCards: React.FC<{ data: ProjectAnalysisResponse }> = ({ data }) => 
         <IonCardTitle>Overview</IonCardTitle>
       </IonCardHeader>
       <IonCardContent>
-        <IonList lines='inset'>
+        <IonList lines="inset">
           <IonItem>
-            <IonLabel className='ion-text-wrap'>
+            <IonLabel className="ion-text-wrap">
               <h3>Summary</h3>
               <p>{data.analysis.summary}</p>
             </IonLabel>
@@ -112,50 +112,49 @@ const ProjectCards: React.FC<{ data: ProjectAnalysisResponse }> = ({ data }) => 
             <IonIcon
               icon={informationCircleOutline}
               title={data.analysis.health.explanation}
-              slot='end'
+              slot="end"
             />
           </IonItem>
 
           <IonItem>
-            <IonLabel className='ion-text-wrap'>
+            <IonLabel className="ion-text-wrap">
               <h3>Productivity</h3>
               <p>
-                {data.analysis.productivity !== null
-                  ? data.analysis.productivity.averageProductivity !== null
+                {data.analysis.productivity
+                  ? data.analysis.productivity.averageProductivity
                     ? `${data.analysis.productivity.averageProductivity} (${data.analysis.productivity.notes})`
-                    : data.analysis.productivity.notes !== null
+                    : data.analysis.productivity.notes
                       ? data.analysis.productivity.notes
                       : 'Productivity can not be measured'
-                  : 'Productivity can not be measured'}
+                  : 'Productivity can not be measured'
+                }
               </p>
             </IonLabel>
           </IonItem>
 
           <IonItem>
-            <IonLabel className='ion-text-wrap'>
+            <IonLabel className="ion-text-wrap">
               <h3>Issues Overview</h3>
               <p>{data.analysis.issues.overview}</p>
             </IonLabel>
           </IonItem>
 
-          {data.analysis.issues.bottlenecks?.length !== undefined
-            ? (
-              <IonItem>
-                <IonLabel className='ion-text-wrap'>
-                  <h3>Bottlenecks</h3>
-                  {data.analysis.issues.bottlenecks.map((b, i) => (
-                    <p key={i}>• {b}</p>
-                  ))}
-                </IonLabel>
-              </IonItem>
-              )
-            : null}
+          {data.analysis.issues.bottlenecks?.length ? (
+            <IonItem>
+              <IonLabel className="ion-text-wrap">
+                <h3>Bottlenecks</h3>
+                {data.analysis.issues.bottlenecks.map((b, i) => (
+                  <p key={i}>• {b}</p>
+                ))}
+              </IonLabel>
+            </IonItem>
+          ) : null}
 
           <IonItem>
             <IonLabel>
               <h3>Overdue Issues</h3>
             </IonLabel>
-            <IonBadge color='danger' slot='end'>
+            <IonBadge color="danger" slot="end">
               {data.analysis.issues.overdueCount}
             </IonBadge>
           </IonItem>
@@ -165,49 +164,45 @@ const ProjectCards: React.FC<{ data: ProjectAnalysisResponse }> = ({ data }) => 
   ), [data])
 
   const risksCard = useMemo(() => (
-    data.analysis.risks?.length !== undefined
-      ? (
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Risks</IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent>
-            <IonList lines='none'>
-              {data.analysis.risks.map((risk, i) => (
-                <IonItem key={i}>
-                  <IonLabel className='ion-text-wrap'>
-                    <p>• {risk}</p>
-                  </IonLabel>
-                </IonItem>
-              ))}
-            </IonList>
-          </IonCardContent>
-        </IonCard>
-        )
-      : null
+    data.analysis.risks?.length ? (
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Risks</IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>
+          <IonList lines="none">
+            {data.analysis.risks.map((risk, i) => (
+              <IonItem key={i}>
+                <IonLabel className="ion-text-wrap">
+                  <p>• {risk}</p>
+                </IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        </IonCardContent>
+      </IonCard>
+    ) : null
   ), [data])
 
   const recommendationsCard = useMemo(() => (
-    data.analysis.recommendations?.length !== undefined
-      ? (
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Recommendations</IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent>
-            <IonList lines='none'>
-              {data.analysis.recommendations.map((rec, i) => (
-                <IonItem key={i}>
-                  <IonLabel className='ion-text-wrap'>
-                    <p>• {rec}</p>
-                  </IonLabel>
-                </IonItem>
-              ))}
-            </IonList>
-          </IonCardContent>
-        </IonCard>
-        )
-      : null
+    data.analysis.recommendations?.length ? (
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Recommendations</IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>
+          <IonList lines="none">
+            {data.analysis.recommendations.map((rec, i) => (
+              <IonItem key={i}>
+                <IonLabel className="ion-text-wrap">
+                  <p>• {rec}</p>
+                </IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        </IonCardContent>
+      </IonCard>
+    ) : null
   ), [data])
 
   return (
@@ -237,8 +232,8 @@ const ChatWithAI: React.FC<{
   // Auto-scroll to bottom when history changes
   useEffect(() => {
     const el = chatRef.current
-    if (el == null) return
-    // scroll to bottom
+    if (!el) return
+    // scroll to bottom 
     el.scrollTo({ top: el.scrollHeight })
   }, [qaHistory])
 
@@ -253,15 +248,15 @@ const ChatWithAI: React.FC<{
 
       <IonCardContent>
         {visibleHistory.length > 0 && (
-          <div ref={chatRef} className='ion-margin-bottom' style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          <div ref={chatRef} className="ion-margin-bottom" style={{ maxHeight: '300px', overflowY: 'auto' }}>
             {visibleHistory.map((qa, i) => (
-              <IonCard key={i} className='ion-margin-bottom'>
+              <IonCard key={i} className="ion-margin-bottom">
                 <IonCardContent>
                   <p><strong>Q:</strong> {qa.question}</p>
-                  {qa.answer !== undefined && (
+                  {qa.answer && (
                     <p>
                       <strong>A:</strong> {qa.answer}
-                      {qa.isStreaming !== undefined && (
+                      {qa.isStreaming && (
                         <span className={styles.blink} style={{ marginLeft: 6 }}>▋</span>
                       )}
                     </p>
@@ -273,54 +268,52 @@ const ChatWithAI: React.FC<{
         )}
 
         {questionLoading && (
-          <div className='ion-text-center ion-margin-top'>
-            <IonSpinner name='dots' />
-            <IonText color='medium'>
+          <div className="ion-text-center ion-margin-top">
+            <IonSpinner name="dots" />
+            <IonText color="medium">
               <p style={{ fontSize: '0.875rem' }}>AI is thinking...</p>
             </IonText>
           </div>
         )}
 
         <IonInput
-          className='ion-margin-top'
-          label='Ask whatever you need to know'
-          labelPlacement='floating'
-          fill='outline'
-          placeholder='Ask AI'
+          className="ion-margin-top"
+          label="Ask whatever you need to know"
+          labelPlacement="floating"
+          fill="outline"
+          placeholder="Ask AI"
           value={question}
-          onIonChange={(e: CustomEvent) => setQuestion(e.detail.value)}
+          onIonChange={(e: CustomEvent) => setQuestion(e.detail.value!)}
           disabled={questionLoading}
           onKeyDown={(e: React.KeyboardEvent) => {
-            if (e.key === 'Enter' && !questionLoading && question.trim() !== null) {
+            if (e.key === 'Enter' && !questionLoading && question.trim()) {
               e.preventDefault()
               void handleAskQuestion()
             }
           }}
         >
-          {questionLoading
-            ? (
-              <IonButton
-                slot='end'
-                fill='clear'
-                onClick={handleCancelQuestion}
-                color='danger'
-              >
-                <IonIcon slot='icon-only' icon={closeCircle} />
-              </IonButton>
-              )
-            : (
-              <IonButton
-                slot='end'
-                fill='clear'
-                onClick={handleAskQuestion}
-                disabled={question.trim() !== null}
-              >
-                <IonIcon slot='icon-only' icon={send} />
-              </IonButton>
-              )}
+          {questionLoading ? (
+            <IonButton
+              slot="end"
+              fill="clear"
+              onClick={handleCancelQuestion}
+              color="danger"
+            >
+              <IonIcon slot="icon-only" icon={closeCircle} />
+            </IonButton>
+          ) : (
+            <IonButton
+              slot="end"
+              fill="clear"
+              onClick={handleAskQuestion}
+              disabled={!question.trim()}
+            >
+              <IonIcon slot="icon-only" icon={send} />
+            </IonButton>
+          )}
         </IonInput>
 
-        {questionError !== null && (
+        {questionError && (
           <IonText color='danger'>
             <p className='ion-padding'>{questionError}</p>
           </IonText>
@@ -352,17 +345,17 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
 
   // Dismiss modal
   const dismiss = useCallback(() => {
-    if (abortControllerRef.current != null) {
+    if (abortControllerRef.current) {
       abortControllerRef.current.abort()
       abortControllerRef.current = null
     }
-    void modal.current?.dismiss()
+    modal.current?.dismiss()
   }, [])
 
   // Ensure we abort any open requests on unmount
   useEffect(() => {
     return () => {
-      if (abortControllerRef.current != null) {
+      if (abortControllerRef.current) {
         abortControllerRef.current.abort()
         abortControllerRef.current = null
       }
@@ -373,7 +366,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
   const handleOpen = useCallback(async () => {
     const cachedProjectAnalysis = cachedResults[projectId]
     // Use cache only if it exists and is NOT expired
-    if (cachedProjectAnalysis !== undefined && !isDateExpired(cachedProjectAnalysis.timestamp)) {
+    if (cachedProjectAnalysis && !isDateExpired(cachedProjectAnalysis.timestamp)) {
       setData(cachedProjectAnalysis)
       return
     }
@@ -384,9 +377,10 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
 
     try {
       const response = await analyzeHelper.get<ProjectAnalysisResponse>(projectId)
-      const withTs = { ...(response), timestamp: new Date() }
+      const withTs = { ...(response as ProjectAnalysisResponse), timestamp: new Date() }
       setData(withTs as any)
       setCachedResults((prev) => ({ ...prev, [projectId]: withTs }))
+
     } catch (err: any) {
       console.error('Analysis fetch error', err)
       setError('Failed to get analysis done. Please try again later.')
@@ -397,10 +391,10 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
 
   // Ask question
   const handleAskQuestion = useCallback(async () => {
-    if (question.trim() === undefined) return
+    if (!question.trim()) return
 
     // Cancel previous request if exists
-    if (abortControllerRef.current != null) {
+    if (abortControllerRef.current) {
       abortControllerRef.current.abort()
     }
     abortControllerRef.current = new AbortController()
@@ -436,11 +430,12 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
       )
     } finally {
       setQuestionLoading(false)
+
     }
   }, [projectId, question, updateQaHistory])
 
   const handleCancelQuestion = useCallback(() => {
-    if (abortControllerRef.current != null) {
+    if (abortControllerRef.current) {
       abortControllerRef.current.abort()
       abortControllerRef.current = null
     }
@@ -449,12 +444,12 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
   const canDismiss = useCallback(async (data?: any, role?: string) => await Promise.resolve(role !== 'gesture'), [])
 
   // Memoized cards to avoid re-render on streaming updates
-  const cards = useMemo(() => (data != null) ? <ProjectCards data={data} /> : null, [data])
+  const cards = useMemo(() => data ? <ProjectCards data={data} /> : null, [data])
 
   return (
     <>
       <IonButton id='open-ai-modal' fill='clear' size='default'>
-        <IonIcon icon={sparklesOutline} slot='icon-only' color='dark' />
+        <IonIcon icon={sparklesOutline} slot='icon-only' />
       </IonButton>
 
       <IonModal
@@ -492,13 +487,13 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
             </IonCard>
           )}
 
-          {!loading && error !== null && (data != null) && (
+          {!loading && !error && (data != null) && (
             <>
               {cards}
             </>
           )}
 
-          {data !== null && (
+          {data && (
             <ChatWithAI
               projectId={projectId}
               qaHistory={qaHistory}
