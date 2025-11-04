@@ -7,6 +7,7 @@ import { AIFeedbackModal as Ai } from '../aifeedback/AIFeedbackModal'
 import { component as Notifications } from '../notifications/component'
 import { ValidateHeader } from '../../middleware/ValidateHeader'
 import { MembershipPlan } from '../../enums/MembershipPlan'
+import { URLHelper } from '../../Helpers/URLHelper'
 
 interface HeaderProps {
   isLoggedIn?: boolean
@@ -15,10 +16,15 @@ interface HeaderProps {
 const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
   const validate = new ValidateHeader()
   const [planMembership, setPlanMembership] = useState<MembershipPlan>(MembershipPlan.BASIC)
+  const [imp, setImp] = useState(false)
+  const [ai, setAi] = useState(false)
 
   useEffect(() => {
     const exec = async (): Promise<void> => {
       const plan = await validate.getPlan()
+      const canImport = await validate.validateImport()
+      setImp(canImport)
+      setAi(new URLHelper().getPath().includes('/project'))
       if (plan !== null) {
         setPlanMembership(plan)
       } else {
@@ -38,8 +44,8 @@ const component: React.FC<HeaderProps> = ({ isLoggedIn }) => {
             {isLoggedIn as boolean
               ? (
                 <>
-                  {[MembershipPlan.PRO, MembershipPlan.PLUS].includes(planMembership) ? (<Import />) : (<div />)}
-                  {[MembershipPlan.PRO].includes(planMembership) ? (<Ai projectId={1} />) : (<div />)}
+                  {[MembershipPlan.PRO, MembershipPlan.PLUS].includes(planMembership) && imp ? (<Import />) : (<div />)}
+                  {[MembershipPlan.PRO].includes(planMembership) && ai ? (<Ai projectId={new URLHelper().getPathId()} />) : (<div />)}
                   {[MembershipPlan.PRO].includes(planMembership) ? (<Notifications />) : (<div />)}
                   <Profile />
                 </>
