@@ -23,5 +23,5 @@ export type ProjectAnalysisResponse = {
         risks?: string[];
         recommendations?: string[];
     };
-    timestamp: string;
+    timestamp: Date;
 };
