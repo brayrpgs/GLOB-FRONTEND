@@ -74,7 +74,7 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 /* JUST
   return (
     <>
       <IonButton id='open-ai-modal' fill='clear' size='default'>
-        <IonIcon icon={sparklesOutline} slot='icon-only' />
+        <IonIcon icon={sparklesOutline} slot='icon-only' color='dark' />
       </IonButton>
 
       <IonModal

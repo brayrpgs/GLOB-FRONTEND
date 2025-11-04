@@ -51,13 +51,13 @@ const Page: React.FC = () => {
     const confirmPassword = confirmPasswordRef.current?.value as string
 
     // Basic validation
-    if (email.trim() !== null || username.trim() !== null || password.trim() !== null || confirmPassword.trim() !== null) {
+    if (email.trim().length < 1 || username.trim().length < 1 || password.trim().length < 1 || confirmPassword.trim().length < 1) {
       setToast(prev => ({ ...prev, message: 'Please fill in all required fields', show: true }))
       return false
     }
 
     // Avatar validation
-    if (avatarUrl !== null) {
+    if (avatarUrl === null) {
       setToast(prev => ({ ...prev, message: 'Please upload an avatar', show: true }))
       return false
     }

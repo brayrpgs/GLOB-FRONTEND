@@ -9,6 +9,7 @@ import { ProjectStatus } from '../../enums/ProjectStatus'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
+import { ValidateProject } from '../../middleware/ValidateProject'
 export const component: React.FC = () => {
   const [projects, SetProjects] = useState<Project[]>()
   useEffect(() => {
@@ -22,7 +23,11 @@ export const component: React.FC = () => {
   return (
     <>
       {projects?.map((value, key) => (
-        <IonCard key={key} className={`${styles.animatedFadeHorizontal} ${styles.card}`}>
+        <IonCard
+          key={key}
+          className={`${styles.animatedFadeHorizontal} ${styles.card}`}
+          onClick={() => { new ValidateProject(`/project/${value.PROJECT_ID}`).redirect() }}
+        >
           <IonCardHeader>
             <IonIcon className={`${styles.iconProject} ${styles.bloom}`} icon={layers} size='large' />
             <IonCardTitle>{value.NAME}</IonCardTitle>
