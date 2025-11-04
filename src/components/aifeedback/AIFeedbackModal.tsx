@@ -21,12 +21,10 @@ import {
   IonInput
 } from '@ionic/react'
 import { informationCircleOutline, send, sparklesOutline, closeCircle } from 'ionicons/icons'
-import { RequestHelper } from '../../Helpers/RequestHelper'
-import { METHOD_HTTP, RESPONSE_TYPE } from '../../Helpers/FetchHelper'
-import { ANALYZE_PROJECT_BY_AI_URL, QUERY_PROJECT_BY_AI_URL } from '../../common/Common'
 import styles from '../../styles/ai-feedback/style.module.css'
 import type { ProjectAnalysisResponse } from '../../models/ProjectAnalysisResponse'
 import { AnalizeUtils } from '../../utils/AnalizeUtils'
+import { QueryAIUtils } from '../../utils/QueryAIUtils'
 
 interface AIFeedbackModalProps {
   projectId?: number
@@ -55,6 +53,10 @@ const updateLastQA = (prev: QAEntry[], updater: (entry: QAEntry) => QAEntry): QA
   copy[lastIndex] = updater(copy[lastIndex])
   return copy
 }
+
+// Utils for requests
+const analyzeHelper = new AnalizeUtils()
+const queryHelper = new QueryAIUtils()
 
 // Subcomponent: Project overview + general info cards
 const ProjectCards: React.FC<{ data: ProjectAnalysisResponse }> = ({ data }) => {
@@ -322,7 +324,7 @@ const ChatWithAI: React.FC<{
 }
 
 // Main Component
-const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 2 }) => {
+const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 1 }) => {
   const modal = useRef<HTMLIonModalElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -374,18 +376,11 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 2 }) => {
     setData(null)
 
     try {
-      const helper = new RequestHelper(
-        `${ANALYZE_PROJECT_BY_AI_URL}/${projectId}`,
-        METHOD_HTTP.GET,
-        RESPONSE_TYPE.JSON
-      )
-      helper.addHeaders('Content-Type', 'application/json')
-      const response = await helper.buildRequest<ProjectAnalysisResponse>()
-
-      // ensure timestamp and proper typing
+      const response = await analyzeHelper.get<ProjectAnalysisResponse>(projectId)
       const withTs = { ...(response as ProjectAnalysisResponse), timestamp: new Date() }
       setData(withTs as any)
       setCachedResults((prev) => ({ ...prev, [projectId]: withTs }))
+
     } catch (err: any) {
       console.error('Analysis fetch error', err)
       setError('Failed to get analysis done. Please try again later.')
@@ -411,57 +406,31 @@ const AIFeedbackModal: React.FC<AIFeedbackModalProps> = ({ projectId = 2 }) => {
     setQuestion('')
 
     try {
-      const response = await fetch(`${QUERY_PROJECT_BY_AI_URL}/${projectId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: newEntry.question }),
-        signal: abortControllerRef.current.signal
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      if (!response.body) {
-        throw new Error('No response body')
-      }
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let done = false
-      let rawText = ''
-
-      while (!done) {
-        const { value, done: chunkDone } = await reader.read()
-        done = !!chunkDone
-        rawText += decoder.decode(value || new Uint8Array(), { stream: !done })
-
-        // update last entry continuously
-        updateQaHistory(prev => updateLastQA(prev, (entry) => ({ ...entry, answer: rawText, isStreaming: !done })))
-      }
-
-      if (!rawText.trim()) {
-        // graceful fallback
-        updateQaHistory(prev => updateLastQA(prev, (entry) => ({ ...entry, answer: 'No response received from AI.', isStreaming: false })))
-        return
-      }
-
-      // mark streaming false (already done inside loop) but ensure final state
-      updateQaHistory(prev => updateLastQA(prev, (entry) => ({ ...entry, isStreaming: false })))
-
+      await queryHelper.stream(
+        projectId,
+        newEntry.question,
+        (partialAnswer, done) => {
+          updateQaHistory(prev =>
+            updateLastQA(prev, entry => ({ ...entry, answer: partialAnswer, isStreaming: !done }))
+          )
+        },
+        fullAnswer => {
+          updateQaHistory(prev => updateLastQA(prev, entry => ({ ...entry, isStreaming: false })))
+        },
+        () => {
+          updateQaHistory(prev => updateLastQA(prev, entry => ({ ...entry, answer: 'Request cancelled', isStreaming: false })))
+        },
+        abortControllerRef
+      )
     } catch (err: any) {
-      if (err?.name === 'AbortError') {
-        console.log('Request was cancelled')
-        updateQaHistory(prev => updateLastQA(prev, (entry) => ({ ...entry, answer: 'Request cancelled', isStreaming: false })))
-        return
-      }
-
       console.error('AI Query Error:', err)
       setQuestionError('Failed to get AI response.')
-      updateQaHistory(prev => updateLastQA(prev, (entry) => ({ ...entry, answer: `Something happened. Please try again later.`, isStreaming: false })))
+      updateQaHistory(prev =>
+        updateLastQA(prev, entry => ({ ...entry, answer: 'Something happened. Please try again later.', isStreaming: false }))
+      )
     } finally {
       setQuestionLoading(false)
-      abortControllerRef.current = null
+
     }
   }, [projectId, question, updateQaHistory])
 
