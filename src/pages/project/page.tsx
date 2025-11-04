@@ -4,16 +4,16 @@ import React, { useEffect, useState } from 'react'
  */
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
-import { IonAlert, IonButton, IonContent, IonIcon, IonInput, IonLabel, IonPage, IonTextarea } from '@ionic/react'
+import { component as Alert } from '../../components/alertproject/component'
+import { IonContent, IonPage } from '@ionic/react'
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
 import { GetProject } from '../../models/GetProject'
 import { URLHelper } from '../../Helpers/URLHelper'
 import { Project } from '../../models/Project'
-import { MESSAGE_NOT_EMPTY } from '../../common/MessageCommon'
-import { create } from 'ionicons/icons'
 /**
  * import styles
  */
+import styles from '../../styles/project/styles.module.css'
 const Page: React.FC = () => {
   const [project, setProject] = useState<Project>()
 
@@ -33,37 +33,10 @@ const Page: React.FC = () => {
       <IonPage>
         <Header isLoggedIn />
         <IonContent className='ion-padding'>
-          <h1>{project?.NAME.toUpperCase()}</h1>
-
-          <IonButton
-            id='openAlert'
-            color='dark'
-          >
-            <IonIcon icon={create} />
-            Edit
-          </IonButton>
-          <IonAlert
-            trigger='openAlert'
-            mode='ios'
-            header='Config Project'
-            buttons={[
-              {
-                text: 'Delete',
-                handler: (value) => {}
-              },
-              {
-                text: 'Edit',
-                handler: (value) => {}
-              }
-            ]}
-            inputs={[
-              {
-                type: 'text',
-                value: project?.NAME
-              }
-            ]}
-          />
-
+          <h1 className={styles.title}>{project?.NAME.toUpperCase()}</h1>
+          <div className={styles.containerInfo}>
+            <Alert project={project as Project} />
+          </div>
         </IonContent>
         <Footer />
       </IonPage>
