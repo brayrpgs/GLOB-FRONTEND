@@ -25,6 +25,7 @@ import { GetUserProject } from '../../models/GetUserProject'
 import { NotificationChannel } from '../../enums/NotificationChannel'
 import { IssueUtils } from '../../utils/IssueUtils'
 import { GetIssues } from '../../models/GetIssues'
+import { UserProject } from '../../models/UserProject'
 // function
 
 const component: React.FC = () => {
@@ -148,38 +149,37 @@ const canViewNotification = async (eventData: SSEData): Promise<boolean> => {
       user_id_fk: userId, page: 1, limit: 10
     }
   )
-  // userProyect.data[0].USER_PROJECT_ID
   if (eventData.channel === NotificationChannel.user_project_changes) {
-    return await searchUserProyect(eventData, userId)
+    return await searchUserProyect(eventData, userProyect.data[0])
   }
   if (eventData.channel === NotificationChannel.project_changes) {
-    return await searchProyect(eventData, userId)
+    return await searchProyect(eventData, userProyect.data[0])
   }
   if (eventData.channel === NotificationChannel.issue_changes) {
-    return await searchIssue(eventData, userId)
+    return await searchIssue(eventData, userProyect.data[0])
   }
   if (eventData.channel === NotificationChannel.sprint_changes) {
-    return await searchSprint(eventData, userId)
+    return await searchSprint(eventData, userProyect.data[0])
   }
   return true
 }
 
-const searchUserProyect = async (eventData: SSEData, userId: number): Promise<boolean> => {
+const searchUserProyect = async (eventData: SSEData, userId: UserProject): Promise<boolean> => {
   return eventData.data.USER_ID_FK === userId
 }
-const searchProyect = async (eventData: SSEData, userId: number): Promise<boolean> => {
-  return eventData.data.USER_PROJECT_ID_FK === userId
+const searchProyect = async (eventData: SSEData, userProyect: UserProject): Promise<boolean> => {
+  return eventData.data.USER_PROJECT_ID_FK === userProyect.USER_ID_FK
 }
 
-const searchIssue = async (eventData: SSEData, userId: number): Promise<boolean> => {
+const searchIssue = async (eventData: SSEData, userProyect: UserProject): Promise<boolean> => {
   return (
-    eventData.data.USER_ASSIGNED_FK === userId ||
-    eventData.data.USER_CREATOR_ISSUE_FK === userId ||
-    eventData.data.USER_INFORMATOR_ISSUE_FK === userId
+    eventData.data.USER_ASSIGNED_FK === userProyect.USER_ID_FK ||
+    eventData.data.USER_CREATOR_ISSUE_FK === userProyect.USER_ID_FK ||
+    eventData.data.USER_INFORMATOR_ISSUE_FK === userProyect.USER_ID_FK
   )
 }
 
-const searchSprint = async (eventData: SSEData, userId: number): Promise<boolean> => {
+const searchSprint = async (eventData: SSEData, userProyect: UserProject): Promise<boolean> => {
   const issueUtils = new IssueUtils()
   const issuesResponse = await issueUtils.get<GetIssues>({
     sprint_id_fk: eventData.data.SPRINT_ID, page: 1, limit: 1000
@@ -187,7 +187,7 @@ const searchSprint = async (eventData: SSEData, userId: number): Promise<boolean
 
   if (issuesResponse.Issues.length > 0) {
     return issuesResponse.Issues.some(issue =>
-      issue.USER_ASSIGNED_FK === userId || issue.USER_CREATOR_ISSUE_FK === userId || issue.USER_INFORMATOR_ISSUE_FK === userId
+      issue.USER_ASSIGNED_FK === userProyect.USER_ID_FK || issue.USER_CREATOR_ISSUE_FK === userProyect.USER_ID_FK || issue.USER_INFORMATOR_ISSUE_FK === userProyect.USER_ID_FK
     )
   }
   return false
