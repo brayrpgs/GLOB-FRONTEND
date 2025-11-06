@@ -155,10 +155,11 @@ const canViewNotification = async (eventData: SSEData): Promise<boolean> => {
   if (eventData.channel === NotificationChannel.project_changes) {
     return await searchProyect(eventData, userId)
   }
+  if (eventData.channel === NotificationChannel.issue_changes) {
+    return await searchIssue(eventData, userId)
+  }
   return true
 }
-
-// const searchIssues
 
 const searchUserProyect = async (eventData: SSEData, userId: number): Promise<boolean> => {
   return eventData.data.USER_ID_FK === userId
@@ -166,6 +167,14 @@ const searchUserProyect = async (eventData: SSEData, userId: number): Promise<bo
 const searchProyect = async (eventData: SSEData, userId: number): Promise<boolean> => {
   return eventData.data.USER_PROJECT_ID_FK === userId
 }
-// 
+
+const searchIssue = async (eventData: SSEData, userId: number): Promise<boolean> => {
+  const issueData = eventData.data
+  return (
+    issueData.USER_ASSIGNED_FK === userId ||
+    issueData.USER_CREATOR_ISSUE_FK === userId ||
+    issueData.USER_INFORMATOR_ISSUE_FK === userId
+  )
+}
 
 export { component }
