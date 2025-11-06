@@ -9,13 +9,18 @@ import { ProjectsUtils } from '../../utils/ProjectsUtils'
 import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { GetUserProject } from '../../models/GetUserProject'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface componentProps {
   project: Project
 }
 const component: React.FC<componentProps> = ({ project }) => {
   const selectRef = useRef<HTMLSelectElement>(null)
+  const [status, setStatus] = useState<string>(project?.STATUS?.toString() ?? '1')
+
+  useEffect(() => {
+    setStatus(project?.STATUS?.toString() ?? '1')
+  }, [project])
   return (
     <>
       <fieldset className={styles.configProject}>
@@ -106,10 +111,15 @@ const component: React.FC<componentProps> = ({ project }) => {
             }
           ]}
         />
-        <select ref={selectRef} className={`${styles.select}`} defaultValue={ProjectStatus[project?.STATUS]}>
-          <option value={ProjectStatus[1]}>{ProjectStatus[1]}</option>
-          <option value={ProjectStatus[2]}>{ProjectStatus[2]}</option>
-          <option value={ProjectStatus[3]}>{ProjectStatus[3]}</option>
+        <select
+          ref={selectRef}
+          className={`${styles.select}`}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value='1'>{ProjectStatus[1]}</option>
+          <option value='2'>{ProjectStatus[2]}</option>
+          <option value='3'>{ProjectStatus[3]}</option>
         </select>
 
       </fieldset>
