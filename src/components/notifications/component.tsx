@@ -19,6 +19,10 @@ import { NOTIFICATIONS_API_SSE_URL } from '../../common/Common'
 import { SSEData } from '../../models/SseData'
 import { Notifications } from '../../models/Notification'
 import { ValidateNotification } from '../../middleware/ValidateNotificantion'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { GetUserProject } from '../../models/GetUserProject'
+import { NotificationChannel } from '../../enums/NotificationChannel'
 
 // function
 
@@ -40,43 +44,47 @@ const component: React.FC = () => {
     const eventSource = new EventSource(NOTIFICATIONS_API_SSE_URL)
 
     eventSource.onmessage = (event) => {
-      const eventData: SSEData = JSON.parse(event.data)
+      const exec = async (): Promise<void> => {
+        const eventData: SSEData = JSON.parse(event.data)
+        const canViewNotify = await canViewNotification(eventData)
+        if (!canViewNotify) return
+        let message = ''
+        const operation = eventData.operation.toLowerCase()
+        const table = eventData.table
+        const data = eventData.data
+        // Determine the descriptive name from the data payload
+        let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
 
-      let message = ''
-      const operation = eventData.operation.toLowerCase()
-      const table = eventData.table
-      const data = eventData.data
-      // Determine the descriptive name from the data payload
-      let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
+        if (descriptiveName == null) {
+          descriptiveName = `item in ${table}`
+        }
 
-      if (descriptiveName == null) {
-        descriptiveName = `item in ${table}`
+        switch (operation) {
+          case 'insert':
+            message = `A new ${table.toLowerCase()} "${descriptiveName}" has been created, see more details.`
+            break
+          case 'update':
+            message = `The ${table.toLowerCase()} "${descriptiveName}" you are assigned to has been updated.`
+            break
+          case 'delete':
+            message = `The ${table.toLowerCase()} "${descriptiveName}" you were enrolled in has been deleted.`
+            break
+          default:
+            message = `Change in ${table}: A record was ${operation}ED in channel ${eventData.channel}.`
+        }
+
+        const newNotification: Notifications = {
+          id: new Date().getTime().toString() + Math.random().toString(),
+          message,
+          timestamp: eventData.timestamp
+        }
+
+        setNotificationsList((prevNotifications) => [
+          newNotification,
+          ...prevNotifications
+        ])
       }
-
-      switch (operation) {
-        case 'insert':
-          message = `A new ${table.toLowerCase()} "${descriptiveName}" has been created, see more details.`
-          break
-        case 'update':
-          message = `The ${table.toLowerCase()} "${descriptiveName}" you are assigned to has been updated.`
-          break
-        case 'delete':
-          message = `The ${table.toLowerCase()} "${descriptiveName}" you were enrolled in has been deleted.`
-          break
-        default:
-          message = `Change in ${table}: A record was ${operation}ED in channel ${eventData.channel}.`
-      }
-
-      const newNotification: Notifications = {
-        id: new Date().getTime().toString() + Math.random().toString(),
-        message,
-        timestamp: eventData.timestamp
-      }
-
-      setNotificationsList((prevNotifications) => [
-        newNotification,
-        ...prevNotifications
-      ])
+      void exec()
     }
 
     eventSource.onerror = (_err) => {
@@ -131,6 +139,26 @@ const component: React.FC = () => {
       </IonPopover>
     </>
   )
+}
+
+const canViewNotification = async (eventData: SSEData): Promise<boolean> => {
+  const userId = new TokenPayloadUtils().getTokenPayload().id
+  const userProyect = await new UserProjectUtils().get<GetUserProject>(
+    {
+      user_id_fk: userId, page: 1, limit: 10
+    }
+  )
+  // userProyect.data[0].USER_PROJECT_ID
+  if (eventData.channel === NotificationChannel.user_project_changes) {
+    return await searchUserProyect(eventData, userId)
+  }
+  return true
+}
+
+// const searchIssues
+
+const searchUserProyect = async (eventData: SSEData, userId: number): Promise<boolean> => {
+  return eventData.data.USER_ID_FK === userId
 }
 
 export { component }
