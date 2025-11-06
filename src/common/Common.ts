@@ -13,6 +13,7 @@ export const VALIDATE_API_SECURITY_URL = `${RESET_API_SECURITY_URL}/validate`
 export const BASE_API_DATA_APLICATION_URL = 'http://localhost:8000'
 export const USER_PROJECT_API_DATA_APLICATION_URL = `${BASE_API_DATA_APLICATION_URL}/user-projects/`
 export const PROJECT_API_DATA_APLICATION_URL = `${BASE_API_DATA_APLICATION_URL}/projects/`
+export const SPRINT_API_DATA_APLICATION_URL = `${BASE_API_DATA_APLICATION_URL}/sprints/`
 
 // Token key name in localStorage
 export const TOKEN_KEY_NAME = 'authToken'
