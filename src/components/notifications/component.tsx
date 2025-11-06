@@ -47,33 +47,32 @@ const component: React.FC = () => {
     eventSource.onmessage = (event) => {
       const exec = async (): Promise<void> => {
         const eventData: SSEData = JSON.parse(event.data)
+
+        if (eventData.type === 'connection') return
+
         const canViewNotify = await canViewNotification(eventData)
         if (!canViewNotify) return
+
         let message = ''
-        const operation = eventData.operation.toLowerCase()
         const table = eventData.table
-        const data = eventData.data
-        // Determine the descriptive name from the data payload
-        let descriptiveName: string = data.NAME == null ? data.SUMMARY : data.NAME
+        const data = eventData.data ?? {}
 
-        if (descriptiveName == null) {
-          descriptiveName = `item in ${table}`
-        }
+        // Determine the descriptive name safely
+        const descriptiveName: string = data.NAME ?? data.SUMMARY ?? `item in ${table}`
 
-        switch (operation) {
-          case 'insert':
+        switch (eventData.operation) {
+          case 'INSERT':
             message = `A new ${table.toLowerCase()} "${descriptiveName}" has been created, see more details.`
             break
-          case 'update':
+          case 'UPDATE':
             message = `The ${table.toLowerCase()} "${descriptiveName}" you are assigned to has been updated.`
             break
-          case 'delete':
+          case 'DELETE':
             message = `The ${table.toLowerCase()} "${descriptiveName}" you were enrolled in has been deleted.`
             break
           default:
-            message = `Change in ${table}: A record was ${operation}ED in channel ${eventData.channel}.`
+            message = `Change in ${table}: A record was ${eventData.operation}ED in channel ${eventData.channel}.`
         }
-
         const newNotification: Notifications = {
           id: new Date().getTime().toString() + Math.random().toString(),
           message,

@@ -1,4 +1,5 @@
 interface SSEData {
+  type?: string
   channel: string
   data: Record<string, any>
   table: string
