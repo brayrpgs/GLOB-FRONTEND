@@ -3,11 +3,24 @@ import { Project } from '../../models/Project'
 import styles from '../../styles/project/styles.module.css'
 import { create } from 'ionicons/icons'
 import { ProjectStatus } from '../../enums/ProjectStatus'
+import { URLHelper } from '../../Helpers/URLHelper'
+import { ValidateHome } from '../../middleware/ValidateHome'
+import { ProjectsUtils } from '../../utils/ProjectsUtils'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { GetUserProject } from '../../models/GetUserProject'
+import { useEffect, useRef, useState } from 'react'
 
 interface componentProps {
   project: Project
 }
 const component: React.FC<componentProps> = ({ project }) => {
+  const selectRef = useRef<HTMLSelectElement>(null)
+  const [status, setStatus] = useState<string>(project?.STATUS?.toString() ?? '1')
+
+  useEffect(() => {
+    setStatus(project?.STATUS?.toString() ?? '1')
+  }, [project])
   return (
     <>
       <fieldset className={styles.configProject}>
@@ -27,12 +40,47 @@ const component: React.FC<componentProps> = ({ project }) => {
           buttons={[
             {
               text: 'Delete',
-              handler: (value) => { },
+              handler: (value) => {
+                const exec = async (): Promise<void> => {
+                  const idProject = new URLHelper().getPathId()
+                  await new ProjectsUtils().delete(idProject)
+                  new ValidateHome('/home').redirect()
+                }
+                void exec()
+              },
               cssClass: styles.danger
             },
             {
               text: 'Edit',
-              handler: (value) => { },
+              handler: (value) => {
+                const exec = async (): Promise<void> => {
+                  const idProject = new URLHelper().getPathId()
+                  const userProject = await new UserProjectUtils().get<GetUserProject>(
+                    {
+                      user_id_fk: new TokenPayloadUtils().getTokenPayload().id
+                    }
+                  )
+                  const statusSelected = selectRef.current?.value as any
+                  const statusValue = ProjectStatus[statusSelected]
+
+                  const body = {
+                    name: value[0],
+                    description: value[1],
+                    user_project_id_fk: userProject.data[0].USER_PROJECT_ID,
+                    date_init: value[2],
+                    date_end: value[3],
+                    status: statusValue
+                  }
+                  try {
+                    await new ProjectsUtils().patch(body, idProject)
+                    new ValidateHome(`/project/${idProject}`).redirect()
+                  } catch (error) {
+                    console.error(error)
+                    new ValidateHome(`/project/${idProject}`).redirect()
+                  }
+                }
+                void exec()
+              },
               cssClass: styles.warning
             }
           ]}
@@ -63,10 +111,15 @@ const component: React.FC<componentProps> = ({ project }) => {
             }
           ]}
         />
-        <select className={`${styles.select}`} defaultValue={ProjectStatus[project?.STATUS]}>
-          <option value={ProjectStatus[1]}>{ProjectStatus[1]}</option>
-          <option value={ProjectStatus[2]}>{ProjectStatus[2]}</option>
-          <option value={ProjectStatus[3]}>{ProjectStatus[3]}</option>
+        <select
+          ref={selectRef}
+          className={`${styles.select}`}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value='1'>{ProjectStatus[1]}</option>
+          <option value='2'>{ProjectStatus[2]}</option>
+          <option value='3'>{ProjectStatus[3]}</option>
         </select>
 
       </fieldset>
