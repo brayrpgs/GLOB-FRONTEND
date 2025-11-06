@@ -60,16 +60,13 @@ const component: React.FC<componentProps> = ({ project }) => {
                       user_id_fk: new TokenPayloadUtils().getTokenPayload().id
                     }
                   )
-                  const statusSelected = selectRef.current?.value as any
-                  const statusValue = ProjectStatus[statusSelected]
-
                   const body = {
                     name: value[0],
                     description: value[1],
                     user_project_id_fk: userProject.data[0].USER_PROJECT_ID,
                     date_init: value[2],
                     date_end: value[3],
-                    status: statusValue
+                    status
                   }
                   try {
                     await new ProjectsUtils().patch(body, idProject)
@@ -115,7 +112,7 @@ const component: React.FC<componentProps> = ({ project }) => {
           ref={selectRef}
           className={`${styles.select}`}
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => setStatus(selectRef.current?.value as string)}
         >
           <option value='1'>{ProjectStatus[1]}</option>
           <option value='2'>{ProjectStatus[2]}</option>
