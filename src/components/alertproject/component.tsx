@@ -48,47 +48,10 @@ const component: React.FC<componentProps> = ({ project }) => {
                 }
                 void exec()
               },
-              handler: (value) => {
-                const exec = async (): Promise<void> => {
-                  const idProject = new URLHelper().getPathId()
-                  await new ProjectsUtils().delete(idProject)
-                  new ValidateHome('/home').redirect()
-                }
-                void exec()
-              },
               cssClass: styles.danger
             },
             {
               text: 'Edit',
-              handler: (value) => {
-                const exec = async (): Promise<void> => {
-                  const idProject = new URLHelper().getPathId()
-                  const userProject = await new UserProjectUtils().get<GetUserProject>(
-                    {
-                      user_id_fk: new TokenPayloadUtils().getTokenPayload().id
-                    }
-                  )
-                  const statusSelected = selectRef.current?.value as any
-                  const statusValue = ProjectStatus[statusSelected]
-
-                  const body = {
-                    name: value[0],
-                    description: value[1],
-                    user_project_id_fk: userProject.data[0].USER_PROJECT_ID,
-                    date_init: value[2],
-                    date_end: value[3],
-                    status: statusValue
-                  }
-                  try {
-                    await new ProjectsUtils().patch(body, idProject)
-                    new ValidateHome(`/project/${idProject}`).redirect()
-                  } catch (error) {
-                    console.error(error)
-                    new ValidateHome(`/project/${idProject}`).redirect()
-                  }
-                }
-                void exec()
-              },
               handler: (value) => {
                 const exec = async (): Promise<void> => {
                   const idProject = new URLHelper().getPathId()
