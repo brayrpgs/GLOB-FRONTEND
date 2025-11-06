@@ -23,7 +23,8 @@ import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { GetUserProject } from '../../models/GetUserProject'
 import { NotificationChannel } from '../../enums/NotificationChannel'
-
+import { IssueUtils } from '../../utils/IssueUtils'
+import { GetIssues } from '../../models/GetIssues'
 // function
 
 const component: React.FC = () => {
@@ -158,6 +159,9 @@ const canViewNotification = async (eventData: SSEData): Promise<boolean> => {
   if (eventData.channel === NotificationChannel.issue_changes) {
     return await searchIssue(eventData, userId)
   }
+  if (eventData.channel === NotificationChannel.sprint_changes) {
+    return await searchSprint(eventData, userId)
+  }
   return true
 }
 
@@ -169,12 +173,25 @@ const searchProyect = async (eventData: SSEData, userId: number): Promise<boolea
 }
 
 const searchIssue = async (eventData: SSEData, userId: number): Promise<boolean> => {
-  const issueData = eventData.data
   return (
-    issueData.USER_ASSIGNED_FK === userId ||
-    issueData.USER_CREATOR_ISSUE_FK === userId ||
-    issueData.USER_INFORMATOR_ISSUE_FK === userId
+    eventData.data.USER_ASSIGNED_FK === userId ||
+    eventData.data.USER_CREATOR_ISSUE_FK === userId ||
+    eventData.data.USER_INFORMATOR_ISSUE_FK === userId
   )
+}
+
+const searchSprint = async (eventData: SSEData, userId: number): Promise<boolean> => {
+  const issueUtils = new IssueUtils()
+  const issuesResponse = await issueUtils.get<GetIssues>({
+    sprint_id_fk: eventData.data.SPRINT_ID, page: 1, limit: 1000
+  })
+
+  if (issuesResponse.Issues.length > 0) {
+    return issuesResponse.Issues.some(issue =>
+      issue.USER_ASSIGNED_FK === userId || issue.USER_CREATOR_ISSUE_FK === userId || issue.USER_INFORMATOR_ISSUE_FK === userId
+    )
+  }
+  return false
 }
 
 export { component }
