@@ -18,13 +18,10 @@ interface MyUsers {
 }
 
 const component: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([])
-  const [usersQuery, setUsersQuery] = useState<User[]>([])
+  const [usersQuery, setUsersQuery] = useState<MyUsers[]>([])
   const [myUsers, setMyUsers] = useState<MyUsers[]>([])
   useEffect(() => {
     const exec = async (): Promise<void> => {
-      const usersFromBackend = await new UserUtils().get<User[]>({})
-      setUsers(usersFromBackend)
       const usersProjectFromBack = await getUsersProject()
       const myUserFromBackend = await getMyUsers(usersProjectFromBack)
       setMyUsers(myUserFromBackend)
@@ -32,10 +29,19 @@ const component: React.FC = () => {
     void exec()
   }, [])
   const queryUsers = (query: string): void => {
-    setUsersQuery(users.filter((user) => user.EMAIL.includes(query) || user.USERNAME.includes(query)))
+    setUsersQuery(
+      myUsers.filter(
+        (myUser) => myUser.user.EMAIL.includes(query) ||
+         myUser.user.USERNAME.includes(query)
+      ))
     if (query.length === 0) {
       setUsersQuery([])
     }
+  }
+
+  const scrollToUser = (id: string): void => {
+    const el = document.getElementById(id)
+    if (el != null) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   return (
@@ -53,18 +59,18 @@ const component: React.FC = () => {
             {usersQuery.map((value, key) => (
               <IonItem
                 key={key}
-                onClick={(e) => { console.log('hola') }}
+                onClick={(e) => { e.preventDefault(); scrollToUser(`${value.user.USER_ID}`) }}
                 className={`${styles.userItem} ${styles.listSearchbar}`}
                 color='medium'
                 mode='ios'
               >
-                {`${value.USERNAME} - ${value.EMAIL}`}
+                {`${value.user.USERNAME} - ${value.user.EMAIL}`}
               </IonItem>
             ))}
           </IonList>
           <div>
             {myUsers.map((data, key) => (
-              <IonCard className={`${styles.listSearchbar}`} key={key} mode='ios'>
+              <IonCard className={`${styles.listSearchbar}`} key={key} mode='ios' id={`${data.user.USER_ID}`}>
                 <IonCardTitle mode='ios' className='ion-padding'>{data.user.USERNAME}</IonCardTitle>
                 <IonCardHeader mode='ios' className={styles.cardHeader}><img className={styles.cardImg} src={data.user.AVATAR_URL} alt='avatar image' />{data.user.EMAIL}</IonCardHeader>
                 <IonCardHeader mode='ios' className={styles.cardHeader}>ROL: {ProjectRole[data.userProject.ROL_PROYECT]}</IonCardHeader>
@@ -121,9 +127,10 @@ const getUsersProject = async (): Promise<UserProject[]> => {
   // processing data
   const idUsers = new Set<number>()
   issues.Issues.forEach((user) => {
-    idUsers.add(user.USER_ASSIGNED_FK)
-    idUsers.add(user.USER_CREATOR_ISSUE_FK)
-    idUsers.add(user.USER_INFORMATOR_ISSUE_FK)
+    // validate if fk is null
+    if (user.USER_ASSIGNED_FK !== null) idUsers.add(user.USER_ASSIGNED_FK)
+    if (user.USER_CREATOR_ISSUE_FK !== null) idUsers.add(user.USER_CREATOR_ISSUE_FK)
+    if (user.USER_INFORMATOR_ISSUE_FK !== null) idUsers.add(user.USER_INFORMATOR_ISSUE_FK)
   })
   // get every user
   const userProjectArray: UserProject[] = []
@@ -189,7 +196,7 @@ const deleteMyUser = async (idUserProject: number): Promise<void> => {
   for (const issue of issuesAssigned.Issues) {
     await new IssueUtils().patch(
       {
-        user_assigned: null
+        user_assigned: -1
       },
       issue.ISSUE_ID
     )
@@ -198,7 +205,7 @@ const deleteMyUser = async (idUserProject: number): Promise<void> => {
   for (const issue of issuesCreator.Issues) {
     await new IssueUtils().patch(
       {
-        user_creator: null
+        user_creator: -1
       },
       issue.ISSUE_ID
     )
@@ -207,7 +214,7 @@ const deleteMyUser = async (idUserProject: number): Promise<void> => {
   for (const issue of issuesInformator.Issues) {
     await new IssueUtils().patch(
       {
-        user_informator: null
+        user_informator: -1
       },
       issue.ISSUE_ID
     )
