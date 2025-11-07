@@ -1,4 +1,4 @@
-import { IonAlert, IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar, useIonAlert } from '@ionic/react'
+import { IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import { User } from '../../models/User'
 import styles from '../../styles/users/styles.module.css'
