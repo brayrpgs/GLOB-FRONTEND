@@ -48,12 +48,34 @@
 }
 
 .warning {
-  color: var(--ion-color-warning) !important;
+  background-color: var(--ion-color-warning) !important;
 }
 
-.configProject {
+.success {
+  background-color: var(--ion-color-success) !important;
+}
+
+.secondary {
+  background-color: var(--ion-color-secondary) !important;
+}
+
+.configProjectNotStarted {
   border-radius: 2rem;
-  box-shadow: 0 0 10px 0px var(--ion-color-warning) !important;
+  box-shadow: 0 0 20px 8px var(--ion-color-warning) !important;
+  width: 14rem;
+  text-align: center;
+}
+
+.configProjectSuccess {
+  border-radius: 2rem;
+  box-shadow: 0 0 20px 8px var(--ion-color-success) !important;
+  width: 14rem;
+  text-align: center;
+}
+
+.configProjectInProgress {
+  border-radius: 2rem;
+  box-shadow: 0 0 20px 8px var(--ion-color-secondary) !important;
   width: 14rem;
   text-align: center;
 }
@@ -70,12 +92,12 @@
 }
 
 .select {
-  background-color: var(--ion-color-warning) !important;
   color: var(--ion-color-dark-contrast);
   border-radius: 1rem;
   transition: 1s all ease !important;
 }
+
 .select:open {
   transition: 1s all ease !important;
-  
+
 }
