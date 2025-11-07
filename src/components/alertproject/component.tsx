@@ -88,7 +88,7 @@ const component: React.FC<componentProps> = ({ project }) => {
                 }
                 void exec()
               },
-              cssClass: styles.warning
+              cssClass: styles.edit
             }
           ]}
           inputs={[
