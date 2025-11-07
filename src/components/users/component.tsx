@@ -1,4 +1,4 @@
-import { IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar } from '@ionic/react'
+import { IonAlert, IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar, useIonAlert } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import { User } from '../../models/User'
 import styles from '../../styles/users/styles.module.css'
@@ -10,6 +10,7 @@ import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { GetUserProject } from '../../models/GetUserProject'
 import { UserProject } from '../../models/UserProject'
 import { ProjectRole } from '../../enums/ProjectRole'
+import { ValidateProject } from '../../middleware/ValidateProject'
 
 interface MyUsers {
   user: User
@@ -69,7 +70,24 @@ const component: React.FC = () => {
                 <IonCardHeader mode='ios' className={styles.cardHeader}>ROL: {ProjectRole[data.userProject.ROL_PROYECT]}</IonCardHeader>
                 <IonCardHeader mode='ios' className={styles.cardHeader}>PRODUCTIVITY: <IonProgressBar className={getColorProgresBar(data.userProject.PRODUCTIVITY / 100)} value={data.userProject.PRODUCTIVITY / 100} buffer={data.userProject.PRODUCTIVITY / 100} mode='ios' /></IonCardHeader>
                 <IonCardHeader mode='ios' className={styles.cardHeader}>
-                  <select defaultValue={data.userProject.ROL_PROYECT}>
+                  <select
+                    defaultValue={data.userProject.ROL_PROYECT}
+                    onChange={(e) => {
+                      const newRol = e.currentTarget.value
+                      const idUserProject = data.userProject.USER_PROJECT_ID
+                      const idProject = new URLHelper().getPathId()
+                      const exec = async (): Promise<void> => {
+                        await new UserProjectUtils().patch(
+                          {
+                            rol_proyect: newRol
+                          },
+                          idUserProject
+                        )
+                        new ValidateProject(`/project/${idProject}`).redirect()
+                      }
+                      void exec()
+                    }}
+                  >
                     {Object.entries(ProjectRole).map((rol, key) => (
                       !isNaN(rol[1] as ProjectRole)
                         ? <option key={key} value={rol[1]}>{rol[0]}</option>
@@ -78,6 +96,9 @@ const component: React.FC = () => {
                   </select>
                   <button
                     className={styles.buttonDeleteColor}
+                    onClick={() => {
+                      void deleteMyUser(data.userProject.USER_PROJECT_ID)
+                    }}
                   >{'delete'.toUpperCase()}
                   </button>
                 </IonCardHeader>
@@ -140,6 +161,56 @@ const getColorProgresBar = (value: number): string => {
     return styles.progressBarWarning
   } else {
     return styles.progressBarSuccess
+  }
+}
+
+const deleteMyUser = async (idUserProject: number): Promise<void> => {
+  // get issues
+  const issuesAssigned = await new IssueUtils().get<GetIssues>(
+    {
+      user_assigned_fk: idUserProject,
+      project_id_fk: new URLHelper().getPathId()
+    }
+  )
+  const issuesCreator = await new IssueUtils().get<GetIssues>(
+    {
+      user_creator_issue_fk: idUserProject,
+      project_id_fk: new URLHelper().getPathId()
+    }
+  )
+  const issuesInformator = await new IssueUtils().get<GetIssues>(
+    {
+      user_informator_fk: idUserProject,
+      project_id_fk: new URLHelper().getPathId()
+    }
+  )
+
+  // patch every issue group
+  for (const issue of issuesAssigned.Issues) {
+    await new IssueUtils().patch(
+      {
+        user_assigned: null
+      },
+      issue.ISSUE_ID
+    )
+  }
+
+  for (const issue of issuesCreator.Issues) {
+    await new IssueUtils().patch(
+      {
+        user_creator: null
+      },
+      issue.ISSUE_ID
+    )
+  }
+
+  for (const issue of issuesInformator.Issues) {
+    await new IssueUtils().patch(
+      {
+        user_informator: null
+      },
+      issue.ISSUE_ID
+    )
   }
 }
 export { component }

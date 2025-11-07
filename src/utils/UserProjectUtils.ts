@@ -38,7 +38,19 @@ class UserProjectUtils implements Api {
   }
 
   put!: <T>(body?: any, params?: any, path?: any) => Promise<T>
-  patch!: <T>(body?: any, params?: any, path?: any) => Promise<T>
+  async patch<T>(body: any, path: any): Promise<T> {
+    const request = new RequestHelper(
+      `${USER_PROJECT_API_DATA_APLICATION_URL}${path as number}`,
+      METHOD_HTTP.PATCH,
+      RESPONSE_TYPE.JSON,
+      body
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Authorization', `Bearer ${this.token()}`)
+    request.addHeaders('Content-Type', 'application/json')
+    return await request.buildRequest()
+  }
+
   delete!: <T>(body?: any, params?: any, path?: any) => Promise<T>
   head!: <T>(body?: any, params?: any, path?: any) => Promise<T>
 }
