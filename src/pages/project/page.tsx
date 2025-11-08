@@ -6,7 +6,7 @@ import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { component as Alert } from '../../components/alertproject/component'
 import { component as Users } from '../../components/users/component'
-import { IonContent, IonPage } from '@ionic/react'
+import { IonBackButton, IonContent, IonPage } from '@ionic/react'
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
 import { GetProject } from '../../models/GetProject'
 import { URLHelper } from '../../Helpers/URLHelper'
@@ -33,6 +33,7 @@ const Page: React.FC = () => {
     <>
       <IonPage>
         <Header isLoggedIn />
+        <IonBackButton mode='ios' defaultHref='/home' color='secondary'>Back</IonBackButton>
         <IonContent className='ion-padding'>
           <h1 className={styles.title}>{project?.NAME.toUpperCase()}</h1>
           <div className={styles.containerInfo}>
