@@ -1,5 +1,6 @@
 export enum IssueStatus {
-  ToDo = 1,
-  InProgress = 2,
-  Done = 3
+  'Not Selected' = 0,
+  'To Do' = 1,
+  'In Progress' = 2,
+  'Done' = 3
 }

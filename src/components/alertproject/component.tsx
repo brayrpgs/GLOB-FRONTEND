@@ -1,4 +1,4 @@
-import { IonAlert, IonButton, IonIcon } from '@ionic/react'
+import { IonAlert, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/react'
 import { Project } from '../../models/Project'
 import styles from '../../styles/project/styles.module.css'
 import { create } from 'ionicons/icons'
@@ -15,21 +15,31 @@ interface componentProps {
   project: Project
 }
 const component: React.FC<componentProps> = ({ project }) => {
-  const selectRef = useRef<HTMLSelectElement>(null)
+  const selectRef = useRef<HTMLIonSelectElement>(null)
   const [status, setStatus] = useState<string>(project?.STATUS?.toString() ?? '1')
+  const styleFieldset: Record<number, string> = {
+    1: styles.configProjectNotStarted,
+    2: styles.configProjectInProgress,
+    3: styles.configProjectSuccess
+  }
+  const styleSelect: Record<number, string> = {
+    1: styles.warning,
+    2: styles.secondary,
+    3: styles.success
+  }
 
   useEffect(() => {
     setStatus(project?.STATUS?.toString() ?? '1')
   }, [project])
   return (
     <>
-      <fieldset className={styles.configProject}>
+      <fieldset className={styleFieldset[parseInt(status)]}>
         <legend>{'settings project'.toUpperCase()}</legend>
         <IonButton
           id='openAlert'
-          color='warning'
+          color='dark'
         >
-          <IonIcon icon={create} className={styles.bloom} />
+          <IonIcon icon={create} />
           Config
         </IonButton>
         <IonAlert
@@ -60,16 +70,13 @@ const component: React.FC<componentProps> = ({ project }) => {
                       user_id_fk: new TokenPayloadUtils().getTokenPayload().id
                     }
                   )
-                  const statusSelected = selectRef.current?.value as any
-                  const statusValue = ProjectStatus[statusSelected]
-
                   const body = {
                     name: value[0],
                     description: value[1],
                     user_project_id_fk: userProject.data[0].USER_PROJECT_ID,
                     date_init: value[2],
                     date_end: value[3],
-                    status: statusValue
+                    status
                   }
                   try {
                     await new ProjectsUtils().patch(body, idProject)
@@ -81,7 +88,7 @@ const component: React.FC<componentProps> = ({ project }) => {
                 }
                 void exec()
               },
-              cssClass: styles.warning
+              cssClass: styles.edit
             }
           ]}
           inputs={[
@@ -111,16 +118,30 @@ const component: React.FC<componentProps> = ({ project }) => {
             }
           ]}
         />
-        <select
+        <IonSelect
+          labelPlacement='floating' label='STATUS PROJECT'
+          mode='ios'
           ref={selectRef}
-          className={`${styles.select}`}
+          defaultValue={project?.STATUS}
+          className={`${styles.select} ${styleSelect[parseInt(status)]}`}
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onIonChange={(e) => {
+            const exec = async (): Promise<void> => {
+              const idProject = new URLHelper().getPathId()
+              const body = {
+                status: e.detail.value
+              }
+              const result = await new ProjectsUtils().patch<Project>(body, idProject)
+              setStatus(result.STATUS.toString())
+            }
+            void exec()
+          }}
+          id='select'
         >
-          <option value='1'>{ProjectStatus[1]}</option>
-          <option value='2'>{ProjectStatus[2]}</option>
-          <option value='3'>{ProjectStatus[3]}</option>
-        </select>
+          <IonSelectOption value='1'>{ProjectStatus[1]}</IonSelectOption>
+          <IonSelectOption value='2'>{ProjectStatus[2]}</IonSelectOption>
+          <IonSelectOption value='3'>{ProjectStatus[3]}</IonSelectOption>
+        </IonSelect>
 
       </fieldset>
     </>

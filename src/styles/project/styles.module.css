@@ -47,15 +47,56 @@
   color: var(--ion-color-danger) !important;
 }
 
-.warning {
+.edit {
   color: var(--ion-color-warning) !important;
 }
 
-.configProject {
-  border-radius: 2rem;
-  box-shadow: 0 0 10px 0px var(--ion-color-warning) !important;
-  width: 14rem;
+.warning {
+  --border-color: var(--ion-color-warning) !important;
+  --ripple-color: var(--ion-color-warning) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-warning) !important;
+}
+
+.success {
+  --border-color: var(--ion-color-success) !important;
+  --ripple-color: var(--ion-color-success) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-success) !important;
+}
+
+.secondary {
+  --border-color: var(--ion-color-warning) !important;
+  --ripple-color: var(--ion-color-warning) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-secondary) !important;
+}
+
+.configProjectNotStarted {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-warning) !important;
+  width: fit-content;
   text-align: center;
+  border: 1px solid var(--ion-color-warning);
+}
+
+.configProjectSuccess {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-success) !important;
+  width: fit-content;
+  text-align: center;
+  border: 1px solid var(--ion-color-success);
+}
+
+.configProjectInProgress {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
+   width: fit-content;
+  text-align: center;
+  border: 1px solid var(--ion-color-secondary);
 }
 
 .title {
@@ -67,15 +108,21 @@
 .containerInfo {
   display: flex;
   flex-wrap: wrap;
+  gap: 5rem;
+  align-items: flex-start;
 }
 
 .select {
-  background-color: var(--ion-color-warning) !important;
   color: var(--ion-color-dark-contrast);
   border-radius: 1rem;
   transition: 1s all ease !important;
 }
+
 .select:open {
   transition: 1s all ease !important;
-  
+}
+
+.backButton {
+  align-self: flex-start;
+  padding-inline: 1rem;
 }
