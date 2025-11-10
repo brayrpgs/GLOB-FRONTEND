@@ -10,6 +10,7 @@ import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { GetUserProject } from '../../models/GetUserProject'
 import { useEffect, useRef, useState } from 'react'
+import { GetProject } from '../../models/GetProject'
 
 interface componentProps {
   project: Project
@@ -120,19 +121,21 @@ const component: React.FC<componentProps> = ({ project }) => {
         />
         <select
           ref={selectRef}
+          defaultValue={project?.STATUS}
           className={`${styles.select} ${styleSelect[parseInt(status)]}`}
           value={status}
           onChange={(e) => {
-            setStatus(selectRef.current?.value as string)
             const exec = async (): Promise<void> => {
               const idProject = new URLHelper().getPathId()
               const body = {
-                status
+                status: e.currentTarget.value
               }
-              await new ProjectsUtils().patch(body, idProject)
+              const result = await new ProjectsUtils().patch<Project>(body, idProject)
+              setStatus(result.STATUS.toString())
             }
             void exec()
           }}
+          id='select'
         >
           <option value='1'>{ProjectStatus[1]}</option>
           <option value='2'>{ProjectStatus[2]}</option>
