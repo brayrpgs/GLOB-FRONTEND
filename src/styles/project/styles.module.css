@@ -47,15 +47,44 @@
   color: var(--ion-color-danger) !important;
 }
 
-.warning {
+.edit {
   color: var(--ion-color-warning) !important;
 }
 
-.configProject {
-  border-radius: 2rem;
-  box-shadow: 0 0 10px 0px var(--ion-color-warning) !important;
+.warning {
+  background-color: var(--ion-color-warning) !important;
+}
+
+.success {
+  background-color: var(--ion-color-success) !important;
+}
+
+.secondary {
+  background-color: var(--ion-color-secondary) !important;
+}
+
+.configProjectNotStarted {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-warning) !important;
   width: 14rem;
   text-align: center;
+  border: 1px solid var(--ion-color-warning);
+}
+
+.configProjectSuccess {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-success) !important;
+  width: 14rem;
+  text-align: center;
+  border: 1px solid var(--ion-color-success);
+}
+
+.configProjectInProgress {
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
+  width: 14rem;
+  text-align: center;
+  border: 1px solid var(--ion-color-secondary);
 }
 
 .title {
@@ -67,15 +96,16 @@
 .containerInfo {
   display: flex;
   flex-wrap: wrap;
+  gap: 5rem;
+  align-items: flex-start;
 }
 
 .select {
-  background-color: var(--ion-color-warning) !important;
   color: var(--ion-color-dark-contrast);
   border-radius: 1rem;
   transition: 1s all ease !important;
 }
+
 .select:open {
   transition: 1s all ease !important;
-  
 }

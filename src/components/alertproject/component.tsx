@@ -10,6 +10,7 @@ import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { GetUserProject } from '../../models/GetUserProject'
 import { useEffect, useRef, useState } from 'react'
+import { GetProject } from '../../models/GetProject'
 
 interface componentProps {
   project: Project
@@ -17,19 +18,29 @@ interface componentProps {
 const component: React.FC<componentProps> = ({ project }) => {
   const selectRef = useRef<HTMLSelectElement>(null)
   const [status, setStatus] = useState<string>(project?.STATUS?.toString() ?? '1')
+  const styleFieldset: Record<number, string> = {
+    1: styles.configProjectNotStarted,
+    2: styles.configProjectInProgress,
+    3: styles.configProjectSuccess
+  }
+  const styleSelect: Record<number, string> = {
+    1: styles.warning,
+    2: styles.secondary,
+    3: styles.success
+  }
 
   useEffect(() => {
     setStatus(project?.STATUS?.toString() ?? '1')
   }, [project])
   return (
     <>
-      <fieldset className={styles.configProject}>
+      <fieldset className={styleFieldset[parseInt(status)]}>
         <legend>{'settings project'.toUpperCase()}</legend>
         <IonButton
           id='openAlert'
-          color='warning'
+          color='dark'
         >
-          <IonIcon icon={create} className={styles.bloom} />
+          <IonIcon icon={create} />
           Config
         </IonButton>
         <IonAlert
@@ -78,7 +89,7 @@ const component: React.FC<componentProps> = ({ project }) => {
                 }
                 void exec()
               },
-              cssClass: styles.warning
+              cssClass: styles.edit
             }
           ]}
           inputs={[
@@ -110,9 +121,21 @@ const component: React.FC<componentProps> = ({ project }) => {
         />
         <select
           ref={selectRef}
-          className={`${styles.select}`}
+          defaultValue={project?.STATUS}
+          className={`${styles.select} ${styleSelect[parseInt(status)]}`}
           value={status}
-          onChange={(e) => setStatus(selectRef.current?.value as string)}
+          onChange={(e) => {
+            const exec = async (): Promise<void> => {
+              const idProject = new URLHelper().getPathId()
+              const body = {
+                status: e.currentTarget.value
+              }
+              const result = await new ProjectsUtils().patch<Project>(body, idProject)
+              setStatus(result.STATUS.toString())
+            }
+            void exec()
+          }}
+          id='select'
         >
           <option value='1'>{ProjectStatus[1]}</option>
           <option value='2'>{ProjectStatus[2]}</option>
