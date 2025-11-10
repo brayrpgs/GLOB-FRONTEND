@@ -281,6 +281,7 @@ export const component: React.FC = () => {
             </IonList>
             <div className={styles.form}>
               <IonButton
+                fill='outline'
                 mode='ios' type='submit' color='success'
                 onClick={() => {
                   const exec = async (): Promise<void> => {
@@ -318,7 +319,7 @@ export const component: React.FC = () => {
                 }}
               >Create Issue
               </IonButton>
-              <IonButton mode='ios' type='reset' color='danger' onClick={() => { setIsModalOpen(false) }}>Close</IonButton>
+              <IonButton fill='outline' mode='ios' type='reset' color='danger' onClick={() => { setIsModalOpen(false) }}>Close</IonButton>
             </div>
           </IonContent>
         </IonModal>
