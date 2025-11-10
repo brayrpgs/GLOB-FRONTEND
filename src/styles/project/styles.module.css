@@ -109,3 +109,8 @@
 .select:open {
   transition: 1s all ease !important;
 }
+
+.backButton {
+  align-self: flex-start;
+  padding-inline: 1rem;
+}
