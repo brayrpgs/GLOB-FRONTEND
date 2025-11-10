@@ -52,21 +52,33 @@
 }
 
 .warning {
-  background-color: var(--ion-color-warning) !important;
+  --border-color: var(--ion-color-warning) !important;
+  --ripple-color: var(--ion-color-warning) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-warning) !important;
 }
 
 .success {
-  background-color: var(--ion-color-success) !important;
+  --border-color: var(--ion-color-success) !important;
+  --ripple-color: var(--ion-color-success) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-success) !important;
 }
 
 .secondary {
-  background-color: var(--ion-color-secondary) !important;
+  --border-color: var(--ion-color-warning) !important;
+  --ripple-color: var(--ion-color-warning) !important;
+  --border-style: solid !important;
+  --border-width: 1px !important;
+  color: var(--ion-color-secondary) !important;
 }
 
 .configProjectNotStarted {
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-warning) !important;
-  width: 14rem;
+  width: fit-content;
   text-align: center;
   border: 1px solid var(--ion-color-warning);
 }
@@ -74,7 +86,7 @@
 .configProjectSuccess {
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-success) !important;
-  width: 14rem;
+  width: fit-content;
   text-align: center;
   border: 1px solid var(--ion-color-success);
 }
@@ -82,7 +94,7 @@
 .configProjectInProgress {
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
-  width: 14rem;
+   width: fit-content;
   text-align: center;
   border: 1px solid var(--ion-color-secondary);
 }
@@ -108,4 +120,9 @@
 
 .select:open {
   transition: 1s all ease !important;
+}
+
+.backButton {
+  align-self: flex-start;
+  padding-inline: 1rem;
 }

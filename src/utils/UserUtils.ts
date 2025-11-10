@@ -5,7 +5,7 @@ import { Api } from '../interfaces/Api'
 import { TokenPayload } from '../models/TokenPayload'
 
 class UserUtils implements Api {
-  token(): string { return localStorage.getItem(TOKEN_KEY_NAME) as string }
+  token (): string { return localStorage.getItem(TOKEN_KEY_NAME) as string }
   async get<T>(params?: any): Promise<T> {
     const request = new RequestHelper(
       USER_API_SECURITY_URL,

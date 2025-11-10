@@ -54,6 +54,7 @@ const component: React.FC = () => {
             placeholder='Search Users'
             onInput={(e) => { queryUsers(e.currentTarget.value as string) }}
             mode='ios'
+            onIonClear={(e) => { setUsersQuery([]) }}
           />
           <IonList mode='ios'>
             {usersQuery.map((value, key) => (
