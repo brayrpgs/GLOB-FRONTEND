@@ -25,6 +25,9 @@
 
 .cursor{
   cursor: pointer;
+  &:hover {
+    outline: var(--ion-color-medium) 1px solid !important;
+  }
 }
 
 .searchBar {
@@ -77,6 +80,10 @@
   padding: 1rem;
   background: unset !important;
   border-radius: 1rem;
+}
+
+.hide {
+  display: none;
 }
 
 @keyframes fadeInVertical {
