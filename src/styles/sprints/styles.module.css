@@ -1,4 +1,4 @@
-.issuesField {
+.sprintField {
   width: 40rem;
   height: 50dvh;
   border: var(--ion-color-primary) 1px solid;
@@ -21,13 +21,6 @@
 
 .subItem {
   justify-self: left;
-}
-
-.cursor{
-  cursor: pointer;
-  &:hover {
-    outline: var(--ion-color-medium) 1px solid !important;
-  }
 }
 
 .searchBar {
@@ -80,10 +73,6 @@
   padding: 1rem;
   background: unset !important;
   border-radius: 1rem;
-}
-
-.hide {
-  display: none;
 }
 
 @keyframes fadeInVertical {

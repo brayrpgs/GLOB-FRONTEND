@@ -46,7 +46,17 @@ class IssueUtils implements Api {
     return await request.buildRequest()
   }
 
-  delete!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
+  async delete<T>(path: any): Promise<T> {
+    const request = new RequestHelper(
+      `${ISSUES_API_DATA_APLICATION_URL}${path as number}`,
+      METHOD_HTTP.DELETE,
+      RESPONSE_TYPE.JSON
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    return await request.buildRequest()
+  }
+
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
 export { IssueUtils }
