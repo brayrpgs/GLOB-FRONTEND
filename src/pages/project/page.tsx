@@ -7,6 +7,7 @@ import { component as Footer } from '../../components/footer/component'
 import { component as Alert } from '../../components/alertproject/component'
 import { component as Users } from '../../components/users/component'
 import { component as Issues } from '../../components/issues/component'
+import { component as Sprints } from '../../components/sprints/component'
 /**
  * imports ionic
  */
@@ -46,6 +47,7 @@ const Page: React.FC = () => {
             <Alert project={project as Project} />
             <Users />
             <Issues />
+            <Sprints />
           </div>
         </IonContent>
         <Footer />
