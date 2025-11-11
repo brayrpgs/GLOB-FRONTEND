@@ -105,7 +105,7 @@ const Page: React.FC = () => {
           email: email.trim(),
           username: username.trim(),
           password: password.trim(),
-          avatarUrl
+          ...(avatarUrl && { avatarUrl })
         })
         // Handle response
         if (user.length > 0) {
