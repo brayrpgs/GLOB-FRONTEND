@@ -1,0 +1,93 @@
+.issuesField {
+  width: 40rem;
+  height: 50dvh;
+  border: var(--ion-color-primary) 1px solid;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
+}
+
+.fadeInVertical {
+  animation: fadeInVertical 1s ease;
+}
+
+.borderRadius {
+  border-radius: 1rem;
+}
+
+.item {
+  justify-self: center;
+  width: 100%;
+}
+
+.subItem {
+  justify-self: left;
+}
+
+.cursor{
+  cursor: pointer;
+}
+
+.searchBar {
+  text-align: center;
+}
+
+.searchItem {
+  cursor: pointer;
+  outline: 1px solid var(--ion-color-primary) !important;
+  border-radius: 1rem;
+  margin: 1rem;
+}
+
+.containerSearch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+
+.icon {
+  cursor: pointer;
+  transition: .5s ease;
+}
+
+.icon:hover {
+  color: var(--ion-color-medium);
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-direction: row-reverse;
+  justify-content: space-evenly;
+}
+
+.buttonDeleteColor {
+  color: var(--ion-color-danger) !important;
+  outline: 1px solid !important;
+  padding: 1rem;
+  background: unset !important;
+  border-radius: 1rem;
+}
+
+.buttonCreateColor {
+  color: var(--ion-color-success) !important;
+  outline: 1px solid !important;
+  padding: 1rem;
+  background: unset !important;
+  border-radius: 1rem;
+}
+
+@keyframes fadeInVertical {
+
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

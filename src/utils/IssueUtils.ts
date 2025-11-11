@@ -19,7 +19,18 @@ class IssueUtils implements Api {
     return await request.buildRequest()
   }
 
-  post!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
+  async post<T>(body: any): Promise<T> {
+    const request = new RequestHelper(
+      ISSUES_API_DATA_APLICATION_URL,
+      METHOD_HTTP.POST,
+      RESPONSE_TYPE.JSON,
+      body
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    request.addHeaders('Content-Type', 'application/json')
+    return await request.buildRequest()
+  }
 
   put!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
   async patch<T>(body: any, path: any): Promise<T> {
@@ -35,7 +46,17 @@ class IssueUtils implements Api {
     return await request.buildRequest()
   }
 
-  delete!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
+  async delete<T>(path: any): Promise<T> {
+    const request = new RequestHelper(
+      `${ISSUES_API_DATA_APLICATION_URL}${path as number}`,
+      METHOD_HTTP.DELETE,
+      RESPONSE_TYPE.JSON
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    return await request.buildRequest()
+  }
+
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
 export { IssueUtils }

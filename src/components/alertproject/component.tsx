@@ -1,4 +1,4 @@
-import { IonAlert, IonButton, IonIcon } from '@ionic/react'
+import { IonAlert, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/react'
 import { Project } from '../../models/Project'
 import styles from '../../styles/project/styles.module.css'
 import { create } from 'ionicons/icons'
@@ -10,13 +10,12 @@ import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { GetUserProject } from '../../models/GetUserProject'
 import { useEffect, useRef, useState } from 'react'
-import { GetProject } from '../../models/GetProject'
 
 interface componentProps {
   project: Project
 }
 const component: React.FC<componentProps> = ({ project }) => {
-  const selectRef = useRef<HTMLSelectElement>(null)
+  const selectRef = useRef<HTMLIonSelectElement>(null)
   const [status, setStatus] = useState<string>(project?.STATUS?.toString() ?? '1')
   const styleFieldset: Record<number, string> = {
     1: styles.configProjectNotStarted,
@@ -119,16 +118,18 @@ const component: React.FC<componentProps> = ({ project }) => {
             }
           ]}
         />
-        <select
+        <IonSelect
+          labelPlacement='floating' label='STATUS PROJECT'
+          mode='ios'
           ref={selectRef}
           defaultValue={project?.STATUS}
           className={`${styles.select} ${styleSelect[parseInt(status)]}`}
           value={status}
-          onChange={(e) => {
+          onIonChange={(e) => {
             const exec = async (): Promise<void> => {
               const idProject = new URLHelper().getPathId()
               const body = {
-                status: e.currentTarget.value
+                status: e.detail.value
               }
               const result = await new ProjectsUtils().patch<Project>(body, idProject)
               setStatus(result.STATUS.toString())
@@ -137,10 +138,10 @@ const component: React.FC<componentProps> = ({ project }) => {
           }}
           id='select'
         >
-          <option value='1'>{ProjectStatus[1]}</option>
-          <option value='2'>{ProjectStatus[2]}</option>
-          <option value='3'>{ProjectStatus[3]}</option>
-        </select>
+          <IonSelectOption value='1'>{ProjectStatus[1]}</IonSelectOption>
+          <IonSelectOption value='2'>{ProjectStatus[2]}</IonSelectOption>
+          <IonSelectOption value='3'>{ProjectStatus[3]}</IonSelectOption>
+        </IonSelect>
 
       </fieldset>
     </>
