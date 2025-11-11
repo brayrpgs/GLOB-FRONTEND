@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from '../../styles/issues/styles.module.css'
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonSearchbar } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonSearchbar, IonSelect, IonSelectOption } from '@ionic/react'
 import { Issue } from '../../models/Issue'
 import { URLHelper } from '../../Helpers/URLHelper'
 import { IssueUtils } from '../../utils/IssueUtils'
@@ -8,11 +8,20 @@ import { GetIssues } from '../../models/GetIssues'
 import { IssueStatus } from '../../enums/IssueStatus'
 import { addCircle, informationCircle } from 'ionicons/icons'
 import { Colors } from '../../enums/Color'
+import { IssueTypeStatus } from '../../enums/IssueTypeStatus'
+import { IssueTypePriority } from '../../enums/IssueTypePriority'
+import { UserProject } from '../../models/UserProject'
+import { User } from '../../models/User'
+import { UserProjectUtils } from '../../utils/UserProjectUtils'
+import { GetUserProject } from '../../models/GetUserProject'
+import { UserUtils } from '../../utils/UserUtils'
 
 export const component: React.FC = () => {
+  /** states */
   const [issues, setIssues] = useState<Issue[]>([])
   const [issuesQuery, setIssuesQuery] = useState<Issue[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [myUsers, setMyUsers] = useState<MyUsers[]>([])
   /* list references inputs */
   const summaryRef = useRef<HTMLIonInputElement>(null)
   const descriptionRef = useRef<HTMLIonInputElement>(null)
@@ -23,15 +32,17 @@ export const component: React.FC = () => {
   const customStartDateRef = useRef<HTMLIonInputElement>(null)
   const customEndDateRef = useRef<HTMLIonInputElement>(null)
   const storyPointEstimateRef = useRef<HTMLIonInputElement>(null)
-  const parentSummaryRef = useRef<HTMLIonInputElement>(null)
-  const issueTypeRef = useRef<HTMLIonInputElement>(null)
-  const userAssignedRef = useRef<HTMLIonInputElement>(null)
-  const userCreatorRef = useRef<HTMLIonInputElement>(null)
-  const userInformatorRef = useRef<HTMLIonInputElement>(null)
+  const parentSummaryRef = useRef<HTMLIonSelectElement>(null)
+  const issueTypeStatusRef = useRef<HTMLIonSelectElement>(null)
+  const issueTypePriorityRef = useRef<HTMLIonSelectElement>(null)
+  const userAssignedRef = useRef<HTMLIonSelectElement>(null)
+  const userCreatorRef = useRef<HTMLIonSelectElement>(null)
+  const userInformatorRef = useRef<HTMLIonSelectElement>(null)
   const sprintIdRef = useRef<HTMLIonInputElement>(null)
   const statusRef = useRef<HTMLIonInputElement>(null)
   useEffect(() => {
     void getIssues(setIssues)
+    void exec(setMyUsers)
   }, [])
   return (
     <fieldset className={styles.issuesField}>
@@ -120,7 +131,7 @@ export const component: React.FC = () => {
             <IonList>
               <IonListHeader>{'Create a new Issue'.toUpperCase()}</IonListHeader>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='text'
                   labelPlacement='floating'
@@ -130,7 +141,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='text'
                   labelPlacement='floating'
@@ -140,7 +151,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='date'
                   labelPlacement='floating'
@@ -150,7 +161,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='date'
                   labelPlacement='floating'
@@ -160,7 +171,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='number'
                   labelPlacement='floating'
@@ -169,7 +180,8 @@ export const component: React.FC = () => {
                   ref={votesRef}
                 />
               </IonItem>
-              <IonItem>
+
+              <IonItem mode='ios'>
                 <IonInput
                   type='number'
                   labelPlacement='floating'
@@ -179,7 +191,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='date'
                   labelPlacement='floating'
@@ -189,7 +201,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='date'
                   labelPlacement='floating'
@@ -199,7 +211,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='number'
                   labelPlacement='floating'
@@ -209,57 +221,103 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
-                <IonInput
-                  type='number'
+              <IonItem mode='ios'>
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
                   label={'parent_summary'.toUpperCase()}
                   ref={parentSummaryRef}
-                />
+                >
+                  <IonSelectOption key={0} value={0}>No Parent</IonSelectOption>
+                  {issues.map((data) => (
+                    <IonSelectOption key={data.ISSUE_ID} value={data.ISSUE_ID}>
+                      {data.SUMMARY.slice(0, 50)}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
-              <IonItem>
-                <IonInput
-                  type='number'
+              <IonItem mode='ios'>
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
-                  label={'issue_type'.toUpperCase()}
-                  ref={issueTypeRef}
-                />
+                  label={'issue_type_status'.toUpperCase()}
+                  ref={issueTypeStatusRef}
+                >
+                  <IonSelectOption key={0} value={0}>No Type</IonSelectOption>
+                  {getIssueTypesStatus().map((data) => (
+                    <IonSelectOption key={data} value={data}>
+                      {IssueTypeStatus[data]}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
-              <IonItem>
-                <IonInput
-                  type='number'
+              <IonItem mode='ios'>
+                <IonSelect
+                  labelPlacement='floating'
+                  mode='ios'
+                  label={'issue_type_priority'.toUpperCase()}
+                  ref={issueTypePriorityRef}
+                >
+                  <IonSelectOption key={0} value={0}>No Priority</IonSelectOption>
+                  {getIssueTypesPriority().map((data) => (
+                    <IonSelectOption key={data} value={data}>
+                      {IssueTypePriority[data]}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+
+              <IonItem mode='ios'>
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_assigned'.toUpperCase()}
                   ref={userAssignedRef}
-                />
+                >
+                  <IonSelectOption key={0} value={0}>No Priority</IonSelectOption>
+                  {myUsers.map((data) => (
+                    <IonSelectOption key={data.userProject.USER_PROJECT_ID} value={data.userProject.USER_PROJECT_ID}>
+                      {data.user.USERNAME} - {data.user.EMAIL}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
-              <IonItem>
-                <IonInput
-                  type='number'
+              <IonItem mode='ios'>
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_creator'.toUpperCase()}
                   ref={userCreatorRef}
-                />
+                >
+                  <IonSelectOption key={0} value={0}>No Priority</IonSelectOption>
+                  {myUsers.map((data) => (
+                    <IonSelectOption key={data.userProject.USER_PROJECT_ID} value={data.userProject.USER_PROJECT_ID}>
+                      {data.user.USERNAME} - {data.user.EMAIL}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
-              <IonItem>
-                <IonInput
-                  type='number'
+              <IonItem mode='ios'>
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_informator'.toUpperCase()}
                   ref={userInformatorRef}
-                />
+                >
+                  <IonSelectOption key={0} value={0}>No Priority</IonSelectOption>
+                  {myUsers.map((data) => (
+                    <IonSelectOption key={data.userProject.USER_PROJECT_ID} value={data.userProject.USER_PROJECT_ID}>
+                      {data.user.USERNAME} - {data.user.EMAIL}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='number'
                   labelPlacement='floating'
@@ -269,7 +327,7 @@ export const component: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem>
+              <IonItem mode='ios'>
                 <IonInput
                   type='number'
                   labelPlacement='floating'
@@ -285,6 +343,8 @@ export const component: React.FC = () => {
                 mode='ios' type='submit' color='success'
                 onClick={() => {
                   const exec = async (): Promise<void> => {
+                    // const getIssueTypeStatus =
+
                     const issue =
                     {
                       summary: summaryRef.current?.value,
@@ -347,3 +407,65 @@ const filterIssues = (query: string, issues: Issue[]): Issue[] =>
     IssueStatus[issue.STATUS_ISSUE].includes(query) ||
     issue.DUE_DATE.includes(query)
   )
+
+const getIssueTypesStatus = (): IssueTypeStatus[] => {
+  return [IssueTypeStatus.Bug, IssueTypeStatus.Epic, IssueTypeStatus.Other, IssueTypeStatus.Story, IssueTypeStatus.Task]
+}
+const getIssueTypesPriority = (): IssueTypePriority[] => {
+  return [IssueTypePriority.Low, IssueTypePriority.Medium, IssueTypePriority.High]
+}
+
+const getUsersProject = async (): Promise<UserProject[]> => {
+  const idProject = new URLHelper().getPathId()
+  const issues = await new IssueUtils().get<GetIssues>(
+    {
+      project_id_fk: idProject
+    }
+  )
+  // processing data
+  const idUsers = new Set<number>()
+  issues.Issues.forEach((user) => {
+    // validate if fk is null
+    if (user.USER_ASSIGNED_FK !== null) idUsers.add(user.USER_ASSIGNED_FK)
+    if (user.USER_CREATOR_ISSUE_FK !== null) idUsers.add(user.USER_CREATOR_ISSUE_FK)
+    if (user.USER_INFORMATOR_ISSUE_FK !== null) idUsers.add(user.USER_INFORMATOR_ISSUE_FK)
+  })
+  // get every user
+  const userProjectArray: UserProject[] = []
+  for (const id of idUsers.values()) {
+    const usersProject = await new UserProjectUtils().get<GetUserProject>(
+      {
+        user_project_id: id
+      }
+    )
+    userProjectArray.push(usersProject.data[0])
+  }
+  // ready
+  return userProjectArray
+}
+const getMyUsers = async (usersProject: UserProject[]): Promise<MyUsers[]> => {
+  const result: MyUsers[] = []
+  for (const value of usersProject) {
+    const user = await new UserUtils().get<User[]>(
+      {
+        user_id: value.USER_ID_FK
+      }
+    )
+    result.push({
+      user: user[0],
+      userProject: value
+    })
+  }
+  return result
+}
+
+const exec = async (setMyUsers: React.Dispatch<React.SetStateAction<MyUsers[]>>): Promise<void> => {
+  const usersProject = await getUsersProject()
+  const myUsers = await getMyUsers(usersProject)
+  setMyUsers(myUsers)
+}
+
+interface MyUsers {
+  user: User
+  userProject: UserProject
+}
