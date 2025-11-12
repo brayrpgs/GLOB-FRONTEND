@@ -17,9 +17,14 @@ class ValidateHome extends Validate {
       MembershipPlan.PLUS,
       MembershipPlan.PRO
     ].includes(user.MEMBERSHIPPLAN_ID)
+    console.log('canView:', canView)
     if (!canView) {
-      this.redirect()
+      this.redirectToMembership()
     }
+  }
+
+  redirectToMembership (): void {
+    new ValidateHome('/membership').redirect()
   }
 
   async getUser (): Promise<User> {

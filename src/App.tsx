@@ -46,6 +46,7 @@ import { Page as Main } from './pages/main/page'
 import { Page as Welcome } from './pages/welcome/page'
 import { Page as Contact } from './pages/contact/page'
 import { Page as Project } from './pages/project/page'
+import { Page as Membership } from './pages/membership/page'
 
 setupIonicReact()
 
@@ -61,6 +62,7 @@ const App: React.FC = () => (
         <Route exact path='/welcome' component={Welcome} />
         <Route exact path='/contact' component={Contact} />
         <Route path='/project' component={Project} />
+        <Route path='/membership' component={Membership} />
         <Route component={Error} />
       </IonRouterOutlet>
     </IonReactRouter>
