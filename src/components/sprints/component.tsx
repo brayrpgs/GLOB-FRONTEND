@@ -268,6 +268,7 @@ export const component: React.FC = () => {
 
                     await getSprints(setSprints, setIssuesFromProject)
                     setIsModalOpen(false)
+                    new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
                   }
                   void exec()
                 }}
@@ -292,6 +293,7 @@ export const component: React.FC = () => {
                     await getSprints(setSprints, setIssuesFromProject)
                     setEditingSprint(null)
                     setIsModalOpen(false)
+                    new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
                   }
                   void exec()
                 }}
