@@ -11,7 +11,7 @@ import { component as Sprints } from '../../components/sprints/component'
 /**
  * imports ionic
  */
-import { IonBackButton, IonContent, IonPage } from '@ionic/react'
+import { IonBackButton, IonContent, IonItemDivider, IonLabel, IonPage } from '@ionic/react'
 /** * imports utils and models
  */
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
@@ -48,6 +48,13 @@ const Page: React.FC = () => {
             <Users />
             <Issues />
             <Sprints />
+          </div>
+          <div>
+            <h2>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
+            <IonItemDivider>
+              <IonLabel>Section A</IonLabel>
+              {/** add componente here */}
+            </IonItemDivider>
           </div>
         </IonContent>
         <Footer />
