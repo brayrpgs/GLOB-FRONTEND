@@ -1,7 +1,7 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonLabel, IonList, IonProgressBar } from '@ionic/react'
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react'
 import styles from '../../styles/project/styles.module.css'
 import { useEffect, useState } from 'react'
-import { albumsOutline, analyticsOutline, calendarNumberOutline, layers, listOutline } from 'ionicons/icons'
+import { albumsOutline, calendarNumberOutline, layers, listOutline } from 'ionicons/icons'
 import { Project } from '../../models/Project'
 import { GetUserProject } from '../../models/GetUserProject'
 import { GetProject } from '../../models/GetProject'
@@ -45,11 +45,6 @@ export const component: React.FC = () => {
               </IonItem>
               <IonItem className={styles.suptitleCard}>
                 <span><IonIcon className={styles.bloom} icon={calendarNumberOutline} color='dark' /> <IonLabel>Date End: {['-infinity', 'infinity'].includes(value.DATE_END) ? 'No Date Set' : value.DATE_INIT}</IonLabel></span>
-              </IonItem>
-              <IonItem className={styles.suptitleCard}>
-                <span>
-                  <IonIcon className={styles.bloom} icon={analyticsOutline} color='warning' /> Progress: <IonProgressBar buffer={value.PROGRESS} value={value.PROGRESS} />
-                </span>
               </IonItem>
             </IonList>
           </IonCardContent>
