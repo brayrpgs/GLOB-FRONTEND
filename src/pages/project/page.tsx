@@ -8,6 +8,7 @@ import { component as Alert } from '../../components/alertproject/component'
 import { component as Users } from '../../components/users/component'
 import { component as Issues } from '../../components/issues/component'
 import { component as Sprints } from '../../components/sprints/component'
+import { component as UserProGraph } from '../../components/userprograph/component'
 /**
  * imports ionic
  */
@@ -51,9 +52,8 @@ const Page: React.FC = () => {
           </div>
           <div>
             <h2>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
-            <IonItemDivider>
-              <IonLabel>Section A</IonLabel>
-              {/** add componente here */}
+            <IonItemDivider color='light'>
+              <UserProGraph />
             </IonItemDivider>
           </div>
         </IonContent>
