@@ -9,6 +9,7 @@ import { component as Users } from '../../components/users/component'
 import { component as Issues } from '../../components/issues/component'
 import { component as Sprints } from '../../components/sprints/component'
 import { component as UserProGraph } from '../../components/userprograph/component'
+import { component as ProjectGraph } from '../../components/projectgraph/component'
 /**
  * imports ionic
  */
@@ -55,6 +56,7 @@ const Page: React.FC = () => {
             <IonItemDivider color='light'>
               <UserProGraph />
             </IonItemDivider>
+            <ProjectGraph />
           </div>
         </IonContent>
         <Footer />
