@@ -67,7 +67,7 @@ export const component: React.FC = () => {
             }
             onIonClear={(e) => { setIssuesQuery([]) }}
           />
-          <IonIcon icon={addCircle} size='large' className={styles.icon} id='open-modal' onClick={(e) => { setIssuesCreateAndEdit(undefined) }} />
+          <IonIcon icon={addCircle} size='large' className={styles.icon} id='open-modal' />
         </div>
         <div>
           <IonList mode='ios' className={styles.borderRadius}>
@@ -94,11 +94,7 @@ export const component: React.FC = () => {
                   <IonItem
                     mode='ios'
                     key={issue.ISSUE_ID}
-                    className={`${styles.fadeInVertical} ${styles.item} ${styles.cursor}`}
-                    onClick={(e) => {
-                      setIssuesCreateAndEdit(issue)
-                      setIsModalOpen(true)
-                    }}
+                    className={`${styles.fadeInVertical} ${styles.item}`}
                   >
                     <IonIcon
                       id={`issue-${issue.ISSUE_ID}`}
@@ -365,7 +361,7 @@ export const component: React.FC = () => {
             <div className={styles.form}>
               <IonButton
                 fill='outline'
-                mode='ios' type='submit' color='success' className={issuesCreateAndEdit?.ISSUE_ID != null ? styles.hide : ''}
+                mode='ios' type='submit' color='success'
                 onClick={() => {
                   const exec = async (): Promise<void> => {
                     try {
@@ -416,7 +412,6 @@ export const component: React.FC = () => {
                 fill='outline'
                 mode='ios'
                 color='warning'
-                className={issuesCreateAndEdit !== undefined ? '' : styles.hide}
               >Edit Issue
               </IonButton>
               <IonButton fill='outline' mode='ios' type='reset' color='danger' onClick={() => { setIsModalOpen(false) }}>Close</IonButton>
