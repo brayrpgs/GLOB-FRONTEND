@@ -2,6 +2,7 @@ import { IssueUtils } from './IssueUtils'
 import { UserProjectUtils } from './UserProjectUtils'
 import { URLHelper } from '../Helpers/URLHelper'
 import { GetIssues } from '../models/GetIssues'
+import { IssueStatus } from '../enums/IssueStatus'
 
 export async function getUserProductivity (userId: number): Promise<{ total: number, done: number }> {
   try {
@@ -27,6 +28,20 @@ export async function getUserProductivity (userId: number): Promise<{ total: num
     const total = userIssues.length
     const done = userIssues.filter((i) => i.STATUS_ISSUE === 3).length
 
+    return { total, done }
+  } catch (err) {
+    console.error('Error in getUserProductivity:', err)
+    return { total: 0, done: 0 }
+  }
+}
+
+export async function getProgreesProyect (proyectId: number): Promise<{ total: number, done: number }> {
+  try {
+    const issueUtils = new IssueUtils()
+    const issuesResponse = await issueUtils.get<GetIssues>({ project_id_fk: proyectId })
+    const issues = issuesResponse.Issues ?? []
+    const total = issues.length
+    const done = issues.filter((i) => i.STATUS_ISSUE === IssueStatus.Done).length
     return { total, done }
   } catch (err) {
     console.error('Error in getUserProductivity:', err)
