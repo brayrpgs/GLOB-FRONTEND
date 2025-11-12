@@ -1,9 +1,14 @@
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonBadge, IonGrid, IonRow, IonCol } from '@ionic/react'
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonBadge, IonGrid, IonRow, IonCol, useIonToast } from '@ionic/react'
 import { checkmarkCircle } from 'ionicons/icons'
 import { component as Header } from '../../components/header/component'
 import { component as Footer } from '../../components/footer/component'
 import { useState } from 'react'
+import { MembershipPlan } from '../../enums/MembershipPlan'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
+import { UserUtils } from '../../utils/UserUtils'
 import styles from '../../styles/membership/styles.module.css'
+import { Colors } from '../../enums/Color'
+import { ValidateHome } from '../../middleware/ValidateHome'
 
 interface Plan {
   name: string
@@ -18,21 +23,20 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    name: 'Basic',
+    name: 'BASIC',
     price: '$10',
     priceSuffix: '/month',
     description: 'Perfect for individuals starting to explore.',
     features: [
       'One project administration',
-      'Have a dedicated account manager',
-      '5 team members'
+      'Have a dedicated account manager'
     ],
     ctaText: 'Select Plan',
     popular: false,
     icon: '⭐'
   },
   {
-    name: 'Plus',
+    name: 'PLUS',
     price: '$20',
     priceSuffix: '/month',
     description: 'Ideal for professionals who need more power and support.',
@@ -42,7 +46,6 @@ const plans: Plan[] = [
       'Access to premium templates',
       'Priority support',
       'Monthly performance reports',
-      '10 team members',
       'Access to import Project of Jira'
     ],
     ctaText: 'Get Started Now',
@@ -50,7 +53,7 @@ const plans: Plan[] = [
     icon: '⚡'
   },
   {
-    name: 'Pro',
+    name: 'PRO',
     price: '$45',
     priceSuffix: '/month',
     description: 'The complete solution for teams and companies.',
@@ -61,7 +64,6 @@ const plans: Plan[] = [
       'Priority support',
       'Monthly performance reports',
       'Advanced analytics dashboard',
-      '15 team members',
       'Notifications live',
       'Access to import Project of Jira',
       'Access to use ultimate AI'
@@ -74,11 +76,43 @@ const plans: Plan[] = [
 
 const Page: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
-
-  const handleSelectPlan = (planName: string): void => {
+  const [toast] = useIonToast()
+  const handleSelectPlan = async (planName: string): Promise<void> => {
     setSelectedPlan(planName)
     console.log(`Plan selected: ${planName}`)
-    
+
+    try {
+      const userId = new TokenPayloadUtils().getTokenPayload().id
+
+      const planId = MembershipPlan[planName as any]
+
+      const exec = async (): Promise<void> => {
+        await new UserUtils().patch(
+          {
+            membership: planId
+          }, userId
+        )
+        void toast({
+          message: ('Membership updated successfully'),
+          duration: 2000,
+          color: Colors[Colors.success],
+          position: 'top'
+        })
+      }
+
+      void exec()
+      setTimeout(() => {
+        new ValidateHome('/home').redirect()
+      }, 2000)
+    } catch (error) {
+      void toast({
+        message: (error as Error).message,
+        duration: 2000,
+        color: Colors[Colors.danger],
+        position: 'top'
+      })
+      console.error('Error al actualizar el plan de membresía:', error)
+    }
   }
 
   return (
@@ -157,7 +191,7 @@ const Page: React.FC = () => {
                       expand='block'
                       color={selectedPlan === plan.name ? 'success' : plan.popular && !selectedPlan ? 'primary' : 'dark'}
                       className={styles.ctaButton}
-                      onClick={() => handleSelectPlan(plan.name)}
+                      onClick={async () => await handleSelectPlan(plan.name)}
                     >
                       {selectedPlan === plan.name ? '✓ Selected' : plan.ctaText}
                     </IonButton>
