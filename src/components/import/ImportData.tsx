@@ -20,6 +20,7 @@ import { GetUploadedBase64 } from '../../models/GetUploadedBase64'
 import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { ImportDataUtils } from '../../utils/ImportDataUtils'
+import { ValidateProject } from '../../middleware/ValidateProject'
 
 // Import CSV component
 const ImportData: React.FC = () => {
@@ -153,6 +154,9 @@ const ImportData: React.FC = () => {
       showToast('An error occurred while uploading the file', 'danger')
     } finally {
       setLoading(false)
+      setTimeout(() => {
+        new ValidateProject('/home').redirect()
+      }, 2500)
     }
   }
 
