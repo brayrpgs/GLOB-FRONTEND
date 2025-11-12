@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '../../styles/sprints/styles.module.css'
 import {
   IonSelect,
@@ -30,21 +30,31 @@ export const component: React.FC = () => {
   const [sprints, setSprints] = useState<Sprint[]>([])
   const [issues, setIssuesFromProject] = useState<Issue[]>([])
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null)
-
+  const [editingSprint, setEditingSprint] = useState<Sprint | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sprintsQuery, setSprintsQuery] = useState<Sprint[]>([])
-
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [sprintToDelete, setSprintToDelete] = useState<number | null>(null)
-
-  const nameRef = useRef<HTMLIonInputElement>(null)
-  const dateInitRef = useRef<HTMLIonInputElement>(null)
-  const dateEndRef = useRef<HTMLIonInputElement>(null)
+  const [nameValue, setNameValue] = useState('')
+  const [dateInitValue, setDateInitValue] = useState('')
+  const [dateEndValue, setDateEndValue] = useState('')
 
   useEffect(() => {
     void getSprints(setSprints, setIssuesFromProject)
   }, [])
+
+  useEffect(() => {
+    if (editingSprint != null) {
+      setNameValue(editingSprint.NAME)
+      setDateInitValue(editingSprint.DATE_INIT)
+      setDateEndValue(editingSprint.DATE_END)
+    } else {
+      setNameValue('')
+      setDateInitValue('')
+      setDateEndValue('')
+    }
+  }, [editingSprint])
 
   return (
     <fieldset className={styles.sprintField}>
@@ -58,7 +68,7 @@ export const component: React.FC = () => {
             placeholder='Search sprints...'
             value={searchQuery}
             onInput={(e) => {
-              const value = (e.currentTarget.value ?? '')
+              const value = e.currentTarget.value ?? ''
               setSearchQuery(value)
               setSprintsQuery(value !== '' ? filterSprints(value, sprints) : [])
             }}
@@ -67,69 +77,76 @@ export const component: React.FC = () => {
               setSprintsQuery([])
             }}
           />
-          <IonIcon icon={addCircle} size='large' className={styles.icon} id='open-modal-sprint' />
+          <IonIcon
+            icon={addCircle}
+            size='large'
+            className={styles.icon}
+            id='open-modal-sprint'
+            onClick={() => {
+              setEditingSprint(null)
+              setSelectedIssue(null)
+              setIsModalOpen(true)
+            }}
+          />
         </div>
 
         {searchQuery !== '' && (
           <IonList mode='ios' className={styles.borderRadius}>
             {sprintsQuery.length > 0
-              ? (
-                  sprintsQuery.map((s) => (
-                    <IonItem
-                      key={`search-${s.SPRINT_ID}`}
-                      mode='ios'
-                      className={`${styles.fadeInVertical} ${styles.searchItem}`}
-                      color='medium'
-                      onClick={() => {
-                        const target = document.getElementById(`sprint-${s.SPRINT_ID}`)
-                        target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                      }}
-                    >
-                      {`${s.NAME} - ${s.DESCRIPTION} (${s.DATE_INIT} → ${s.DATE_END})`}
-                    </IonItem>
-                  ))
-                )
-              : (
-                <IonItem mode='ios'>No matches</IonItem>
-                )}
+              ? sprintsQuery.map((s) => (
+                <IonItem
+                  key={`search-${s.SPRINT_ID}`}
+                  mode='ios'
+                  className={`${styles.fadeInVertical} ${styles.searchItem}`}
+                  color='medium'
+                  onClick={() => {
+                    const target = document.getElementById(`sprint-${s.SPRINT_ID}`)
+                    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }}
+                >
+                  {`${s.NAME} - ${s.DESCRIPTION} (${s.DATE_INIT} → ${s.DATE_END})`}
+                </IonItem>
+              ))
+              : <IonItem mode='ios'>No matches</IonItem>}
           </IonList>
         )}
 
         <IonList mode='ios' className={styles.borderRadius}>
           {sprints.length === 0
-            ? (
-              <IonItem mode='ios'>No sprints found</IonItem>
-              )
-            : (
-                sprints.map((s) => (
-                  <IonItem
-                    id={`sprint-${s.SPRINT_ID}`}
-                    mode='ios'
-                    key={s.SPRINT_ID}
-                    className={`${styles.fadeInVertical} ${styles.item}`}
-                  >
-                    <IonIcon
-                      icon={informationCircle}
-                      slot='start'
-                      className={`${styles.subItem} ${styles.cursor}`}
-                      color={Colors[Colors.secondary]}
-                    />
-                    <IonLabel className={styles.subItem}>{s.NAME}</IonLabel>
-                    <IonLabel className={styles.subItem}>{s.DATE_INIT}</IonLabel>
-                    <IonLabel className={styles.subItem}>{s.DATE_END}</IonLabel>
-                    <IonIcon
-                      icon={trash}
-                      slot='end'
-                      className={`${styles.subItem} ${styles.cursor}`}
-                      color={Colors[Colors.danger]}
-                      onClick={() => {
-                        setSprintToDelete(s.SPRINT_ID)
-                        setIsAlertOpen(true)
-                      }}
-                    />
-                  </IonItem>
-                ))
-              )}
+            ? <IonItem mode='ios'>No sprints found</IonItem>
+            : sprints.map((s) => (
+              <IonItem
+                id={`sprint-${s.SPRINT_ID}`}
+                mode='ios'
+                key={s.SPRINT_ID}
+                className={`${styles.fadeInVertical} ${styles.item} ${styles.cursor}`}
+                onClick={() => {
+                  setEditingSprint(s)
+                  setIsModalOpen(true)
+                }}
+              >
+                <IonIcon
+                  icon={informationCircle}
+                  slot='start'
+                  className={`${styles.subItem}`}
+                  color={Colors[Colors.secondary]}
+                />
+                <IonLabel className={styles.subItem}>{s.NAME}</IonLabel>
+                <IonLabel className={styles.subItem}>{s.DATE_INIT}</IonLabel>
+                <IonLabel className={styles.subItem}>{s.DATE_END}</IonLabel>
+                <IonIcon
+                  icon={trash}
+                  slot='end'
+                  className={`${styles.subItem} ${styles.cursor}`}
+                  color={Colors[Colors.danger]}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSprintToDelete(s.SPRINT_ID)
+                    setIsAlertOpen(true)
+                  }}
+                />
+              </IonItem>
+            ))}
         </IonList>
 
         <IonAlert
@@ -152,48 +169,78 @@ export const component: React.FC = () => {
 
         <IonModal
           mode='ios'
-          trigger='open-modal-sprint'
           animated
           isOpen={isModalOpen}
-          onIonModalDidPresent={() => setIsModalOpen(true)}
-          onDidDismiss={() => setIsModalOpen(false)}
+          onDidDismiss={() => {
+            setIsModalOpen(false)
+            setEditingSprint(null)
+            setSelectedIssue(null)
+            setNameValue('')
+            setDateInitValue('')
+            setDateEndValue('')
+          }}
         >
           <IonContent className='ion-padding'>
             <IonList>
-              <IonListHeader>CREATE NEW SPRINT</IonListHeader>
+              <IonListHeader>
+                {editingSprint == null ? 'CREATE NEW SPRINT' : 'EDIT SPRINT'}
+              </IonListHeader>
 
               <IonItem>
-                <IonInput type='text' labelPlacement='floating' mode='ios' label='NAME' ref={nameRef} />
-              </IonItem>
-
-              <IonItem>
-                <IonInput type='date' labelPlacement='floating' mode='ios' label='START DATE' ref={dateInitRef} />
-              </IonItem>
-
-              <IonItem>
-                <IonInput type='date' labelPlacement='floating' mode='ios' label='END DATE' ref={dateEndRef} />
-              </IonItem>
-
-              <IonItem>
-                <IonSelect
-                  labelPlacement='fixed'
-                  label='Select Issue'
+                <IonInput
+                  type='text'
+                  labelPlacement='floating'
                   mode='ios'
-                  placeholder='Select an Issue'
-                  className={styles.select}
-                  onIonChange={(e) => {
-                    const issueId = Number(e.detail.value)
-                    const foundIssue = issues.find((i) => i.ISSUE_ID === issueId)
-                    if (foundIssue != null) setSelectedIssue(foundIssue)
-                  }}
-                >
-                  {issues.map((issue) => (
-                    <IonSelectOption key={issue.ISSUE_ID} value={issue.ISSUE_ID}>
-                      {issue.SUMMARY} - {issue.DESCRIPTION}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
+                  label='NAME'
+                  value={nameValue}
+                  onIonChange={(e) => setNameValue(e.detail.value ?? '')}
+                />
               </IonItem>
+
+              <IonItem>
+                <IonInput
+                  type='date'
+                  labelPlacement='floating'
+                  mode='ios'
+                  label='START DATE'
+                  value={dateInitValue}
+                  onIonChange={(e) => setDateInitValue(e.detail.value ?? '')}
+                />
+              </IonItem>
+
+              <IonItem>
+                <IonInput
+                  type='date'
+                  labelPlacement='floating'
+                  mode='ios'
+                  label='END DATE'
+                  value={dateEndValue}
+                  onIonChange={(e) => setDateEndValue(e.detail.value ?? '')}
+                />
+              </IonItem>
+
+              {editingSprint == null && (
+                <IonItem>
+                  <IonSelect
+                    labelPlacement='fixed'
+                    label='Select Issue'
+                    mode='ios'
+                    placeholder='Select an Issue'
+                    className={styles.select}
+                    onIonChange={(e) => {
+                      const issueId = Number(e.detail.value)
+                      const foundIssue = issues.find((i) => i.ISSUE_ID === issueId)
+                      if (foundIssue != null) setSelectedIssue(foundIssue)
+                    }}
+                  >
+                    {issues.map((issue) => (
+                      <IonSelectOption key={issue.ISSUE_ID} value={issue.ISSUE_ID}>
+                        {issue.SUMMARY} - {issue.DESCRIPTION}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
+                </IonItem>
+              )}
             </IonList>
 
             <div className={styles.form}>
@@ -201,13 +248,14 @@ export const component: React.FC = () => {
                 fill='outline'
                 mode='ios'
                 color='success'
+                style={{ display: editingSprint != null ? 'none' : 'block' }}
                 onClick={() => {
                   const exec = async (): Promise<void> => {
                     const sprint = {
-                      name: nameRef.current?.value,
+                      name: nameValue,
                       description: selectedIssue?.SUMMARY,
-                      date_init: dateInitRef.current?.value,
-                      date_end: dateEndRef.current?.value
+                      date_init: dateInitValue,
+                      date_end: dateEndValue
                     }
                     const newSprint = await new SprintUtils().post<Sprint[]>(sprint)
 
@@ -218,18 +266,37 @@ export const component: React.FC = () => {
                       )
                     }
 
-                    if (newSprint != null) {
-                      await getSprints(setSprints, setIssuesFromProject)
-                      setIsModalOpen(false)
-                    } else {
-                      console.error('Error while creating sprint')
-                      setIsModalOpen(false)
-                    }
+                    await getSprints(setSprints, setIssuesFromProject)
+                    setIsModalOpen(false)
                   }
                   void exec()
                 }}
               >
                 Create Sprint
+              </IonButton>
+
+              <IonButton
+                fill='outline'
+                mode='ios'
+                color='warning'
+                style={{ display: editingSprint == null ? 'none' : 'block' }}
+                onClick={() => {
+                  const exec = async (): Promise<void> => {
+                    if (editingSprint == null) return
+                    const updatedSprint = {
+                      name: nameValue,
+                      date_init: dateInitValue,
+                      date_end: dateEndValue
+                    }
+                    await new SprintUtils().patch(updatedSprint, editingSprint.SPRINT_ID)
+                    await getSprints(setSprints, setIssuesFromProject)
+                    setEditingSprint(null)
+                    setIsModalOpen(false)
+                  }
+                  void exec()
+                }}
+              >
+                Edit Sprint
               </IonButton>
 
               <IonButton fill='outline' mode='ios' color='danger' onClick={() => setIsModalOpen(false)}>
@@ -248,9 +315,9 @@ const getSprints = async (
   setIssuesFromProject: React.Dispatch<React.SetStateAction<Issue[]>>
 ): Promise<void> => {
   const setIssues = await getIssues(setIssuesFromProject)
-
   const setSprintsId = new Set<number>()
   const setDescriptions = new Set<string>()
+
   setIssues.forEach((issue) => {
     if (issue.SPRINT_ID_FK != null) setSprintsId.add(issue.SPRINT_ID_FK)
     setDescriptions.add(issue.SUMMARY)
@@ -264,10 +331,7 @@ const getSprints = async (
 
   for (const description of setDescriptions.values()) {
     const sprintOrphan = await new SprintUtils().get<GetSprint>({ description })
-    if (
-      !projectSprints.some((s) => s.SPRINT_ID === sprintOrphan?.data?.[0]?.SPRINT_ID) &&
-      sprintOrphan.totalData > 0
-    ) {
+    if (!projectSprints.some((s) => s.SPRINT_ID === sprintOrphan?.data?.[0]?.SPRINT_ID) && sprintOrphan.totalData > 0) {
       projectSprints.push(sprintOrphan?.data?.[0])
     }
   }
