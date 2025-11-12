@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react'
 import { IonSelect, IonSelectOption, IonContent, IonItem, IonLabel } from '@ionic/react'
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { getUserProductivity } from '../../utils/ProductivityUtils'
+import { getUserProductivity } from '../../utils/GraphsUtils'
 import { UserProjectUtils } from '../../utils/UserProjectUtils'
 import { UserUtils } from '../../utils/UserUtils'
 import { URLHelper } from '../../Helpers/URLHelper'
 import styles from '../../styles/userprograph/styles.module.css'
+import { IssueUtils } from '../../utils/IssueUtils'
+import { GetIssues } from '../../models/GetIssues'
+import { Issue } from '../../models/Issue'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -28,30 +31,29 @@ const component: React.FC = () => {
 
   const getUsersFromProject = async (): Promise<void> => {
     try {
-      const projectId = new URLHelper().getPathId()
+      const projectId = Number(new URLHelper().getPathId())
+
+      const { ids } = await getUserProjectIdsFromProject(projectId)
+
       const userProjectUtils = new UserProjectUtils()
       const userUtils = new UserUtils()
-
-      const userProjectsResponse = await userProjectUtils.get<any>({ project_id_fk: projectId })
-      const userProjects = userProjectsResponse?.data ?? []
-      if (userProjects.length === 0) {
-        setUsers([])
-        return
-      }
-
-      const userIds = [...new Set(userProjects.map((u: any) => u.USER_ID_FK))]
-
       const usersData: User[] = []
-      for (const id of userIds) {
-        const res = await userUtils.get<any>({ user_id: id })
-        if (Array.isArray(res) && res[0] !== undefined && res[0] !== null) {
-          usersData.push(res[0])
+
+      for (const upId of ids) {
+        const userProjectResponse = await userProjectUtils.get<any>({ user_project_id: upId })
+        const userProject = userProjectResponse?.data?.[0]
+
+        if (userProject?.USER_ID_FK != null) {
+          const userResponse = await userUtils.get<User[]>({ user_id: userProject.USER_ID_FK })
+          if (Array.isArray(userResponse) && userResponse.length > 0) {
+            usersData.push(userResponse[0])
+          }
         }
       }
 
       setUsers(usersData)
     } catch (err) {
-      console.error('Error: ', err)
+      console.error('Error:', err)
       setUsers([])
     }
   }
@@ -71,12 +73,12 @@ const component: React.FC = () => {
   const pending = Math.max(dataChart.total - dataChart.done, 0)
 
   const chartData = {
-    labels: ['Done', 'In Progress'],
+    labels: ['Done', 'Incomplete'],
     datasets: [
       {
         label: 'Productivity',
         data: [completed, pending],
-        backgroundColor: ['#28a745', '#007bff'],
+        backgroundColor: ['#2dd55b', '#c5000f'],
         hoverOffset: 10,
         borderWidth: 2,
         borderColor: '#ffffff'
@@ -150,3 +152,23 @@ const component: React.FC = () => {
 }
 
 export { component }
+
+export const getUserProjectIdsFromProject = async (projectId: number): Promise<{
+  ids: number[]
+  count: number
+}> => {
+  const issueUtils = new IssueUtils()
+
+  const resp = await issueUtils.get<GetIssues>({ project_id_fk: projectId })
+  const issues: Issue[] = Array.isArray(resp?.Issues) ? resp.Issues : []
+
+  const set = new Set<number>()
+  for (const it of issues) {
+    if (typeof it.USER_ASSIGNED_FK === 'number') set.add(it.USER_ASSIGNED_FK)
+    if (typeof it.USER_CREATOR_ISSUE_FK === 'number') set.add(it.USER_CREATOR_ISSUE_FK)
+    if (typeof it.USER_INFORMATOR_ISSUE_FK === 'number') set.add(it.USER_INFORMATOR_ISSUE_FK)
+  }
+
+  const ids = [...set]
+  return { ids, count: ids.length }
+}
