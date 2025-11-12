@@ -466,38 +466,63 @@ export const component: React.FC = () => {
                 onClick={(e) => {
                   const exec = async (): Promise<void> => {
                     try {
-                      // create a new issueType
-                      const issueType = {
-                        status: issueTypeStatusRef.current?.value,
-                        priority: issueTypePriorityRef.current?.value
+                      // chaeck required fields with IonToast
+                      if (summaryRef.current?.value === '' || descriptionRef.current?.value === '') {
+                        throw new Error('Summary and Description are required fields')
                       }
-                      const newIssueType = await new IssueTypeUtils().post<IssueType[]>(issueType)
+                      if (resolveAtRef.current?.value === '' || dueDateRef.current?.value === '') {
+                        throw new Error('Resolve At and Due Date are required fields')
+                      }
+                      if (customStartDateRef.current?.value === '') {
+                        throw new Error('Custom Start Date is a required field')
+                      }
+                      if (votesRef.current?.value === null || originalEstimationRef.current?.value === null || storyPointEstimateRef.current?.value === null) {
+                        throw new Error('Votes, Original Estimation and Story Point Estimate are required fields')
+                      }
+                      // update a new issueType
+                      const newIssueType = await new IssueTypeUtils().patch<IssueType>(
+                        {
+                          status: issueTypeStatusRef.current?.value as number,
+                          priority: issueTypePriorityRef.current?.value as number
+                        },
+                        issuesCreateAndEdit?.ISSUE_TYPE as number
+                      )
                       // create issue with the new issueType id
                       const issue = {
-                        summary: summaryRef.current?.value,
-                        description: descriptionRef.current?.value,
-                        resolve_at: resolveAtRef.current?.value,
-                        due_date: dueDateRef.current?.value,
-                        votes: Number(votesRef.current?.value),
-                        original_estimation: Number(originalEstimationRef.current?.value),
-                        custom_start_date: customStartDateRef.current?.value,
-                        story_point_estimate: Number(storyPointEstimateRef.current?.value),
-                        parent_summary: Number(parentSummaryRef.current?.value) === 0 ? null : Number(parentSummaryRef.current?.value),
-                        issue_type: newIssueType[0].ISSUE_TYPE_ID,
+                        summary: summaryRef.current?.value ?? '',
+                        description: descriptionRef.current?.value ?? '',
+                        resolve_at: resolveAtRef.current?.value ?? new Date().toISOString(),
+                        due_date: dueDateRef.current?.value ?? new Date().toISOString(),
+                        votes: Number(votesRef.current?.value) ?? 0,
+                        original_estimation: Number(originalEstimationRef.current?.value) ?? 0,
+                        custom_start_date: customStartDateRef.current?.value ?? new Date().toISOString(),
+                        story_point_estimate: Number(storyPointEstimateRef.current?.value) ?? 0,
+                        parent_summary: parentSummaryRef.current?.value === 0 ? -1 : Number(parentSummaryRef.current?.value),
+                        issue_type: newIssueType.ISSUE_TYPE_ID,
                         project_id: new URLHelper().getPathId(),
-                        user_assigned: Number(userAssignedRef.current?.value) === 0 ? null : userAssignedRef.current?.value,
-                        user_creator: Number(userCreatorRef.current?.value) === 0 ? null : userCreatorRef.current?.value,
-                        user_informator: Number(userInformatorRef.current?.value) === 0 ? null : userInformatorRef.current?.value,
-                        sprint_id: Number(sprintIdRef.current?.value) === 0 ? null : sprintIdRef.current?.value,
-                        status: Number(statusRef.current?.value)
+                        user_assigned: userAssignedRef.current?.value === 0 ? -1 : userAssignedRef.current?.value,
+                        user_creator: userCreatorRef.current?.value === 0 ? -1 : userCreatorRef.current?.value,
+                        user_informator: userInformatorRef.current?.value === 0 ? -1 : userInformatorRef.current?.value,
+                        sprint_id: sprintIdRef.current?.value === 0 ? -1 : Number(sprintIdRef.current?.value),
+                        status: statusRef.current?.value ?? 0
                       }
-                      const updatedIssue = await new IssueUtils().patch<Issue>(issuesCreateAndEdit?.ISSUE_ID as number, issue)
+                      await new IssueUtils().patch<Issue>(
+                        issue,
+                        issuesCreateAndEdit?.ISSUE_ID as number
+                      )
+                      setIsModalOpen(false)
+                      new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
                     } catch (error) {
+                      void presentToast({
+                        message: (error as Error).message,
+                        duration: 2000,
+                        color: Colors[Colors.danger],
+                        position: 'top'
+                      })
                       console.error('Error updating issue', error)
                     }
                   }
                   void exec()
-                  new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
                 }}
               >Update Issue
               </IonButton>

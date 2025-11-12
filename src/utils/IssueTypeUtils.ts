@@ -33,7 +33,19 @@ class IssueTypeUtils implements Api {
   }
 
   put!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
-  patch!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
+  async patch<T>(body: any, path: any): Promise<T> {
+    const request = new RequestHelper(
+      `${ISSUES_TYPE_API_DATA_APLICATION_URL}${path as number}`,
+      METHOD_HTTP.PATCH,
+      RESPONSE_TYPE.JSON,
+      body
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Content-Type', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    return await request.buildRequest()
+  }
+
   delete!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
