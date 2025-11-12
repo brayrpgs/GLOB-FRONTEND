@@ -10,7 +10,6 @@ const component: React.FC = () => {
           <li>Basic Plan - $10/month</li>
           <li>Feature:One project administration</li>
           <li>Feature:Have a dedicated account manager</li>
-          <li>Feature:5 team members</li>
         </ul>
         <IonButton color='secondary' className={styles.buttons}>Subscribe</IonButton>
         <img src='/payment.svg' alt='payment-info' />
@@ -25,7 +24,6 @@ const component: React.FC = () => {
           <li>Feature:Access to premium templates</li>
           <li>Feature:Priority support</li>
           <li>Feature:Monthly performance reports</li>
-          <li>Feature:10 team members</li>
           <li>Feature:Access to import Project of Jira</li>
         </ul>
         <IonButton color='secondary' className={styles.buttons}>Subscribe</IonButton>
@@ -42,7 +40,6 @@ const component: React.FC = () => {
           <li>Feature:Priority support</li>
           <li>Feature:Monthly performance reports</li>
           <li>Feature:Advanced analytics dashboard</li>
-          <li>Feature:15 team members</li>
           <li>Feature:Notifications live</li>
           <li>Feature:Access to import Project of Jira</li>
           <li>Feature:Access to use ultimate AI</li>
