@@ -94,7 +94,7 @@
 .configProjectInProgress {
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
-   width: fit-content;
+  width: fit-content;
   text-align: center;
   border: 1px solid var(--ion-color-secondary);
 }
@@ -110,6 +110,7 @@
   flex-wrap: wrap;
   gap: 5rem;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .select {
