@@ -1,4 +1,4 @@
-import { TOKEN_KEY_NAME, USER_API_SECURITY_URL } from '../common/Common'
+import { MEMBERSHIP_API_DATA_APLICATION_URL, TOKEN_KEY_NAME, USER_API_SECURITY_URL } from '../common/Common'
 import { METHOD_HTTP, RESPONSE_TYPE } from '../Helpers/FetchHelper'
 import { RequestHelper } from '../Helpers/RequestHelper'
 import { Api } from '../interfaces/Api'
@@ -53,7 +53,19 @@ class UserUtils implements Api {
     return await request.buildRequest<T>()
   }
 
-  patch!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
+  async patch<T>(body: any, path: any): Promise<T> {
+    const request = new RequestHelper(
+      `${MEMBERSHIP_API_DATA_APLICATION_URL}${path as number}`,
+      METHOD_HTTP.PATCH,
+      RESPONSE_TYPE.JSON,
+      body
+    )
+    request.addHeaders('Content-Type', 'application/json')
+    request.addHeaders('Accept', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    return await request.buildRequest<T>()
+  }
+
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
 export { UserUtils }

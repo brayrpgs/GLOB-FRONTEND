@@ -1,0 +1,164 @@
+/* Header Section */
+.headerSection {
+  text-align: center;
+  padding: 30px 20px;
+  margin-bottom: 24px;
+}
+
+.headerBadge {
+  margin-bottom: 12px;
+  font-size: 10.5px;
+}
+
+.headerTitle {
+  font-size: 1.875rem;
+  font-weight: 400;
+  margin: 4px 0;
+  line-height: 1.2;
+  color: var(--ion-color-dark);
+}
+
+.headerSubtitle {
+  font-size: 0.825rem;
+  color: var(--ion-color-medium);
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+/* Plan Card */
+.planCard {
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid transparent;
+  height: 100%;
+}
+
+.planCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+/* Popular Card - solo cuando no hay selección */
+.popularCard {
+  border: 1.5px solid var(--ion-color-primary);
+  box-shadow: 0 3px 9px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+/* Selected Card - cuando el usuario lo selecciona */
+.selectedCard {
+  border: 1.5px solid var(--ion-color-success) !important;
+  box-shadow: 0 3px 9px rgba(var(--ion-color-success-rgb), 0.3) !important;
+  transform: scale(1.02);
+}
+
+.popularBadge,
+.selectedBadge {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 10;
+}
+
+/* Card Header */
+.cardHeader {
+  text-align: center;
+  padding: 18px 12px;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.planIcon {
+  font-size: 2.25rem;
+  margin-bottom: 12px;
+}
+
+.planName {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.planDescription {
+  color: var(--ion-color-medium);
+  font-size: 0.675rem;
+  margin-bottom: 12px;
+}
+
+.priceContainer {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.price {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.priceSuffix {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  margin-left: 6px;
+}
+
+
+.featureItem {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 6px;
+}
+
+.checkIcon {
+  font-size: 0.975rem;
+  margin-right: 6px;
+}
+
+.ctaButton {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.trustSection {
+  text-align: center;
+  padding: 24px 20px;
+  margin-top: 15px;
+}
+
+.trustText {
+  color: var(--ion-color-medium);
+  font-size: 0.675rem;
+  margin: 0;
+}
+
+.animationEnter {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .headerTitle {
+    font-size: 1.5rem;
+  }
+
+  .selectedCard {
+    transform: scale(1);
+  }
+
+  .planCard:hover {
+    transform: translateY(-1.5px);
+  }
+}
