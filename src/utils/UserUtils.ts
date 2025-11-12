@@ -41,8 +41,19 @@ class UserUtils implements Api {
     return await request.buildRequest()
   }
 
+  async delete<T>(path?: any): Promise<T> {
+    const request = new RequestHelper(
+      `${USER_API_SECURITY_URL}/${path as number}`,
+      METHOD_HTTP.DELETE,
+      RESPONSE_TYPE.JSON,
+      null,
+      null
+    )
+    request.addHeaders('Content-Type', 'application/json')
+    return await request.buildRequest<T>()
+  }
+
   patch!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
-  delete !: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
 export { UserUtils }

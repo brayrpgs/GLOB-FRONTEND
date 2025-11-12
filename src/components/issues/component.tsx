@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from '../../styles/issues/styles.module.css'
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonSearchbar, IonSelect, IonSelectOption } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonSearchbar, IonSelect, IonSelectOption, useIonToast } from '@ionic/react'
 import { Issue } from '../../models/Issue'
 import { URLHelper } from '../../Helpers/URLHelper'
 import { IssueUtils } from '../../utils/IssueUtils'
@@ -18,6 +18,10 @@ import { UserUtils } from '../../utils/UserUtils'
 import { IssueType } from '../../models/IssueType'
 import { IssueTypeUtils } from '../../utils/IssueTypeUtils'
 import { ValidateProject } from '../../middleware/ValidateProject'
+import { GetIssueType } from '../../models/GetIssueType'
+import { Sprint } from '../../models/Sprint'
+import { SprintUtils } from '../../utils/SprintUtils'
+import { GetSprint } from '../../models/GetSprint'
 
 export const component: React.FC = () => {
   /** states */
@@ -26,7 +30,9 @@ export const component: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [myUsers, setMyUsers] = useState<MyUsers[]>([])
   const [issuesCreateAndEdit, setIssuesCreateAndEdit] = useState<Issue>()
-  /* list references inputs */
+  const [issueTypeCreateAndEdit, setIssueTypeCreateAndEdit] = useState<IssueType>()
+  const [sprints, setSprints] = useState<Sprint[]>([])
+  //* refs for edit issue */
   const summaryRef = useRef<HTMLIonInputElement>(null)
   const descriptionRef = useRef<HTMLIonInputElement>(null)
   const resolveAtRef = useRef<HTMLIonInputElement>(null)
@@ -34,7 +40,6 @@ export const component: React.FC = () => {
   const votesRef = useRef<HTMLIonInputElement>(null)
   const originalEstimationRef = useRef<HTMLIonInputElement>(null)
   const customStartDateRef = useRef<HTMLIonInputElement>(null)
-  const customEndDateRef = useRef<HTMLIonInputElement>(null)
   const storyPointEstimateRef = useRef<HTMLIonInputElement>(null)
   const parentSummaryRef = useRef<HTMLIonSelectElement>(null)
   const issueTypeStatusRef = useRef<HTMLIonSelectElement>(null)
@@ -42,12 +47,16 @@ export const component: React.FC = () => {
   const userAssignedRef = useRef<HTMLIonSelectElement>(null)
   const userCreatorRef = useRef<HTMLIonSelectElement>(null)
   const userInformatorRef = useRef<HTMLIonSelectElement>(null)
-  const sprintIdRef = useRef<HTMLIonInputElement>(null)
+  const sprintIdRef = useRef<HTMLIonSelectElement>(null)
   const statusRef = useRef<HTMLIonSelectElement>(null)
+  const [presentToast] = useIonToast()
   useEffect(() => {
     void getIssues(setIssues)
     void exec(setMyUsers)
-  }, [])
+    if (issues.length > 0) {
+      void getSprintsFromBackend(setSprints, issues)
+    }
+  }, [issues.length])
   return (
     <fieldset className={styles.issuesField}>
       <legend>{'issues'.toUpperCase()}</legend>
@@ -67,7 +76,13 @@ export const component: React.FC = () => {
             }
             onIonClear={(e) => { setIssuesQuery([]) }}
           />
-          <IonIcon icon={addCircle} size='large' className={styles.icon} id='open-modal' />
+          <IonIcon
+            icon={addCircle} size='large' className={styles.icon} id='open-modal'
+            onClick={(e) => {
+              setIssuesCreateAndEdit(undefined)
+              setIssueTypeCreateAndEdit(undefined)
+            }}
+          />
         </div>
         <div>
           <IonList mode='ios' className={styles.borderRadius}>
@@ -94,7 +109,12 @@ export const component: React.FC = () => {
                   <IonItem
                     mode='ios'
                     key={issue.ISSUE_ID}
-                    className={`${styles.fadeInVertical} ${styles.item}`}
+                    className={`${styles.fadeInVertical} ${styles.item} ${styles.cursor}`}
+                    onClick={(e) => {
+                      setIssuesCreateAndEdit(issue)
+                      void getIssueTypeFromBackend(setIssueTypeCreateAndEdit, issue.ISSUE_TYPE)
+                      setIsModalOpen(true)
+                    }}
                   >
                     <IonIcon
                       id={`issue-${issue.ISSUE_ID}`}
@@ -143,7 +163,7 @@ export const component: React.FC = () => {
             className='ion-padding'
           >
 
-            <IonList>
+            <IonList mode='ios' className={styles.borderRadius}>
               <IonListHeader>{'Create a new Issue'.toUpperCase()}</IonListHeader>
 
               <IonItem mode='ios'>
@@ -152,6 +172,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'summary'.toUpperCase()}
+                  value={issuesCreateAndEdit?.SUMMARY ?? ''}
                   ref={summaryRef}
                 />
               </IonItem>
@@ -162,6 +183,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'description'.toUpperCase()}
+                  value={issuesCreateAndEdit?.DESCRIPTION ?? ''}
                   ref={descriptionRef}
                 />
               </IonItem>
@@ -172,6 +194,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'resolve_at'.toUpperCase()}
+                  value={issuesCreateAndEdit?.RESOLVE_AT ?? ''}
                   ref={resolveAtRef}
                 />
               </IonItem>
@@ -182,6 +205,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'due_date'.toUpperCase()}
+                  value={issuesCreateAndEdit?.DUE_DATE ?? ''}
                   ref={dueDateRef}
                 />
               </IonItem>
@@ -192,6 +216,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'votes'.toUpperCase()}
+                  value={issuesCreateAndEdit?.VOTES ?? ''}
                   ref={votesRef}
                 />
               </IonItem>
@@ -202,6 +227,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'original_estimation'.toUpperCase()}
+                  value={issuesCreateAndEdit?.ORIGINAL_ESTIMATION ?? ''}
                   ref={originalEstimationRef}
                 />
               </IonItem>
@@ -212,17 +238,8 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'custom_start_date'.toUpperCase()}
+                  value={issuesCreateAndEdit?.CUSTOM_START_DATE ?? ''}
                   ref={customStartDateRef}
-                />
-              </IonItem>
-
-              <IonItem mode='ios'>
-                <IonInput
-                  type='date'
-                  labelPlacement='floating'
-                  mode='ios'
-                  label={'custom_end_date'.toUpperCase()}
-                  ref={customEndDateRef}
                 />
               </IonItem>
 
@@ -232,6 +249,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'story_point_estimate'.toUpperCase()}
+                  value={issuesCreateAndEdit?.STORY_POINT_ESTIMATE ?? ''}
                   ref={storyPointEstimateRef}
                 />
               </IonItem>
@@ -241,10 +259,11 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'parent_summary'.toUpperCase()}
-                  ref={parentSummaryRef}
+                  value={issuesCreateAndEdit?.PARENT_SUMMARY_FK ?? 0}
                   defaultValue={0}
+                  ref={parentSummaryRef}
                 >
-                  <IonSelectOption key={0} value={0}>No Parent</IonSelectOption>
+                  <IonSelectOption key={0} value={0}>{'not parent'.toUpperCase()}</IonSelectOption>
                   {issues.map((data) => (
                     <IonSelectOption key={data.ISSUE_ID} value={data.ISSUE_ID}>
                       {data.SUMMARY.slice(0, 50)}
@@ -258,6 +277,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'issue_type_status'.toUpperCase()}
+                  value={issueTypeCreateAndEdit?.STATUS ?? 0}
                   ref={issueTypeStatusRef}
                 >
                   <IonSelectOption key={0} value={0}>No Type</IonSelectOption>
@@ -274,6 +294,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'issue_type_priority'.toUpperCase()}
+                  value={issueTypeCreateAndEdit?.PRIORITY ?? 0}
                   ref={issueTypePriorityRef}
                 >
                   <IonSelectOption key={0} value={0}>No Priority</IonSelectOption>
@@ -290,6 +311,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_assigned'.toUpperCase()}
+                  value={issuesCreateAndEdit?.USER_ASSIGNED_FK ?? 0}
                   ref={userAssignedRef}
                 >
                   <IonSelectOption key={0} value={0}>No User</IonSelectOption>
@@ -306,6 +328,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_creator'.toUpperCase()}
+                  value={issuesCreateAndEdit?.USER_CREATOR_ISSUE_FK ?? 0}
                   ref={userCreatorRef}
                 >
                   <IonSelectOption key={0} value={0}>No User</IonSelectOption>
@@ -322,6 +345,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'user_informator'.toUpperCase()}
+                  value={issuesCreateAndEdit?.USER_INFORMATOR_ISSUE_FK ?? 0}
                   ref={userInformatorRef}
                 >
                   <IonSelectOption key={0} value={0}>No User</IonSelectOption>
@@ -334,13 +358,20 @@ export const component: React.FC = () => {
               </IonItem>
 
               <IonItem mode='ios'>
-                <IonInput
-                  type='number'
+                <IonSelect
                   labelPlacement='floating'
                   mode='ios'
                   label={'sprint_id'.toUpperCase()}
+                  value={issuesCreateAndEdit?.SPRINT_ID_FK ?? 0}
                   ref={sprintIdRef}
-                />
+                >
+                  <IonSelectOption key={0} value={0}>No Sprint</IonSelectOption>
+                  {sprints.map((sprint) => (
+                    <IonSelectOption key={sprint.SPRINT_ID} value={sprint.SPRINT_ID}>
+                      {sprint.NAME} - {sprint.DESCRIPTION}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonItem>
 
               <IonItem mode='ios'>
@@ -348,6 +379,7 @@ export const component: React.FC = () => {
                   labelPlacement='floating'
                   mode='ios'
                   label={'status'.toUpperCase()}
+                  value={issuesCreateAndEdit?.STATUS_ISSUE ?? 0}
                   ref={statusRef}
                 >
                   {getIssueStatus().map((status, index) => (
@@ -361,35 +393,47 @@ export const component: React.FC = () => {
             <div className={styles.form}>
               <IonButton
                 fill='outline'
-                mode='ios' type='submit' color='success'
+                mode='ios' type='submit' color='success' className={issuesCreateAndEdit?.ISSUE_ID != null ? styles.hide : ''}
                 onClick={() => {
                   const exec = async (): Promise<void> => {
                     try {
+                      // chaeck required fields with IonToast
+                      if (summaryRef.current?.value === '' || descriptionRef.current?.value === '') {
+                        throw new Error('Summary and Description are required fields')
+                      }
+                      if (resolveAtRef.current?.value === '' || dueDateRef.current?.value === '') {
+                        throw new Error('Resolve At and Due Date are required fields')
+                      }
+                      if (customStartDateRef.current?.value === '') {
+                        throw new Error('Custom Start Date is a required field')
+                      }
+                      if (votesRef.current?.value === null || originalEstimationRef.current?.value === null || storyPointEstimateRef.current?.value === null) {
+                        throw new Error('Votes, Original Estimation and Story Point Estimate are required fields')
+                      }
                       // create a new issueType
                       const issueType = {
-                        status: issueTypeStatusRef.current?.value,
-                        priority: issueTypePriorityRef.current?.value
+                        status: issueTypeStatusRef.current?.value ?? 0,
+                        priority: issueTypePriorityRef.current?.value ?? 0
                       }
                       const newIssueType = await new IssueTypeUtils().post<IssueType[]>(issueType)
                       // create issue with the new issueType id
                       const issue = {
-                        summary: summaryRef.current?.value,
-                        description: descriptionRef.current?.value,
-                        resolve_at: resolveAtRef.current?.value,
-                        due_date: dueDateRef.current?.value,
-                        votes: Number(votesRef.current?.value),
-                        original_estimation: Number(originalEstimationRef.current?.value),
-                        custom_start_date: customStartDateRef.current?.value,
-                        custom_end_date: customEndDateRef.current?.value,
-                        story_point_estimate: Number(storyPointEstimateRef.current?.value),
-                        parent_summary: Number(parentSummaryRef.current?.value) === 0 ? null : Number(parentSummaryRef.current?.value),
+                        summary: summaryRef.current?.value ?? '',
+                        description: descriptionRef.current?.value ?? '',
+                        resolve_at: resolveAtRef.current?.value ?? new Date().toISOString(),
+                        due_date: dueDateRef.current?.value ?? new Date().toISOString(),
+                        votes: Number(votesRef.current?.value) ?? 0,
+                        original_estimation: Number(originalEstimationRef.current?.value) ?? 0,
+                        custom_start_date: customStartDateRef.current?.value ?? new Date().toISOString(),
+                        story_point_estimate: Number(storyPointEstimateRef.current?.value) ?? 0,
+                        parent_summary: parentSummaryRef.current?.value === 0 ? null : Number(parentSummaryRef.current?.value),
                         issue_type: newIssueType[0].ISSUE_TYPE_ID,
                         project_id: new URLHelper().getPathId(),
-                        user_assigned: Number(userAssignedRef.current?.value) === 0 ? null : userAssignedRef.current?.value,
-                        user_creator: Number(userCreatorRef.current?.value) === 0 ? null : userCreatorRef.current?.value,
-                        user_informator: Number(userInformatorRef.current?.value) === 0 ? null : userInformatorRef.current?.value,
-                        sprint_id: Number(sprintIdRef.current?.value) === 0 ? null : sprintIdRef.current?.value,
-                        status: Number(statusRef.current?.value)
+                        user_assigned: userAssignedRef.current?.value === 0 ? null : userAssignedRef.current?.value,
+                        user_creator: userCreatorRef.current?.value === 0 ? null : userCreatorRef.current?.value,
+                        user_informator: userInformatorRef.current?.value === 0 ? null : userInformatorRef.current?.value,
+                        sprint_id: sprintIdRef.current?.value === 0 ? null : Number(sprintIdRef.current?.value),
+                        status: statusRef.current?.value ?? 0
                       }
 
                       const newIssue = await new IssueUtils().post<Issue>(issue)
@@ -401,7 +445,13 @@ export const component: React.FC = () => {
                         setIsModalOpen(false)
                       }
                     } catch (error) {
-
+                      void presentToast({
+                        message: (error as Error).message,
+                        duration: 2000,
+                        color: Colors[Colors.danger],
+                        position: 'top'
+                      })
+                      console.error('Error creating issue', error)
                     }
                   }
                   void exec()
@@ -412,7 +462,69 @@ export const component: React.FC = () => {
                 fill='outline'
                 mode='ios'
                 color='warning'
-              >Edit Issue
+                className={issuesCreateAndEdit !== undefined ? '' : styles.hide}
+                onClick={(e) => {
+                  const exec = async (): Promise<void> => {
+                    try {
+                      // chaeck required fields with IonToast
+                      if (summaryRef.current?.value === '' || descriptionRef.current?.value === '') {
+                        throw new Error('Summary and Description are required fields')
+                      }
+                      if (resolveAtRef.current?.value === '' || dueDateRef.current?.value === '') {
+                        throw new Error('Resolve At and Due Date are required fields')
+                      }
+                      if (customStartDateRef.current?.value === '') {
+                        throw new Error('Custom Start Date is a required field')
+                      }
+                      if (votesRef.current?.value === null || originalEstimationRef.current?.value === null || storyPointEstimateRef.current?.value === null) {
+                        throw new Error('Votes, Original Estimation and Story Point Estimate are required fields')
+                      }
+                      // update a new issueType
+                      const newIssueType = await new IssueTypeUtils().patch<IssueType>(
+                        {
+                          status: issueTypeStatusRef.current?.value as number,
+                          priority: issueTypePriorityRef.current?.value as number
+                        },
+                        issuesCreateAndEdit?.ISSUE_TYPE as number
+                      )
+                      // create issue with the new issueType id
+                      const issue = {
+                        summary: summaryRef.current?.value ?? '',
+                        description: descriptionRef.current?.value ?? '',
+                        resolve_at: resolveAtRef.current?.value ?? new Date().toISOString(),
+                        due_date: dueDateRef.current?.value ?? new Date().toISOString(),
+                        votes: Number(votesRef.current?.value) ?? 0,
+                        original_estimation: Number(originalEstimationRef.current?.value) ?? 0,
+                        custom_start_date: customStartDateRef.current?.value ?? new Date().toISOString(),
+                        story_point_estimate: Number(storyPointEstimateRef.current?.value) ?? 0,
+                        parent_summary: parentSummaryRef.current?.value === 0 ? -1 : Number(parentSummaryRef.current?.value),
+                        issue_type: newIssueType.ISSUE_TYPE_ID,
+                        project_id: new URLHelper().getPathId(),
+                        user_assigned: userAssignedRef.current?.value === 0 ? -1 : userAssignedRef.current?.value,
+                        user_creator: userCreatorRef.current?.value === 0 ? -1 : userCreatorRef.current?.value,
+                        user_informator: userInformatorRef.current?.value === 0 ? -1 : userInformatorRef.current?.value,
+                        sprint_id: sprintIdRef.current?.value === 0 ? -1 : Number(sprintIdRef.current?.value),
+                        status: statusRef.current?.value ?? 0
+                      }
+                      await new IssueUtils().patch<Issue>(
+                        issue,
+                        issuesCreateAndEdit?.ISSUE_ID as number
+                      )
+                      setIsModalOpen(false)
+                      new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
+                    } catch (error) {
+                      void presentToast({
+                        message: (error as Error).message,
+                        duration: 2000,
+                        color: Colors[Colors.danger],
+                        position: 'top'
+                      })
+                      console.error('Error updating issue', error)
+                    }
+                  }
+                  void exec()
+                }}
+              >Update Issue
               </IonButton>
               <IonButton fill='outline' mode='ios' type='reset' color='danger' onClick={() => { setIsModalOpen(false) }}>Close</IonButton>
             </div>
@@ -508,7 +620,44 @@ const deleteIssue = async (issueId: number): Promise<void> => {
   await new IssueUtils().delete(issueId)
 }
 
+const getIssueTypeFromBackend = async (setIssueType: React.Dispatch<React.SetStateAction<IssueType | undefined>>, id: number): Promise<void> => {
+  const requestResult = await new IssueTypeUtils().get<GetIssueType>(
+    {
+      issue_type_id: id
+    }
+  )
+  setIssueType(requestResult.Issue_type[0])
+}
+
 interface MyUsers {
   user: User
   userProject: UserProject
+}
+
+const getSprintsFromBackend = async (
+  setSprints: React.Dispatch<React.SetStateAction<Sprint[]>>, issues: Issue[]
+): Promise<void> => {
+  const setIssues = issues
+  const setSprintsId = new Set<number>()
+  const setDescriptions = new Set<string>()
+
+  setIssues.forEach((issue) => {
+    if (issue.SPRINT_ID_FK != null) setSprintsId.add(issue.SPRINT_ID_FK)
+    setDescriptions.add(issue.SUMMARY)
+  })
+
+  const projectSprints: Sprint[] = []
+  for (const id of setSprintsId.values()) {
+    const sprint = await new SprintUtils().get<GetSprint>({ sprint_id: id })
+    if (sprint?.data?.[0] != null) projectSprints.push(sprint.data[0])
+  }
+
+  for (const description of setDescriptions.values()) {
+    const sprintOrphan = await new SprintUtils().get<GetSprint>({ description })
+    if (!projectSprints.some((s) => s.SPRINT_ID === sprintOrphan?.data?.[0]?.SPRINT_ID) && sprintOrphan.totalData > 0) {
+      projectSprints.push(sprintOrphan?.data?.[0])
+    }
+  }
+
+  setSprints(projectSprints)
 }
