@@ -22,6 +22,7 @@ import { GetIssueType } from '../../models/GetIssueType'
 import { Sprint } from '../../models/Sprint'
 import { SprintUtils } from '../../utils/SprintUtils'
 import { GetSprint } from '../../models/GetSprint'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 
 export const component: React.FC = () => {
   /** states */
@@ -575,6 +576,10 @@ const getUsersProject = async (): Promise<UserProject[]> => {
   )
   // processing data
   const idUsers = new Set<number>()
+  // get all id_project
+  const usersProject = await new UserProjectUtils().get<GetUserProject>({})
+  usersProject.data.forEach((value) => { idUsers.add(value.USER_PROJECT_ID) })
+  // get every fk from issues
   issues.Issues.forEach((user) => {
     // validate if fk is null
     if (user.USER_ASSIGNED_FK !== null) idUsers.add(user.USER_ASSIGNED_FK)
