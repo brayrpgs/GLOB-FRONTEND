@@ -21,13 +21,13 @@ const component: React.FC = () => {
         <legend>{'progress project'.toUpperCase()}</legend>
         <IonContent>
           <IonProgressBar
-            value={data?.done} buffer={data?.total}
-            className={
+            value={data?.done / data?.total} buffer={data?.done / data?.total}
+            color={
             data?.done / data?.total < 0.3
-              ? styles.danger
+              ? 'danger'
               : data?.done / data?.total < 0.6
-                ? styles.warning
-                : styles.success
+                ? 'warning'
+                : 'success'
           }
           />
         </IonContent>
