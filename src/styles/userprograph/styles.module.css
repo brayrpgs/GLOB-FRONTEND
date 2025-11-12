@@ -1,6 +1,6 @@
 .userprographField {
   width: 40rem;
-  height: 75dvh;
+  height: 70dvh;
   border: var(--ion-color-primary) 1px solid;
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
