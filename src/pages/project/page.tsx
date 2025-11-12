@@ -8,10 +8,11 @@ import { component as Alert } from '../../components/alertproject/component'
 import { component as Users } from '../../components/users/component'
 import { component as Issues } from '../../components/issues/component'
 import { component as Sprints } from '../../components/sprints/component'
+import { component as UserProGraph } from '../../components/userprograph/component'
 /**
  * imports ionic
  */
-import { IonBackButton, IonContent, IonPage } from '@ionic/react'
+import { IonBackButton, IonContent, IonItemDivider, IonLabel, IonPage } from '@ionic/react'
 /** * imports utils and models
  */
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
@@ -48,6 +49,12 @@ const Page: React.FC = () => {
             <Users />
             <Issues />
             <Sprints />
+          </div>
+          <div>
+            <h2>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
+            <IonItemDivider color='light'>
+              <UserProGraph />
+            </IonItemDivider>
           </div>
         </IonContent>
         <Footer />

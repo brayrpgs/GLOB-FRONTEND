@@ -30,6 +30,8 @@ class RequestHelper {
   }
 
   private getQuery (): string {
+    this.parameters.append('page', '1')
+    this.parameters.append('limit', '1000')
     if (this.parameters.toString().length === 0) {
       return ''
     } else {
