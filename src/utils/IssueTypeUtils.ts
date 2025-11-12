@@ -6,7 +6,19 @@ import { TokenPayload } from '../models/TokenPayload'
 
 class IssueTypeUtils implements Api {
   token (): string { return localStorage.getItem(TOKEN_KEY_NAME) as string }
-  get!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>;
+  async get<T>(params?: any): Promise<T> {
+    const request = new RequestHelper(
+      ISSUES_TYPE_API_DATA_APLICATION_URL,
+      METHOD_HTTP.GET,
+      RESPONSE_TYPE.JSON,
+      null,
+      params
+    )
+    request.addHeaders('accept', 'application/json')
+    request.addHeaders('Authorization', this.token())
+    return await request.buildRequest()
+  }
+
   async post<T>(body: any): Promise<T> {
     const request = new RequestHelper(
       ISSUES_TYPE_API_DATA_APLICATION_URL,
