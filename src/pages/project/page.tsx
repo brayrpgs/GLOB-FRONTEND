@@ -52,11 +52,11 @@ const Page: React.FC = () => {
             <Sprints />
           </div>
           <div>
-            <h2>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
+            <h2 className={styles.monitorTitle}>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
             <IonItemDivider color='light'>
               <UserProGraph />
+              <ProjectGraph />
             </IonItemDivider>
-            <ProjectGraph />
           </div>
         </IonContent>
         <Footer />
