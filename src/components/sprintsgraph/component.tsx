@@ -5,7 +5,6 @@ import { Sprint } from '../../models/Sprint'
 import { SprintUtils } from '../../utils/SprintUtils'
 import { GetSprint } from '../../models/GetSprint'
 import { Dispatch, useEffect, useState } from 'react'
-import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,67 +14,64 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,
-  ChartDataset
+  Filler
 } from 'chart.js'
 import styles from '../../styles/sprintsgraph/styles.module.css'
+import { IonItem, IonLabel, IonProgressBar, IonSelect, IonSelectOption } from '@ionic/react'
 
 // register Chart.js components once (mejor mover esto a src/index.tsx si es posible)
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 const component: React.FC = () => {
   const [data, setData] = useState<Sprint[]>()
+  const [selected, setSelected] = useState<Sprint>()
   useEffect(() => {
     void exec(setData)
   }, [])
   return (
     <fieldset className={styles.sprintsField}>
       <legend>{'progress of sprints'.toUpperCase()}</legend>
-      <Line
-        className={styles.graph}
-        options={options}
-        redraw
-        data={{
-          labels: getLabels(data ?? []),
-          datasets: data?.map((sprint, index) => {
-            return {
-              fill: false,
-              label: sprint.NAME,
-              data: [index, index, index, index],
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)'
-            }
-          }) ?? []
+      <IonSelect
+        labelPlacement='floating'
+        label={'select sprint'.toUpperCase()}
+        mode='ios'
+        onIonChange={(e) => {
+          const selected = data?.filter((s) => s.SPRINT_ID === e.target.value)
+          if (selected !== undefined) {
+            setSelected(selected[0])
+          }
         }}
-      />
+      >
+        {
+          data?.map((sprint) => (
+            <IonSelectOption value={sprint.SPRINT_ID} key={sprint.SPRINT_ID}>
+              {sprint.NAME}
+            </IonSelectOption>
+          ))
+        }
+      </IonSelect>
+      <div>
+        <span className={styles.graph}><p>{selected?.DATE_INIT}</p><IonProgressBar value={getValue(selected)} buffer={getValue(selected)} color={getValue(selected) < 0.5 ? 'success' : getValue(selected) < 0.75 ? 'warning' : 'danger'} /><p>{selected?.DATE_END}</p></span>
+      </div>
+
     </fieldset>
   )
 }
 
 export { component }
 
-const getLabels = (sprints: Sprint[]): string[] => {
-  const labels: string[] = []
-  sprints.forEach(sprint => {
-    labels.push(sprint.DATE_INIT)
-    labels.push(sprint.DATE_END)
-  })
-  labels.sort()
-  return labels
+const getValue = (sprint?: Sprint): number => {
+  if (sprint !== undefined) {
+    const dateInit = new Date(sprint.DATE_INIT).getTime()
+    const dateEnd = new Date(sprint.DATE_END).getTime()
+    const dateNow = new Date().getTime()
+    const dateTotal = dateEnd - dateInit
+    const datePass = dateNow - dateInit
+    return datePass / dateTotal
+  }
+  return 0
 }
 
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const
-    },
-    title: {
-      display: true,
-      text: 'sprints progress'.toUpperCase()
-    }
-  }
-}
 const exec = async (setData: Dispatch<React.SetStateAction<Sprint[] | undefined>>): Promise<void> => {
   // get all issues project
   const idProject = new URLHelper().getPathId()
