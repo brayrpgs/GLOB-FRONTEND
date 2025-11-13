@@ -30,9 +30,18 @@ const component: React.FC = () => {
       const allIssues = Array.isArray(issuesResponse?.Issues) ? issuesResponse.Issues : []
       setIssues(allIssues)
 
+      const sprintIds = [...new Set(
+        allIssues.map(issue => issue.SPRINT_ID_FK).filter(Boolean))]
       const sprintUtils = new SprintUtils()
-      const sprintResponse = await sprintUtils.get<GetSprint>({})
-      const sprints = sprintResponse?.data
+      const sprints: Sprint[] = []
+
+      for (const id of sprintIds) {
+        const sprintResponse = await sprintUtils.get<GetSprint>({ sprint_id: id })
+        if (sprintResponse?.data !== undefined) {
+          sprints.push(sprintResponse.data[0])
+        }
+      }
+
       setSprints(sprints)
     } catch (err) {
       console.error('Error:', err)
