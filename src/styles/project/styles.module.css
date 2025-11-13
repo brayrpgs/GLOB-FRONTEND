@@ -171,3 +171,20 @@
     border-width: medium;
   }
 }
+
+.graphContainer {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.childGraph {
+  flex: 1;
+}
+
+.grandsonGraph {
+  display: block;
+}
