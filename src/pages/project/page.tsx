@@ -8,10 +8,14 @@ import { component as Alert } from '../../components/alertproject/component'
 import { component as Users } from '../../components/users/component'
 import { component as Issues } from '../../components/issues/component'
 import { component as Sprints } from '../../components/sprints/component'
+import { component as UserProGraph } from '../../components/userprograph/component'
+import { component as ProjectGraph } from '../../components/projectgraph/component'
+import { component as SprintsGraph } from '../../components/sprintsgraph/component'
+import { component as IssueGraph } from '../../components/issuesgraph/component'
 /**
  * imports ionic
  */
-import { IonBackButton, IonContent, IonPage } from '@ionic/react'
+import { IonBackButton, IonContent, IonItemDivider, IonPage } from '@ionic/react'
 /** * imports utils and models
  */
 import { ProjectsUtils } from '../../utils/ProjectsUtils'
@@ -48,6 +52,21 @@ const Page: React.FC = () => {
             <Users />
             <Issues />
             <Sprints />
+          </div>
+          <div>
+            <h2 className={styles.monitorTitle}>{'Estadistics and Monitor Dashboard'.toUpperCase()}</h2>
+            <div className={styles.graphContainer}>
+              <div className={styles.childGraph}>
+                <UserProGraph />
+              </div>
+              <div className={styles.childGraph}>
+                <div className={styles.grandsonGraph}>
+                  <ProjectGraph />
+                  <SprintsGraph />
+                </div>
+              </div>
+            </div>
+            <IssueGraph />
           </div>
         </IonContent>
         <Footer />

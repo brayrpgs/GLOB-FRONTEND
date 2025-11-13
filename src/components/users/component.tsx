@@ -1,4 +1,4 @@
-import { IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar } from '@ionic/react'
+import { IonCard, IonCardHeader, IonCardTitle, IonContent, IonItem, IonList, IonProgressBar, IonSearchbar, IonSelect, IonSelectOption } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import { User } from '../../models/User'
 import styles from '../../styles/users/styles.module.css'
@@ -11,6 +11,7 @@ import { GetUserProject } from '../../models/GetUserProject'
 import { UserProject } from '../../models/UserProject'
 import { ProjectRole } from '../../enums/ProjectRole'
 import { ValidateProject } from '../../middleware/ValidateProject'
+import { TokenPayloadUtils } from '../../utils/TokenPayloadUtils'
 
 interface MyUsers {
   user: User
@@ -77,10 +78,12 @@ const component: React.FC = () => {
                 <IonCardHeader mode='ios' className={styles.cardHeader}>ROL: {ProjectRole[data.userProject.ROL_PROYECT]}</IonCardHeader>
                 <IonCardHeader mode='ios' className={styles.cardHeader}>PRODUCTIVITY: <IonProgressBar className={getColorProgresBar(data.userProject.PRODUCTIVITY / 100)} value={data.userProject.PRODUCTIVITY / 100} buffer={data.userProject.PRODUCTIVITY / 100} mode='ios' /></IonCardHeader>
                 <IonCardHeader mode='ios' className={styles.cardHeader}>
-                  <select
+                  <IonSelect
                     defaultValue={data.userProject.ROL_PROYECT}
-                    onChange={(e) => {
-                      const newRol = e.currentTarget.value
+                    mode='ios'
+                    value={data.userProject.ROL_PROYECT}
+                    onIonChange={(e) => {
+                      const newRol = e.target.value
                       const idUserProject = data.userProject.USER_PROJECT_ID
                       const idProject = new URLHelper().getPathId()
                       const exec = async (): Promise<void> => {
@@ -97,10 +100,10 @@ const component: React.FC = () => {
                   >
                     {Object.entries(ProjectRole).map((rol, key) => (
                       !isNaN(rol[1] as ProjectRole)
-                        ? <option key={key} value={rol[1]}>{rol[0]}</option>
+                        ? <IonSelectOption key={key} value={rol[1]}>{rol[0]}</IonSelectOption>
                         : ''
                     ))}
-                  </select>
+                  </IonSelect>
                   <button
                     className={styles.buttonDeleteColor}
                     onClick={() => {
@@ -127,6 +130,14 @@ const getUsersProject = async (): Promise<UserProject[]> => {
   )
   // processing data
   const idUsers = new Set<number>()
+  // get id user logged
+  const usersProject = await new UserProjectUtils().get<GetUserProject>(
+    {
+      user_id_fk: new TokenPayloadUtils().getTokenPayload().id
+    }
+  )
+  idUsers.add(usersProject.data[0].USER_PROJECT_ID)
+  // get every fk from issues
   issues.Issues.forEach((user) => {
     // validate if fk is null
     if (user.USER_ASSIGNED_FK !== null) idUsers.add(user.USER_ASSIGNED_FK)
