@@ -1,5 +1,6 @@
 .proyectField {
-  width: 40rem;
+  margin-block : 2rem;
+  width: -webkit-fill-available;
   height: 6dvh;
   border: var(--ion-color-primary) 1px solid;
   border-radius: 1rem;

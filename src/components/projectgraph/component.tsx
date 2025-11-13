@@ -16,23 +16,21 @@ const component: React.FC = () => {
   }, [])
 
   return (
-    <IonItemDivider color='light'>
-      <fieldset className={styles.proyectField}>
-        <legend>{'progress project'.toUpperCase()}</legend>
-        <IonContent>
-          <IonProgressBar
-            value={data?.done / data?.total} buffer={data?.done / data?.total}
-            color={
+    <fieldset className={styles.proyectField}>
+      <legend>{'progress project'.toUpperCase()}</legend>
+      <IonContent>
+        <IonProgressBar
+          value={data?.done / data?.total} buffer={data?.done / data?.total}
+          color={
             data?.done / data?.total < 0.3
               ? 'danger'
               : data?.done / data?.total < 0.6
                 ? 'warning'
                 : 'success'
           }
-          />
-        </IonContent>
-      </fieldset>
-    </IonItemDivider>
+        />
+      </IonContent>
+    </fieldset>
   )
 }
 
