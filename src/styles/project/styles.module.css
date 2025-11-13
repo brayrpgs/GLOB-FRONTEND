@@ -94,7 +94,7 @@
 .configProjectInProgress {
   border-radius: 1rem;
   box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
-   width: fit-content;
+  width: fit-content;
   text-align: center;
   border: 1px solid var(--ion-color-secondary);
 }
@@ -110,6 +110,7 @@
   flex-wrap: wrap;
   gap: 5rem;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .select {
@@ -125,4 +126,65 @@
 .backButton {
   align-self: flex-start;
   padding-inline: 1rem;
+}
+
+.monitorTitle {
+  text-align: center;
+  color: var(--ion-color-secondary);
+  border-bottom: 1px solid var(--ion-color-danger);
+  border-width: medium;
+  border-radius: 1rem;
+  width: fit-content;
+  margin: auto;
+  padding: 1rem;
+  transition: 1s all ease;
+  animation: monitor 10s infinite ease;
+  interpolate-size: allow-keywords;
+}
+
+@keyframes monitor {
+  0% {
+    width: fit-content;
+    border-bottom: 1px solid var(--ion-color-danger);
+    border-width: medium;
+  }
+
+  25% {
+    border-bottom: 1px solid var(--ion-color-warning);
+    border-width: medium;
+  }
+
+  50% {
+    width: 100%;
+    border-bottom: 1px solid var(--ion-color-success);
+    border-width: medium;
+  }
+
+  75% {
+    border-bottom: 1px solid var(--ion-color-warning);
+    border-width: medium;
+  }
+
+  100% {
+    width: fit-content;
+    border-bottom: 1px solid var(--ion-color-danger);
+    border-width: medium;
+  }
+}
+
+.graphContainer {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.childGraph {
+  flex: 1;
+}
+
+.grandsonGraph {
+  display: block;
 }

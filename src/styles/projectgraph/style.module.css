@@ -1,0 +1,17 @@
+.proyectField {
+  margin-block : 2rem;
+  width: -webkit-fill-available;
+  height: 6dvh;
+  border: var(--ion-color-primary) 1px solid;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
+}
+.danger{
+  color: var(--ion-color-danger) !important;
+}
+.success{
+ color: var(--ion-color-success) !important;
+}
+.warning{
+ color: var(--ion-color-warning) !important;
+}

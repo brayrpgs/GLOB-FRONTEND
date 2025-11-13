@@ -1,0 +1,19 @@
+.sprintsField {
+  margin: auto;
+  width: auto;
+  display: block;
+  border: var(--ion-color-primary) 1px solid;
+  border-radius: 1rem;
+  transition: 1s ease;
+  interpolate-size: allow-keywords;
+  box-shadow: 0 0 10px 2px var(--ion-color-secondary) !important;
+}
+
+.graph {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  p{
+    min-width: 10ch;
+  }
+}
