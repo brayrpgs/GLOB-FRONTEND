@@ -53,9 +53,6 @@ class UserUtils implements Api {
     return await request.buildRequest<T>()
   }
 
-<<<<<<< HEAD
-  patch!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
-=======
   async patch<T>(body: any, path: any): Promise<T> {
     const request = new RequestHelper(
       `${MEMBERSHIP_API_DATA_APLICATION_URL}${path as number}`,
@@ -69,7 +66,6 @@ class UserUtils implements Api {
     return await request.buildRequest<T>()
   }
 
->>>>>>> 4a6a233056c80915a248655c6789bf8542a5ce48
   head!: <T>(tokenPayload?: TokenPayload, body?: any, params?: any, path?: any) => Promise<T>
 }
 export { UserUtils }

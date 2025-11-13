@@ -17,7 +17,7 @@ const component: React.FC = () => {
 
   return (
     <fieldset className={styles.proyectField}>
-      <legend>{'progress project'.toUpperCase()}</legend>
+      <legend>{'progress of project'.toUpperCase()}</legend>
       <IonContent>
         <IonProgressBar
           value={data?.done / data?.total} buffer={data?.done / data?.total}

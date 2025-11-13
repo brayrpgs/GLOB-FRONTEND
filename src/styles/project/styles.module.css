@@ -183,6 +183,7 @@
 
 .childGraph {
   flex: 1;
+  min-width: fit-content;
 }
 
 .grandsonGraph {

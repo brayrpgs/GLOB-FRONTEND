@@ -11,6 +11,7 @@ import { component as Sprints } from '../../components/sprints/component'
 import { component as UserProGraph } from '../../components/userprograph/component'
 import { component as ProjectGraph } from '../../components/projectgraph/component'
 import { component as SprintsGraph } from '../../components/sprintsgraph/component'
+import { component as IssueGraph } from '../../components/issuesgraph/component'
 /**
  * imports ionic
  */
@@ -65,6 +66,7 @@ const Page: React.FC = () => {
                 </div>
               </div>
             </div>
+            <IssueGraph />
           </div>
         </IonContent>
         <Footer />
