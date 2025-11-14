@@ -63,7 +63,7 @@ const getProyects = async (): Promise<Project[]> => {
     }
   )
   // validate userProject
-  if (getUserProject.totalData > 1 || getUserProject.totalData < 1) {
+  if (getUserProject.totalData < 1) {
     return []
   }
   // step 2
