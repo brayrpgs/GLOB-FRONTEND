@@ -453,6 +453,9 @@ export const component: React.FC = () => {
                         position: 'top'
                       })
                       console.error('Error creating issue', error)
+                    } finally {
+                      
+                      new ValidateProject(`/project/${new URLHelper().getPathId()}`).redirect()
                     }
                   }
                   void exec()
